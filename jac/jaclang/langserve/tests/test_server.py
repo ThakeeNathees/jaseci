@@ -77,7 +77,7 @@ class TestJacLangServer(TestCase):
             str(lsp.get_definition(circle_file, lspt.Position(9, 16))),
         )
         self.assertIn(
-            "fixtures/circle_pure.jac:13:11-13:17",
+            "fixtures/circle_pure.jac:13:11-13:16",
             str(lsp.get_definition(circle_file, lspt.Position(20, 16))),
         )
 
@@ -88,7 +88,7 @@ class TestJacLangServer(TestCase):
             str(lsp.get_definition(goto_defs_file, lspt.Position(6, 21))),
         )
         self.assertIn(
-            "fixtures/goto_def_tests.jac:1:8-1:16",
+            "fixtures/goto_def_tests.jac:1:8-1:17",
             str(lsp.get_definition(goto_defs_file, lspt.Position(6, 30))),
         )
 
