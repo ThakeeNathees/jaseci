@@ -132,3 +132,6 @@ class TypeCheckPass(UniPass):
                         sym := filter_type.lookup_member_symbol(cmp.left.value)
                     ):
                         self.evaluator._set_symbol_to_expr(cmp.left, sym)
+
+    def exit_special_var_ref(self, node: uni.SpecialVarRef) -> None:
+        self.evaluator.get_type_of_expression(node)
