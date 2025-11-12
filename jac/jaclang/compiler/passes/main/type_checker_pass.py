@@ -131,5 +131,3 @@ class TypeCheckPass(UniPass):
                     if isinstance(cmp.left, uni.Name):
                         if sym := filter_type.lookup_member_symbol(cmp.left.value):
                             self.evaluator._set_symbol_to_expr(cmp.left, sym)
-
-
