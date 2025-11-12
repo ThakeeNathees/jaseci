@@ -77,15 +77,19 @@ class TestJacLangServer(TestCase):
             str(lsp.get_definition(circle_file, lspt.Position(9, 16))),
         )
         self.assertIn(
-            "fixtures/circle_pure.jac:13:11-13:16",
+            "fixtures/circle_pure.jac:13:11-13:17",
             str(lsp.get_definition(circle_file, lspt.Position(20, 16))),
         )
 
         goto_defs_file = uris.from_fs_path(self.fixture_abs_path("goto_def_tests.jac"))
         lsp.type_check_file(goto_defs_file)
         self.assertIn(
-            "fixtures/goto_def_tests.jac:1:5-1:13",
-            str(lsp.get_definition(goto_defs_file, lspt.Position(5, 21))),
+            "fixtures/goto_def_tests.jac:2:5-2:13",
+            str(lsp.get_definition(goto_defs_file, lspt.Position(8, 21))),
+        )
+        self.assertIn(
+            "fixtures/goto_def_tests.jac:3:8-3:16",
+            str(lsp.get_definition(goto_defs_file, lspt.Position(8, 30))),
         )
 
     def test_go_to_definition_method_manual_impl(self) -> None:

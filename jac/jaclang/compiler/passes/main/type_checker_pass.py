@@ -122,4 +122,14 @@ class TypeCheckPass(UniPass):
         """Handle the edge reference trailer node."""
         for chain in node.chain:
             if isinstance(chain, uni.FilterCompr) and chain.f_type:
-                self.evaluator.get_type_of_expression(chain.f_type)
+                filter_type = self.evaluator.get_type_of_expression(chain.f_type)
+                if not isinstance(filter_type, jtypes.ClassType):
+                    continue
+
+                # For each compare in the filter comprehension, set symbol to the right name.
+                for cmp in chain.compares:
+                    if isinstance(cmp.left, uni.Name):
+                        if sym := filter_type.lookup_member_symbol(cmp.left.value):
+                            self.evaluator._set_symbol_to_expr(cmp.left, sym)
+
+
