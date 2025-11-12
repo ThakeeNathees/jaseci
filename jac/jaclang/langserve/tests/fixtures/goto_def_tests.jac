@@ -1,5 +1,3 @@
-
-
 node SomeNode {
     has some_attr: int;
 }
