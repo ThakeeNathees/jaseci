@@ -128,6 +128,7 @@ class TypeCheckPass(UniPass):
 
                 # For each compare in the filter comprehension, set symbol to the right name.
                 for cmp in chain.compares:
-                    if isinstance(cmp.left, uni.Name):
-                        if sym := filter_type.lookup_member_symbol(cmp.left.value):
-                            self.evaluator._set_symbol_to_expr(cmp.left, sym)
+                    if isinstance(cmp.left, uni.Name) and (
+                        sym := filter_type.lookup_member_symbol(cmp.left.value)
+                    ):
+                        self.evaluator._set_symbol_to_expr(cmp.left, sym)
