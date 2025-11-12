@@ -117,3 +117,9 @@ class TypeCheckPass(UniPass):
     def exit_formatted_value(self, node: uni.FormattedValue) -> None:
         """Handle the formatted value node."""
         self.evaluator.get_type_of_expression(node.format_part)
+
+    def exit_edge_ref_trailer(self, node: uni.EdgeRefTrailer) -> None:
+        """Handle the edge reference trailer node."""
+        for chain in node.chain:
+            if isinstance(chain, uni.FilterCompr) and chain.f_type:
+                self.evaluator.get_type_of_expression(chain.f_type)
