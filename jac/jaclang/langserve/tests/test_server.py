@@ -156,6 +156,44 @@ class TestJacLangServer(TestCase):
                     ),
                 )
 
+    def test_go_to_definition_connect_filter(self) -> None:
+        """Test that the go to definition is correct."""
+        lsp = JacLangServer()
+        workspace_path = self.fixture_abs_path("")
+        workspace = Workspace(workspace_path, lsp)
+        lsp.lsp._workspace = workspace
+        import_file = uris.from_fs_path(
+            self.passes_main_fixture_abs_path("checker_connect_filter.jac")
+        )
+        lsp.type_check_file(import_file)
+        # fmt: off
+        positions = [
+            (23, 7, "connect_filter.jac:20:4-20:10"),
+            (23, 17, "connect_filter.jac:0:5-0:11"),
+            (23, 28, "connect_filter.jac:21:4-21:10"),
+            (26, 20, "connect_filter.jac:23:4-23:13"),
+            (27, 18, "connect_filter.jac:4:5-4:10"),
+            (28, 8, "connect_filter.jac:4:5-4:10"),
+            (28, 18, "connect_filter.jac:0:5-0:11"),
+            (32, 18, "connect_filter.jac:0:5-0:11"),
+            (32, 23, "connect_filter.jac:1:6-1:8"),
+            (35, 17, "connect_filter.jac:12:4-12:8"),
+            (36, 6, "connect_filter.jac:34:4-34:7"),
+            (40, 17, "connect_filter.jac:1:6-1:8"),
+        ]
+        # fmt: on
+
+        for line, char, expected in positions:
+            with self.subTest(line=line, char=char):
+                self.assertIn(
+                    expected,
+                    str(
+                        lsp.get_definition(
+                            import_file, lspt.Position(line - 1, char - 1)
+                        )
+                    ),
+                )
+
     def test_go_to_definition_atom_trailer(self) -> None:
         """Test that the go to definition is correct."""
         lsp = JacLangServer()
@@ -245,7 +283,6 @@ class TestJacLangServer(TestCase):
         test_cases = [
             (47, 12, ["circle.jac:47:8-47:14", "69:8-69:14", "74:8-74:14"]),
             (54, 66, ["54:62-54:76", "65:23-65:37"]),
-
             # TODO: Even if we cannot find the function decl,
             # we should connect the function args to their decls
             # (62, 14, ["65:44-65:57", "70:33-70:46"]),
@@ -254,4 +291,3 @@ class TestJacLangServer(TestCase):
             references = str(lsp.get_references(circle_file, lspt.Position(line, char)))
             for expected in expected_refs:
                 self.assertIn(expected, references)
-
