@@ -552,3 +552,11 @@ class TypeCheckerPassTests(TestCase):
 
         for i, expected in enumerate(expected_errors):
             self._assert_error_pretty_found(expected, program.errors_had[i].pretty_print())
+
+    def test_connect_typed(self) -> None:
+        program = JacProgram()
+        path = self.fixture_abs_path("checker_connect_typed.jac")
+        mod = program.compile(path)
+        TypeCheckPass(ir_in=mod, prog=program)
+        # Expect three errors: wrong edge type usage and node class operands
+        self.assertEqual(len(program.errors_had), 3)
