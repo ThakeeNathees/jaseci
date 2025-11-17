@@ -935,8 +935,8 @@ class TypeEvaluator {
             case uni.Name() | uni.SpecialVarRef():
 
                 if isinstance(expr, uni.SpecialVarRef) {
-                    # Handle "here"
-                    if expr.name == Tok.KW_HERE {
+                    # Handle "here" and "visitor" special name ref.
+                    if expr.name in (Tok.KW_HERE, Tok.KW_VISITOR) {
                         if (method := self._get_enclosing_method(expr)) {
                             if isinstance(method.signature, uni.EventSignature) {
                                 if arch := method.signature.arch_tag_info {
@@ -951,7 +951,9 @@ class TypeEvaluator {
                             }
                         }
                     }
+
                 }
+
 
                 # NOTE: For self's type pyright is getting the first parameter of a method and
                 # the name can be anything not just self, however we don't have the first parameter

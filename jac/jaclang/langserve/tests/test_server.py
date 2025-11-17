@@ -83,17 +83,21 @@ class TestJacLangServer(TestCase):
 
         goto_defs_file = uris.from_fs_path(self.fixture_abs_path("goto_def_tests.jac"))
         lsp.type_check_file(goto_defs_file)
+
+        # Test if the visistor keyword goes to the walker definition
+        self.assertIn(
+            "fixtures/goto_def_tests.jac:8:7-8:17",
+            str(lsp.get_definition(goto_defs_file, lspt.Position(4, 14))),
+        )
+        # Test if the here keywrod goes to the node definition
         self.assertIn(
             "fixtures/goto_def_tests.jac:0:5-0:13",
-            str(lsp.get_definition(goto_defs_file, lspt.Position(7, 21))),
+            str(lsp.get_definition(goto_defs_file, lspt.Position(10, 14))),
         )
-        self.assertIn(
-            "fixtures/goto_def_tests.jac:1:8-1:17",
-            str(lsp.get_definition(goto_defs_file, lspt.Position(7, 30))),
-        )
+        # Test the SomeNode node inside the visit statement goes to its definition
         self.assertIn(
             "fixtures/goto_def_tests.jac:0:5-0:13",
-            str(lsp.get_definition(goto_defs_file, lspt.Position(6, 14))),
+            str(lsp.get_definition(goto_defs_file, lspt.Position(11, 21))),
         )
 
     def test_go_to_definition_method_manual_impl(self) -> None:

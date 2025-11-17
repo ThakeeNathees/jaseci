@@ -1,5 +1,9 @@
 node SomeNode {
     has some_attr: int;
+
+    can with SomeWalker entry {
+        print(visitor); # <-- go to definition of here
+    }
 }
 
 walker SomeWalker {
@@ -8,3 +12,4 @@ walker SomeWalker {
         visit [-->(`?SomeNode:some_attr==10)];
     }
 }
+
