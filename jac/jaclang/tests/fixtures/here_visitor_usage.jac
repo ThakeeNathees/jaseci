@@ -1,7 +1,7 @@
 node MyNode{
     has val:int;
 
-    can ability1 with MyWalker | MyNode entry {
+    can ability1 with MyWalker entry {
         print("Visitor name is ", visitor.name);
     }
 }
