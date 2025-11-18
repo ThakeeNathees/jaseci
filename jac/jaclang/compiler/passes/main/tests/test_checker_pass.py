@@ -622,3 +622,23 @@ class TypeCheckerPassTests(TestCase):
 
         for i, expected in enumerate(expected_errors):
             self._assert_error_pretty_found(expected, program.errors_had[i].pretty_print())
+    
+    def test_import_star(self) -> None:
+        program = JacProgram()
+        path = self.fixture_abs_path("checker_import_star/main.jac")
+        mod = program.compile(path)
+        TypeCheckPass(ir_in=mod, prog=program)
+        self.assertEqual(len(program.errors_had), 1)
+
+        expected_errors = [
+            """
+            Cannot assign <class int> to <class str>
+                a :X = X();
+                x: str = Foo().foo();
+                ^^^^^^^^^^^^^^^^^^^^^
+                y: int = Bar().bar();
+            """
+        ]
+
+        for i, expected in enumerate(expected_errors):
+            self._assert_error_pretty_found(expected, program.errors_had[i].pretty_print())
