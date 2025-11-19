@@ -3,8 +3,8 @@ from jaclang.utils.test import TestCase
 from jaclang.vendor.pygls import uris
 from jaclang.vendor.pygls.workspace import Workspace
 
-import asyncio
 import lsprotocol.types as lspt
+import pytest
 from jaclang.langserve.engine import JacLangServer
 
 
@@ -255,7 +255,8 @@ class TestJacLangServer(TestCase):
             )
         lsp.shutdown()
 
-    def test_completion(self) -> None:
+    @pytest.mark.asyncio
+    async def test_completion(self):
         """Test that the completions are correct."""
         lsp = JacLangServer()
         workspace_path = self.fixture_abs_path("")
@@ -279,22 +280,16 @@ class TestJacLangServer(TestCase):
             ),
         ]
 
-        # Create a new event loop for this test to avoid reuse issues
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
         try:
             for case in test_cases:
-                results = loop.run_until_complete(
-                    lsp.get_completion(
-                        base_module_file, case.pos, completion_trigger=case.trigger
-                    )
+                results = await lsp.get_completion(
+                    base_module_file, case.pos, completion_trigger=case.trigger
                 )
                 completions = results.items
                 for completion in case.expected:
                     self.assertIn(completion, str(completions))
         finally:
             lsp.shutdown()
-            loop.close()
 
     def test_go_to_reference(self) -> None:
         """Test that the go to reference is correct."""
