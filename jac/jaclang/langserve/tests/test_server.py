@@ -278,17 +278,23 @@ class TestJacLangServer(TestCase):
                 ["bar", "baz"],
             ),
         ]
-        loop = asyncio.get_event_loop()
-        for case in test_cases:
-            results = loop.run_until_complete(
-                lsp.get_completion(
-                    base_module_file, case.pos, completion_trigger=case.trigger
+
+        # Create a new event loop for this test to avoid reuse issues
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            for case in test_cases:
+                results = loop.run_until_complete(
+                    lsp.get_completion(
+                        base_module_file, case.pos, completion_trigger=case.trigger
+                    )
                 )
-            )
-            completions = results.items
-            for completion in case.expected:
-                self.assertIn(completion, str(completions))
-        lsp.shutdown()
+                completions = results.items
+                for completion in case.expected:
+                    self.assertIn(completion, str(completions))
+        finally:
+            lsp.shutdown()
+            loop.close()
 
     def test_go_to_reference(self) -> None:
         """Test that the go to reference is correct."""
