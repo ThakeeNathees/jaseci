@@ -9,6 +9,9 @@ This document provides a summary of new features, improvements, and bug fixes in
 - **Plugin Architecture for Server Rendering**: Added extensible plugin system for server-side page rendering, allowing custom rendering engines and third-party templating integration with transform, cache, and customization capabilities.
 - **Improvements to Runtime Error reporting**: Made various improvements to runtime error CLI reporting.
 - **Node Spawn Walker supported**: Spawning walker on a node with `jac serve` is supported.
+- **Type Checking Enhancements**:
+  - Fixed inheritance-based member lookup in type system by properly iterating through MRO (Method Resolution Order) chain
+  - Improved synthesized `__init__` method generation for dataclasses to correctly collect parameters from all base classes in inheritance hierarchy
 -
 ## jaclang 0.8.10 (Latest Release)
 
