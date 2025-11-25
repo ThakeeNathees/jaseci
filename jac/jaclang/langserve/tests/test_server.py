@@ -299,9 +299,9 @@ class TestJacLangServer(TestCase):
         workspace = Workspace(workspace_path, lsp)
         lsp.lsp._workspace = workspace
 
-        import_star_file = uris.from_fs_path(self.passes_main_fixture_abs_path(
-            "checker_import_star/main.jac"
-        ))
+        import_star_file = uris.from_fs_path(
+            self.passes_main_fixture_abs_path("checker_import_star/main.jac")
+        )
         lsp.type_check_file(import_star_file)
         # fmt: off
         positions = [
