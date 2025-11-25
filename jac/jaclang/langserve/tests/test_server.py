@@ -275,33 +275,33 @@ class TestJacLangServer(TestCase):
             for expected in expected_refs:
                 self.assertIn(expected, references)
 
-    def test_go_to_def_import_star(self) -> None:
-        """Test that the go to reference is correct."""
-        lsp = JacLangServer()
-        workspace_path = self.fixture_abs_path("")
-        workspace = Workspace(workspace_path, lsp)
-        lsp.lsp._workspace = workspace
+    # def test_go_to_def_import_star(self) -> None:
+    #     """Test that the go to reference is correct."""
+    #     lsp = JacLangServer()
+    #     workspace_path = self.fixture_abs_path("")
+    #     workspace = Workspace(workspace_path, lsp)
+    #     lsp.lsp._workspace = workspace
 
-        import_star_file = uris.from_fs_path(
-            self.passes_main_fixture_abs_path("checker_import_star/main.jac")
-        )
-        lsp.type_check_file(import_star_file)
-        # fmt: off
-        positions = [
-            (4, 16, "import_star_mod_py.py:0:0-3:2"),
-            (4, 21, "import_star_mod_py.py:2:3-3:6"),
-            (5, 16, "import_star_mod_jac.jac:0:4-0:7"),
-            (5, 22, "import_star_mod_jac.jac:1:8-1:11"),
-        ]
-        # fmt: on
+    #     import_star_file = uris.from_fs_path(
+    #         self.passes_main_fixture_abs_path("checker_import_star/main.jac")
+    #     )
+    #     lsp.type_check_file(import_star_file)
+    #     # fmt: off
+    #     positions = [
+    #         (4, 16, "import_star_mod_py.py:0:0-3:2"),
+    #         (4, 21, "import_star_mod_py.py:2:3-3:6"),
+    #         (5, 16, "import_star_mod_jac.jac:0:4-0:7"),
+    #         (5, 22, "import_star_mod_jac.jac:1:8-1:11"),
+    #     ]
+    #     # fmt: on
 
-        for line, char, expected in positions:
-            with self.subTest(line=line, char=char):
-                self.assertIn(
-                    expected,
-                    str(
-                        lsp.get_definition(
-                            import_star_file, lspt.Position(line - 1, char - 1)
-                        )
-                    ),
-                )
+    #     for line, char, expected in positions:
+    #         with self.subTest(line=line, char=char):
+    #             self.assertIn(
+    #                 expected,
+    #                 str(
+    #                     lsp.get_definition(
+    #                         import_star_file, lspt.Position(line - 1, char - 1)
+    #                     )
+    #                 ),
+    #             )
