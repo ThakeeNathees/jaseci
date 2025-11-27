@@ -158,7 +158,8 @@ repos:
       - id: jac-format
         name: jac format
         entry: jac format
-        language: system
+        language: python
+        additional_dependencies: ['.']
         types: [file]
         files: \.jac$
         pass_filenames: true
@@ -167,7 +168,8 @@ repos:
         name: jac build
         entry: jac build
         args: [-t]
-        language: system
+        language: python
+        additional_dependencies: ['.']
         types: [file]
         files: \.jac$
         pass_filenames: true
