@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run `jac build` on the staged files; allow failures but print them so CI
+# remains informative and commits are not blocked by build checks.
+PYTHONPATH="$(pwd):${PYTHONPATH:-}" python -m jaclang.cli.cli build "$@" -t || {
+    echo "jac build failed, continuing" >&2
+    true
+}

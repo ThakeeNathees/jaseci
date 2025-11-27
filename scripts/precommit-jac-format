@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure repository root is on PYTHONPATH so the `jaclang` package can be
+# imported without installing the package into the environment.
+PYTHONPATH="$(pwd):${PYTHONPATH:-}" python -m jaclang.cli.cli format "$@"
