@@ -60,8 +60,12 @@ def format(path: str, outfile: str = "", to_screen: bool = False) -> None:
         if not path_obj.exists():
             print(f"Error: File '{path}' does not exist.", file=sys.stderr)
             exit(1)
-        formatted_code = JacProgram.jac_file_formatter(str(path_obj))
+        extra: dict[str, object] = {}
+        formatted_code = JacProgram.jac_file_formatter(str(path_obj), extra)
         write_formatted_code(formatted_code, str(path_obj))
+        if extra["is_changed"]:
+            print(f"Formatted {path}.", file=sys.stderr)
+            exit(1)
         return
 
     # Case 2: Directory with .jac files

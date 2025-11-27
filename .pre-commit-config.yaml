@@ -151,3 +151,23 @@ repos:
               ^jac/examples/rpg_game/python_impl/img/single\.png$|
               ^jac/examples/rpg_game/python_impl/img/terrain\.png$
           )
+
+  - repo: local
+    hooks:
+
+      - id: jac-format
+        name: jac format
+        entry: jac format
+        language: system
+        types: [file]
+        files: \.jac$
+        pass_filenames: true
+
+      - id: jac-build
+        name: jac build
+        entry: jac build
+        args: [-t]
+        language: system
+        types: [file]
+        files: \.jac$
+        pass_filenames: true

@@ -167,7 +167,9 @@ class JacProgram:
             current_pass(ir_in=mod, prog=self, cancel_token=cancel_token)  # type: ignore
 
     @staticmethod
-    def jac_file_formatter(file_path: str) -> str:
+    def jac_file_formatter(
+        file_path: str, extra: dict[str, object] | None = None
+    ) -> str:
         """Convert a Jac file to an AST."""
         prog = JacProgram()
         source_str = read_file_with_encoding(file_path)
@@ -177,6 +179,8 @@ class JacProgram:
             prse = i(ir_in=prse.ir_out, prog=prog)
         prse.errors_had = prog.errors_had
         prse.warnings_had = prog.warnings_had
+        if extra is not None:
+            extra["is_changed"] = prse.ir_out.gen.jac != source_str
         return prse.ir_out.gen.jac
 
     @staticmethod
