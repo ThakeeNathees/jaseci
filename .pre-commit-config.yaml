@@ -166,7 +166,7 @@ repos:
 
       - id: jac-check
         name: jac check
-        entry: bash -c 'jac build -t || (echo "jac build failed, continuing" >&2; true)'
+        entry: bash -c 'jac build "$@" -t || (echo "jac build failed, continuing" >&2; true)' --
         language: python
         additional_dependencies: ['.']
         types: [file]
