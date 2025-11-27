@@ -155,11 +155,17 @@ repos:
   - repo: local
     hooks:
 
+      - id: install-jac
+        name: install jaclang locally
+        entry: pip3 install -e ./jac/
+        language: system
+        pass_filenames: false
+        always_run: true
+
       - id: jac-format
         name: jac format
         entry: jac format
-        language: python
-        additional_dependencies: ['./jac']
+        language: system
         types: [file]
         files: \.jac$
         pass_filenames: true
@@ -167,8 +173,7 @@ repos:
       - id: jac-check
         name: jac check
         entry: bash -c 'jac build "$@" -t || (echo "jac build failed, continuing" >&2; true)'
-        language: python
-        additional_dependencies: ['./jac']
+        language: system
         types: [file]
         files: \.jac$
         pass_filenames: true
