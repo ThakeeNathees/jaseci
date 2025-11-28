@@ -19,7 +19,8 @@ class PyastBuildPassTests(TestCase):
 
     def test_synced_to_latest_py_ast(self) -> None:
         """Basic test for pass."""
-        unparser_cls = py_ast._Unparser
+        # TODO: maybe instead iterate `ast.AST.__subclasses__`?
+        unparser_cls = py_ast._Unparser  # type: ignore[attr-defined]
         visit_methods = (
             [
                 method
@@ -45,7 +46,7 @@ class PyastBuildPassTests(TestCase):
 
     def test_str2doc(self) -> None:
         """Test str2doc."""
-        with open(self.fixture_abs_path("str2doc.py"), "r") as f:
+        with open(self.fixture_abs_path("str2doc.py")) as f:
             file_source = f.read()
         code = PyastBuildPass(
             ir_in=PythonModuleAst(

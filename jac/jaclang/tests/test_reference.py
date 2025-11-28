@@ -1,10 +1,13 @@
 """Test Jac reference examples."""
 
+from __future__ import annotations
+
 import io
 import os
-from contextlib import redirect_stdout
 import sys
-from typing import Callable, Optional
+from collections.abc import Callable
+from contextlib import redirect_stdout
+from types import CodeType
 
 import jaclang
 from jaclang.compiler.program import JacProgram
@@ -15,7 +18,7 @@ from jaclang.utils.test import TestCase
 class JacReferenceTests(TestCase):
     """Test Reference examples."""
 
-    test_ref_jac_files_fully_tested: Optional[Callable[[TestCase], None]] = None
+    test_ref_jac_files_fully_tested: Callable[[TestCase], None] | None = None
     methods: list[str] = []
 
     @classmethod
@@ -54,7 +57,9 @@ class JacReferenceTests(TestCase):
         # Reset machine at the start of each test to ensure clean state
         Jac.reset_machine()
 
-        def execute_and_capture_output(code: str | bytes, filename: str = "") -> str:
+        def execute_and_capture_output(
+            code: str | bytes | CodeType, filename: str = ""
+        ) -> str:
             f = io.StringIO()
             with redirect_stdout(f):
                 exec(
@@ -69,26 +74,29 @@ class JacReferenceTests(TestCase):
         def normalize_function_addresses(text: str) -> str:
             """Normalize function memory addresses in output for consistent comparison."""
             import re
+
             # Replace <function Name at 0xADDRESS> with <function Name at 0x...>
-            return re.sub(r'<function (\w+) at 0x[0-9a-f]+>', r'<function \1 at 0x...>', text)
+            return re.sub(
+                r"<function (\w+) at 0x[0-9a-f]+>", r"<function \1 at 0x...>", text
+            )
 
         try:
             if "tests.jac" in filename or "check_statements.jac" in filename:
                 return
             jacast = JacProgram().compile(filename)
-            code_content = compile(
+            code_obj = compile(
                 source=jacast.gen.py_ast[0],
                 filename=jacast.loc.mod_path,
                 mode="exec",
             )
-            output_jac = execute_and_capture_output(code_content, filename=filename)
+            output_jac = execute_and_capture_output(code_obj, filename=filename)
             Jac.reset_machine()
             # Clear byllm modules from cache to ensure consistent behavior between JAC and Python runs
             # when byllm is used
             sys.modules.pop("byllm", None)
             sys.modules.pop("byllm.lib", None)
             filename = filename.replace(".jac", ".py")
-            with open(filename, "r") as file:
+            with open(filename) as file:
                 code_content = file.read()
             output_py = execute_and_capture_output(code_content, filename=filename)
 

@@ -1010,7 +1010,29 @@ class TypeEvaluator {
                     }
                 }
 
-            case uni.Name():
+            case uni.Name() | uni.SpecialVarRef():
+
+                if isinstance(expr, uni.SpecialVarRef) {
+                    # Handle "here" and "visitor" special name ref.
+                    if expr.name in (Tok.KW_HERE, Tok.KW_VISITOR) {
+                        if (method := self._get_enclosing_method(expr)) {
+                            if isinstance(method.signature, uni.EventSignature) {
+                                if arch := method.signature.arch_tag_info {
+                                    type_arch_cls = self.get_type_of_expression(arch);
+                                    type_arch_inst = self._convert_to_instance(type_arch_cls);
+                                    if isinstance(type_arch_cls, types.ClassType) {
+                                        self._set_symbol_to_expr(expr, type_arch_inst.get_class_symbol());
+                                    }
+                                    return type_arch_inst;
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+
+
                 # NOTE: For self's type pyright is getting the first parameter of a method and
                 # the name can be anything not just self, however we don't have the first parameter
                 # and self is a keyword, we need to do it in this way.
@@ -1018,11 +1040,12 @@ class TypeEvaluator {
                     return self._get_type_of_self(expr);
                 }
 
-                if symbol := type_utils.lookup_symtab(expr.sym_tab, expr.value, self.builtins_module) {
+                if symbol := expr.sym_tab.lookup(expr.value, deep=True, incl_inner_scope=True) {
                     symbol = self.resolve_imported_symbols(symbol);
                     symbol.add_use(expr);
                     return self.get_type_of_symbol(symbol);
                 }
+
         }
 
         # TODO: More expressions.
@@ -1307,28 +1330,32 @@ class TypeEvaluator {
 
         parameters: list[types.Parameter] = [];
 
-        # Iterate over the has vars and create parameters.
-        for has_var in class_type.shared.symbol_table.get_has_vars() {
+        for cls in class_type.shared.mro[::-1] {
 
-            # Get parameter type.
-            param_type: TypeBase | None = None;
-            if has_var.type_tag {
-                var_type_expr = has_var.type_tag.tag;
-                type_cls = self.get_type_of_expression(var_type_expr);
-                param_type = self._convert_to_instance(type_cls);
+            # Iterate over the has vars and create parameters.
+            for has_var in cls.shared.symbol_table.get_has_vars() {
+
+                # Get parameter type.
+                param_type: TypeBase | None = None;
+                if has_var.type_tag {
+                    var_type_expr = has_var.type_tag.tag;
+                    type_cls = self.get_type_of_expression(var_type_expr);
+                    param_type = self._convert_to_instance(type_cls);
+                }
+
+                # Create parameter.
+                parameters.append(
+                    types.Parameter(
+                        name=has_var.name.value,
+                        category=types.ParameterCategory.Positional,
+                        param_type=param_type,
+                        default_value=has_var.value,
+                        is_self=False,
+                        param_kind=types.ParamKind.NORMAL,
+                    )
+                );
             }
 
-            # Create parameter.
-            parameters.append(
-                types.Parameter(
-                    name=has_var.name.value,
-                    category=types.ParameterCategory.Positional,
-                    param_type=param_type,
-                    default_value=has_var.value,
-                    is_self=False,
-                    param_kind=types.ParamKind.NORMAL,
-                )
-            );
         }
 
         # Create and return the __init__ method type.

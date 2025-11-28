@@ -6,7 +6,6 @@ import os
 import sys
 from pathlib import Path
 
-from jaclang import JacMachineInterface as Jac
 from jaclang.compiler import jac_lark as jl
 from jaclang.compiler import unitree as uni
 from jaclang.compiler.constant import Tokens
@@ -120,9 +119,10 @@ class TestLarkParser(TestCaseMicroSuite):
 
     def test_all_ast_has_normalize(self) -> None:
         """Test for enter/exit name diffs with parser."""
-        import jaclang.compiler.unitree as uni
         import inspect
         import sys
+
+        import jaclang.compiler.unitree as uni
 
         exclude = [
             "UniNode",
