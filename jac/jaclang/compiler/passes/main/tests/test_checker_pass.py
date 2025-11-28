@@ -694,8 +694,10 @@ class TypeCheckerPassTests(TestCase):
         ]
 
         for i, expected in enumerate(expected_errors):
-            self._assert_error_pretty_found(expected, program.errors_had[i].pretty_print())
-    
+            self._assert_error_pretty_found(
+                expected, program.errors_had[i].pretty_print()
+            )
+
     def test_import_star(self) -> None:
         program = JacProgram()
         path = self.fixture_abs_path("checker_import_star/main.jac")
@@ -714,7 +716,9 @@ class TypeCheckerPassTests(TestCase):
         ]
 
         for i, expected in enumerate(expected_errors):
-            self._assert_error_pretty_found(expected, program.errors_had[i].pretty_print())
+            self._assert_error_pretty_found(
+                expected, program.errors_had[i].pretty_print()
+            )
             self._assert_error_pretty_found(
                 expected, program.errors_had[i].pretty_print()
             )
