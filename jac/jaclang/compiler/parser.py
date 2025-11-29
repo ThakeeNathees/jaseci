@@ -188,6 +188,13 @@ class JacParser(Transform[uni.Source, uni.Module]):
                 iparser.feed_token(jl.Token(Tok.NAME.name, "recover_name_token"))
                 return feed_current_token(iparser, e.token)
 
+            if Tok.KW_WITH.name in iparser.accepts():
+                self.log_error(
+                    "Arbitary statements must be declared inside an entry block",
+                    self.error_to_token(e),
+                )
+                return False
+
             # We're calling try_feed_missing_token twice here because the first missing
             # will be reported as such and we don't for the consequent missing token.
             if tk := try_feed_missing_token(iparser):
