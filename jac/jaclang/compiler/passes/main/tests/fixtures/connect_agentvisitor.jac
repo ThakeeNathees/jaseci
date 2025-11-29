@@ -1,4 +1,3 @@
-```jac
 node MyNode {
     has foo: str = "";
 }
@@ -10,5 +9,3 @@ node Session {
         other ++> MyNode();
     }
 }
-
-```
