@@ -779,6 +779,7 @@ def test_cl_jac_importing_ts(fixture_path: Callable[[str], str]) -> None:
     # The client.cl.jac imports TypeScript modules - verify it compiles
     assert mod is not None
 
+
 def test_agentvisitor_connect_no_errors(fixture_path: Callable[[str], str]) -> None:
     """Ensure the AgentVisitor connect snippet type-checks with no errors."""
     program = JacProgram()
