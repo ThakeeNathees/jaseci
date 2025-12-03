@@ -194,14 +194,41 @@ def test_assignment_list_no_infinite_loop():
 
 def test_free_code_outside_entry_reports_error(capsys):
     """Free python code outside an entry should report an error."""
+
+    # Case 1: Free python code not wrapped in `with entry { ... }` is invalid
     prog = JacProgram()
-    # Free python code not wrapped in `with entry { ... }` is invalid
     code = 'print("hello world");'
     # Compile and capture stderr via pytest capsys
     prog.compile(use_str=code, file_path="test.jac")
     captured = capsys.readouterr()
+
     # The parser change logs this specific message when encountering free code
     assert "Arbitary statements must be declared inside an entry block" in captured.err
+
+    # Case 2: This is unexpected token as well but not the same error
+    prog = JacProgram()
+    code = """
+    with entry {
+        *;
+    }
+    """
+    prog.compile(use_str=code, file_path="test.jac")
+    captured = capsys.readouterr()
+    assert (
+        "Arbitary statements must be declared inside an entry block" not in captured.err
+    )
+
+    # Case 3: `with` context manager block
+    prog = JacProgram()
+    code = """
+    with entry {
+        with open('some/file.txt', 'r') as f {
+            print(f.read());
+        }
+    """
+    prog.compile(use_str=code, file_path="test.jac")
+    captured = capsys.readouterr()
+    assert len(prog.errors_had) == 0
 
 
 def test_need_import(fixture_path, capture_stdout):

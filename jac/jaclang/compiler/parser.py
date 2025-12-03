@@ -189,11 +189,15 @@ class JacParser(Transform[uni.Source, uni.Module]):
                 return feed_current_token(iparser, e.token)
 
             if Tok.KW_WITH.name in iparser.accepts():
-                self.log_error(
-                    "Arbitary statements must be declared inside an entry block",
-                    self.error_to_token(e),
-                )
-                return False
+                # Copy and feed the `with` token cause we don't want to actually
+                # feed the `with` token in the main parser state.
+                ipcopy = iparser.copy(deepcopy_values=True)
+                ipcopy.feed_token(jl.Token(Tok.KW_WITH.name, "with"))
+                if Tok.KW_ENTRY.name in ipcopy.accepts():
+                    self.log_error(
+                        "Arbitary statements must be declared inside an entry block",
+                        self.error_to_token(e),
+                    )
 
             # We're calling try_feed_missing_token twice here because the first missing
             # will be reported as such and we don't for the consequent missing token.

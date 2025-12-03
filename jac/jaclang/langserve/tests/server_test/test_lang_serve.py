@@ -62,7 +62,8 @@ def test_open_with_syntax_error():
     try:
         helper.open_document()
         helper.assert_has_diagnostics(
-            count=2, message_contains="Unexpected token 'error'"
+            count=2,
+            message_contains="Arbitary statements must be declared inside an entry block",
         )
 
         diagnostics = helper.get_diagnostics()
