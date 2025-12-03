@@ -1,9 +1,9 @@
-import from byllm.lib {Image}
-import from PIL {Image as PILImage}
+import from byllm.lib { Image }
+import from PIL { Image as PILImage }
 import io;
 import os;
 import base64;
-import from pathlib {Path}
+import from pathlib { Path }
 
 glob img_file_path = os.path.join(os.path.dirname(__file__), "alan-m-turing.jpg");
 
@@ -11,7 +11,7 @@ with entry {
     print("PIL Image");
     pil_image = PILImage.open(img_file_path);
     image = Image(pil_image);
-    
+
     print("Image from file path");
     image2 = Image(img_file_path);
     print("Image from URL");
@@ -56,5 +56,4 @@ with entry {
 
     print("Image from gs:// URL");
     image11 = Image("gs://bucket/path/alan_turing.png");
-
 }

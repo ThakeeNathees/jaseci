@@ -266,7 +266,7 @@ def get_completion_items(ty: types.TypeBase | uni.UniScopeNode) -> list[Completi
     ret = []
 
     if isinstance(ty, uni.UniScopeNode):
-        scope = ty
+        scope: uni.UniScopeNode | None = ty
         while scope:
             for name, sym in scope.names_in_scope.items():
                 kind = completion_kind_from_sym(sym)
@@ -298,7 +298,7 @@ def lookup_symtab(
     else:
         mod = symtable.find_parent_of_type(uni.Module)
 
-    if mod.parent_scope is None and mod != builtins_to_inject:
+    if mod and (mod.parent_scope is None and mod != builtins_to_inject):
         mod.parent_scope = builtins_to_inject
 
     return symtable.lookup(name, deep=True, incl_inner_scope=True)
