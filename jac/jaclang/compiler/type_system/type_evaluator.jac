@@ -159,7 +159,7 @@ class TypeEvaluator {
     def _get_type_from_module(
         self: TypeEvaluator, module: uni.Module, name: str
     ) -> TypeBase {
-        if (symbol := module.lookup(name, incl_inner_scope=True)) is not None {
+        if (symbol := type_utils.lookup_symtab(module, name, self.builtins_module)) is not None {
             return self.get_type_of_symbol(symbol);
         }
         return types.UnknownType();
@@ -393,7 +393,9 @@ class TypeEvaluator {
 
                         # Case 1: Look for symbol inside __init__.ext module
                         if path.name.startswith("__init__") {
-                            if sym := mod.lookup(node_.name.value) {
+                            if sym := type_utils.lookup_symtab(
+                                mod, node_.name.value, self.builtins_module
+                            ) {
                                 return self._set_module_item_symbol_and_type(
                                     node_, sym
                                 );
