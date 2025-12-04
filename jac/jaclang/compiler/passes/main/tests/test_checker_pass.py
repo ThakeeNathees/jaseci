@@ -101,7 +101,7 @@ def test_datetime_import(fixture_path: Callable[[str], str]) -> None:
     assert len(program.errors_had) == 1
     _assert_error_pretty_found(
         """
-      d: str = datetime.time;
+      d: str = datetime.date();
       ^^^^^^^^^^^^^^^^^^^^^^
     """,
         program.errors_had[0].pretty_print(),
