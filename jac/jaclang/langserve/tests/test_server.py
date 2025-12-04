@@ -351,10 +351,10 @@ def test_go_to_def_import_star(passes_main_fixture_abs_path) -> None:
         lsp.type_check_file(import_star_file)
         # fmt: off
         positions = [
-            (4, 16, "import_star_mod_py.py:0:0-2:2"),
-            (4, 21, "import_star_mod_py.py:1:3-2:6"),
-            (5, 16, "import_star_mod_jac.jac:0:4-0:7"),
-            (5, 22, "import_star_mod_jac.jac:1:8-1:11"),
+            (5, 16, "import_star_mod_py.py:0:0-2:2"),
+            (5, 21, "import_star_mod_py.py:1:3-2:6"),
+            (6, 16, "import_star_mod_jac.jac:0:4-0:7"),
+            (6, 22, "import_star_mod_jac.jac:1:8-1:11"),
         ]
         # fmt: on
 
