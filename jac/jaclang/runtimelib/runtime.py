@@ -30,8 +30,6 @@ from typing import (
 )
 from uuid import UUID
 
-import pluggy
-
 from jaclang.compiler.constant import Constants as Con
 from jaclang.compiler.constant import EdgeDir, colors
 from jaclang.compiler.program import JacProgram
@@ -68,10 +66,10 @@ from jaclang.runtimelib.utils import (
     traverse_graph,
 )
 from jaclang.utils import infer_language
+from jaclang.vendor import pluggy
 
 if TYPE_CHECKING:
     from jaclang.runtimelib.server import ModuleIntrospector
-
 
 plugin_manager = pluggy.PluginManager("jac")
 hookspec = pluggy.HookspecMarker("jac")
@@ -83,7 +81,7 @@ P = ParamSpec("P")
 JsonValue: TypeAlias = (
     None | str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
 )
-StatusCode: TypeAlias = Literal[200, 201, 400, 401, 404, 503]
+StatusCode: TypeAlias = Literal[200, 201, 400, 401, 404, 500, 503]
 
 
 class ExecutionContext:
@@ -98,11 +96,12 @@ class ExecutionContext:
         self.mem: Memory = ShelfStorage(session)
         self.reports: list[Any] = []
         self.custom: Any = MISSING
-        self.system_root = self.mem.find_by_id(UUID(Con.SUPER_ROOT_UUID))
-        if not isinstance(self.system_root, NodeAnchor):
-            self.system_root = cast(NodeAnchor, Root().__jac__)
-            self.system_root.id = UUID(Con.SUPER_ROOT_UUID)
-            self.mem.set(self.system_root)
+        system_root = self.mem.find_by_id(UUID(Con.SUPER_ROOT_UUID))
+        if not isinstance(system_root, NodeAnchor):
+            system_root = cast(NodeAnchor, Root().__jac__)
+            system_root.id = UUID(Con.SUPER_ROOT_UUID)
+            self.mem.set(system_root)
+        self.system_root: NodeAnchor = system_root
         self.entry_node = self.root_state = (
             self._get_anchor(root) if root else self.system_root
         )
@@ -1548,7 +1547,9 @@ class JacByLLM:
     @staticmethod
     def call_llm(model: object, mtir: MTIR) -> Any:  # noqa: ANN401
         """Call the LLM model."""
-        from jaclang.utils.NonGPT import random_value_for_type
+        from jaclang.utils import NonGPT
+
+        random_value_for_type: Callable[[Any], Any] = NonGPT.random_value_for_type
 
         try:
             type_hints = get_type_hints(
@@ -1587,6 +1588,18 @@ class JacByLLM:
             return _wrapped_caller
 
         return _decorator
+
+    @staticmethod
+    def by_operator(left: Any, right: Any) -> Any:  # noqa: ANN401
+        """by operator feature for expression composition.
+
+        Currently not implemented - raises NotImplementedError.
+        The exact execution behavior is not yet defined.
+        """
+        raise NotImplementedError(
+            "The 'by' operator is not yet implemented. "
+            "This feature is reserved for future use."
+        )
 
 
 class JacUtils:

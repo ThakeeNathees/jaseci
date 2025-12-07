@@ -6,7 +6,7 @@
     "build": "npm run compile && vite build",
     "dev": "vite dev",
     "preview": "vite preview",
-    "compile": "babel src --out-dir build --extensions \".jsx,.js\" --out-file-extension .js"
+    "compile": "babel compiled --out-dir build --extensions \".jsx,.js\" --out-file-extension .js"
   },
   "keywords": [],
   "author": "",
@@ -24,5 +24,16 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.3.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "modules": false
+        }
+      ],
+      "@babel/preset-react"
+    ]
   }
 }

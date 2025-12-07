@@ -36,7 +36,7 @@ with entry {
     tpl = (1, 2, 3);
     lst = [1, 2, 3];
     dct = {"k": "v"};
-    st = {1, 2, 3};
+    st = {1,2,3};
 
     # Multistring
     multi = "Hello " "World";

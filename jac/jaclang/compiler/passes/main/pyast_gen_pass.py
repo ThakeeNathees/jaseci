@@ -574,7 +574,7 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
         node.gen.py_ast = [
             self.sync(
                 ast3.Module(
-                    body=new_body,
+                    body=[cast(ast3.stmt, s) for s in new_body],
                     type_ignores=[],
                 )
             )
@@ -960,8 +960,20 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
 
     def gen_llm_body(self, node: uni.Ability) -> list[ast3.stmt]:
         """Generate the by LLM body."""
-        assert isinstance(node.body, uni.Expr)
         assert isinstance(node.signature, uni.FuncSignature)
+
+        model_expr: ast3.expr
+        if (
+            node.signature.return_type
+            and isinstance(node.signature.return_type, uni.BinaryExpr)
+            and isinstance(node.signature.return_type.op, uni.Token)
+            and node.signature.return_type.op.name == Tok.KW_BY
+        ):
+            model_expr = cast(ast3.expr, node.signature.return_type.right.gen.py_ast[0])
+        elif isinstance(node.body, uni.Expr):
+            model_expr = cast(ast3.expr, node.body.gen.py_ast[0])
+        else:
+            raise self.ice("gen_llm_body called without model expression")
 
         # Codegen for the caller of the LLM call.
         caller: ast3.expr
@@ -1001,9 +1013,7 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
             )
         )
 
-        llm_call = self._invoke_llm_call(
-            model=cast(ast3.expr, node.body.gen.py_ast[0]), caller=caller, args=args
-        )
+        llm_call = self._invoke_llm_call(model=model_expr, caller=caller, args=args)
 
         # Attach docstring if exists and the llm call.
         statements: list[ast3.stmt] = []
@@ -1023,6 +1033,14 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
 
     def exit_ability(self, node: uni.Ability) -> None:
         func_type = ast3.AsyncFunctionDef if node.is_async else ast3.FunctionDef
+        # Check if return type has 'by' operator for LLM-augmented function
+        has_by_in_return = (
+            isinstance(node.signature, uni.FuncSignature)
+            and node.signature.return_type
+            and isinstance(node.signature.return_type, uni.BinaryExpr)
+            and isinstance(node.signature.return_type.op, uni.Token)
+            and node.signature.return_type.op.name == Tok.KW_BY
+        )
         body = (
             self.gen_llm_body(node)
             if isinstance(node.body, uni.Expr)
@@ -1030,6 +1048,7 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
                 isinstance(node.body, uni.ImplDef)
                 and isinstance(node.body.body, uni.Expr)
             )
+            or has_by_in_return
             else (
                 [
                     self.sync(
@@ -1107,7 +1126,16 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
 
         ast_returns: ast3.expr = self.sync(ast3.Constant(value=None))
         if isinstance(node.signature, uni.FuncSignature) and node.signature.return_type:
-            ast_returns = cast(ast3.expr, node.signature.return_type.gen.py_ast[0])
+            if (
+                isinstance(node.signature.return_type, uni.BinaryExpr)
+                and isinstance(node.signature.return_type.op, uni.Token)
+                and node.signature.return_type.op.name == Tok.KW_BY
+            ):
+                ast_returns = cast(
+                    ast3.expr, node.signature.return_type.left.gen.py_ast[0]
+                )
+            else:
+                ast_returns = cast(ast3.expr, node.signature.return_type.gen.py_ast[0])
 
         func_def = self.sync(
             func_type(
@@ -1160,14 +1188,14 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
         )
         if posonlyargs:
             posonlyargs = params + posonlyargs
-            params = [i.gen.py_ast[0] for i in node.params]
+            params = [cast(ast3.arg, i.gen.py_ast[0]) for i in node.params]
         else:
-            params = params + [i.gen.py_ast[0] for i in node.params]
+            params = params + [cast(ast3.arg, i.gen.py_ast[0]) for i in node.params]
         defaults = []
         for i in [*node.posonly_params, *node.params]:
             if i.value:
                 defaults.append(cast(ast3.expr, i.value.gen.py_ast[0]))
-        kwonly_args = [i.gen.py_ast[0] for i in node.kwonlyargs]
+        kwonly_args = [cast(ast3.arg, i.gen.py_ast[0]) for i in node.kwonlyargs]
         # kw_defaults must be the same length as kwonlyargs
         # it will have None for args that don't have defaults
         kw_defaults: list[ast3.expr | None] = []
@@ -2306,6 +2334,19 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
             func_node.parent = node.parent
             self.exit_func_call(func_node)
             return func_node.gen.py_ast
+        elif node.op.name in [Tok.KW_BY]:
+            return [
+                self.sync(
+                    ast3.Call(
+                        func=self.jaclib_obj("by_operator"),
+                        args=cast(
+                            list[ast3.expr],
+                            [node.left.gen.py_ast[0], node.right.gen.py_ast[0]],
+                        ),
+                        keywords=[],
+                    )
+                )
+            ]
         elif node.op.name == Tok.PIPE_FWD and isinstance(node.right, uni.TupleVal):
             self.log_error("Invalid pipe target.")
         else:
@@ -2402,7 +2443,9 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
                 ),
                 jac_node=node,
             )
-        body_expr = cast(ast3.expr, node.body.gen.py_ast[0])
+        # At this point node.body is guaranteed to be an Expr (list case returned above)
+        body_node = cast(uni.Expr, node.body)
+        body_expr = cast(ast3.expr, body_node.gen.py_ast[0])
         node.gen.py_ast = [
             self.sync(
                 ast3.Lambda(
@@ -2419,7 +2462,8 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
                 param.gen.py_ast[0].annotation = None
 
     def exit_unary_expr(self, node: uni.UnaryExpr) -> None:
-        op_cls = UNARY_OP_MAP.get(node.op.name)
+        op_tok = Tok(node.op.name) if node.op.name in Tok.__members__ else None
+        op_cls = UNARY_OP_MAP.get(op_tok) if op_tok else None
         if op_cls:
             node.gen.py_ast = [
                 self.sync(
@@ -2813,7 +2857,7 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
                         )
                     )
                 elif isinstance(x, uni.Expr):
-                    args.append(x.gen.py_ast[0])
+                    args.append(cast(ast3.expr, x.gen.py_ast[0]))
                 elif isinstance(x, uni.KWPair) and isinstance(
                     x.gen.py_ast[0], ast3.keyword
                 ):
@@ -3312,7 +3356,8 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
         ]
 
     def exit_token(self, node: uni.Token) -> None:
-        op_cls = TOKEN_AST_MAP.get(node.name)
+        tok = Tok(node.name) if node.name in Tok.__members__ else None
+        op_cls = TOKEN_AST_MAP.get(tok) if tok else None
         if op_cls:
             node.gen.py_ast = [self.sync(op_cls())]
 

@@ -3,17 +3,19 @@
 import os
 import subprocess
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 
 from jaclang.compiler.passes.ecmascript import EsastGenPass
 from jaclang.compiler.passes.ecmascript.es_unparse import es_to_js
+from jaclang.compiler.passes.ecmascript.estree import Node as EsNode
 from jaclang.compiler.program import JacProgram
 
 
 @pytest.fixture
-def fixture_path():
+def fixture_path() -> Callable[[str], str]:
     """Return a function that returns absolute path to a fixture file."""
 
     def _get_fixture_path(filename: str) -> str:
@@ -24,7 +26,7 @@ def fixture_path():
 
 
 @pytest.fixture
-def lang_fixture_path():
+def lang_fixture_path() -> Callable[[str], str]:
     """Return a function that returns absolute path to a language fixture file."""
 
     def _get_lang_fixture_path(file: str) -> str:
@@ -39,7 +41,9 @@ def lang_fixture_path():
     return _get_lang_fixture_path
 
 
-def compile_fixture_to_js(fixture_name: str, fixture_path_func=None) -> str:
+def compile_fixture_to_js(
+    fixture_name: str, fixture_path_func: Callable[[str], str] | None = None
+) -> str:
     """Compile a Jac fixture to JavaScript and return the emitted source."""
     fixture_path = fixture_name
     if not Path(fixture_path).exists() and fixture_path_func:
@@ -55,9 +59,10 @@ def compile_fixture_to_js(fixture_name: str, fixture_path_func=None) -> str:
     es_ir = es_pass.ir_out
 
     assert hasattr(es_ir.gen, "es_ast"), "es_ast attribute missing"
-    assert es_ir.gen.es_ast is not None, "es_ast should not be None"
+    es_ast = es_ir.gen.es_ast
+    assert isinstance(es_ast, EsNode), "es_ast should be an EsNode"
 
-    return es_to_js(es_ir.gen.es_ast)
+    return es_to_js(es_ast)
 
 
 def assert_balanced_syntax(js_code: str, fixture_name: str) -> None:
@@ -91,7 +96,9 @@ def assert_no_jac_keywords(js_code: str, fixture_name: str) -> None:
         )
 
 
-def test_core_fixture_emits_expected_constructs(fixture_path) -> None:
+def test_core_fixture_emits_expected_constructs(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Core fixture should cover fundamental language constructs."""
     core_fixture = "core_language_features.jac"
     js_code = compile_fixture_to_js(core_fixture, fixture_path)
@@ -131,7 +138,9 @@ def test_core_fixture_emits_expected_constructs(fixture_path) -> None:
     assert len(js_code) > 200
 
 
-def test_advanced_fixture_emits_expected_constructs(fixture_path) -> None:
+def test_advanced_fixture_emits_expected_constructs(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Advanced fixture should exercise higher-level Jac features."""
     advanced_fixture = "advanced_language_features.jac"
     js_code = compile_fixture_to_js(advanced_fixture, fixture_path)
@@ -158,7 +167,9 @@ def test_advanced_fixture_emits_expected_constructs(fixture_path) -> None:
     assert len(js_code) > 150
 
 
-def test_client_fixture_generates_client_bundle(fixture_path) -> None:
+def test_client_fixture_generates_client_bundle(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Client-focused fixture should emit JSX-flavoured JavaScript."""
     client_fixture = "client_jsx.jac"
     js_code = compile_fixture_to_js(client_fixture, fixture_path)
@@ -175,7 +186,9 @@ def test_client_fixture_generates_client_bundle(fixture_path) -> None:
     assert_balanced_syntax(js_code, client_fixture)
 
 
-def test_iife_fixture_generates_function_expressions(lang_fixture_path) -> None:
+def test_iife_fixture_generates_function_expressions(
+    lang_fixture_path: Callable[[str], str],
+) -> None:
     """IIFE-heavy fixture should lower Jac function expressions for JS runtime."""
     fixture_path = lang_fixture_path("iife_functions_client.jac")
     js_code = compile_fixture_to_js(fixture_path)
@@ -191,7 +204,7 @@ def test_iife_fixture_generates_function_expressions(lang_fixture_path) -> None:
     assert "return () => {\n    count = count + 1;\n    return count;\n  };" in js_code
 
 
-def test_cli_js_command_outputs_js(fixture_path) -> None:
+def test_cli_js_command_outputs_js(fixture_path: Callable[[str], str]) -> None:
     """jac js CLI should emit JavaScript for the core fixture."""
     core_fixture = "core_language_features.jac"
     fixture_file_path = fixture_path(core_fixture)
@@ -261,7 +274,9 @@ cl def check_types() {
         os.unlink(temp_path)
 
 
-def test_category1_named_imports_generate_correct_js(fixture_path) -> None:
+def test_category1_named_imports_generate_correct_js(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Test Category 1 named imports from proposal document."""
     fixture_file_path = fixture_path("category1_named_imports.jac")
     js_code = compile_fixture_to_js(fixture_file_path)
@@ -285,7 +300,9 @@ def test_category1_named_imports_generate_correct_js(fixture_path) -> None:
     assert_balanced_syntax(js_code, fixture_file_path)
 
 
-def test_category2_default_imports_generate_correct_js(fixture_path) -> None:
+def test_category2_default_imports_generate_correct_js(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Test Category 2 default imports from proposal document."""
     fixture_file_path = fixture_path("category2_default_imports.jac")
     js_code = compile_fixture_to_js(fixture_file_path)
@@ -306,7 +323,9 @@ def test_category2_default_imports_generate_correct_js(fixture_path) -> None:
     assert_balanced_syntax(js_code, fixture_file_path)
 
 
-def test_category4_namespace_imports_generate_correct_js(fixture_path) -> None:
+def test_category4_namespace_imports_generate_correct_js(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Test Category 4 namespace imports from proposal document."""
     fixture_file_path = fixture_path("category4_namespace_imports.jac")
     js_code = compile_fixture_to_js(fixture_file_path)
@@ -327,7 +346,9 @@ def test_category4_namespace_imports_generate_correct_js(fixture_path) -> None:
     assert_balanced_syntax(js_code, fixture_file_path)
 
 
-def test_atom_trailer_starts_with_specialvaref_js(fixture_path) -> None:
+def test_atom_trailer_starts_with_specialvaref_js(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Test that atom trailers starting with SpecialVarRef generate correct JS."""
     fixture_file_path = fixture_path("root_render.jac")
     js_code = compile_fixture_to_js(fixture_file_path)
@@ -336,7 +357,7 @@ def test_atom_trailer_starts_with_specialvaref_js(fixture_path) -> None:
     assert "obj" not in js_code
 
 
-def test_assignment_inside_globvar_js(fixture_path) -> None:
+def test_assignment_inside_globvar_js(fixture_path: Callable[[str], str]) -> None:
     """Test Category 4 namespace imports from proposal document."""
     fixture_file_path = fixture_path("js_gen_bug.jac")
     js_code = compile_fixture_to_js(fixture_file_path)
@@ -348,7 +369,9 @@ def test_assignment_inside_globvar_js(fixture_path) -> None:
         assert pattern in js_code
 
 
-def test_hyphenated_package_imports_generate_correct_js(fixture_path) -> None:
+def test_hyphenated_package_imports_generate_correct_js(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Test string literal imports for hyphenated package names."""
     fixture_file_path = fixture_path("hyphenated_imports.jac")
     js_code = compile_fixture_to_js(fixture_file_path)
@@ -434,7 +457,9 @@ def test_usage() {
         os.unlink(temp_path)
 
 
-def test_side_effect_imports_generate_correct_js(fixture_path) -> None:
+def test_side_effect_imports_generate_correct_js(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Test that side effect imports generate correct JavaScript import statements."""
     fixture_file_path = fixture_path("side_effect_imports.jac")
     js_code = compile_fixture_to_js(fixture_file_path)
@@ -522,7 +547,9 @@ cl def conditional_message(score: int) -> str {
         os.unlink(temp_path)
 
 
-def test_fstring_advanced_fixture_template_literals(fixture_path) -> None:
+def test_fstring_advanced_fixture_template_literals(
+    fixture_path: Callable[[str], str],
+) -> None:
     """Test that the advanced fixture's f-strings generate proper template literals."""
     advanced_fixture = "advanced_language_features.jac"
     js_code = compile_fixture_to_js(advanced_fixture, fixture_path)

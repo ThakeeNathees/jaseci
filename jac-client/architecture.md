@@ -18,7 +18,7 @@ Extends the base `ClientBundleBuilder` to provide Vite integration. Key responsi
    - Recursively traverses import graphs
    - Processes both `.jac` and `.js` imports
    - Accumulates exports and globals across all modules
-   - Writes compiled artifacts to `src/` directory
+   - Writes compiled artifacts to `compiled/` directory
    - **Preserves nested folder structure** (see Nested Folder Handling below)
 
 3. **Import Handling** (`_process_imports`)
@@ -52,17 +52,17 @@ Extends the base `ClientBundleBuilder` to provide Vite integration. Key responsi
 
 2. Recursive dependency resolution
    ├── Traverse all .jac/.js imports
-   ├── Compile/copy each to src/ directory (preserving folder structure)
+   ├── Compile/copy each to compiled/ directory (preserving folder structure)
    ├── Accumulate exports & globals
    └── Skip bare specifiers (handled by Vite)
 
 3. Babel compilation
    ├── Run npm run compile
-   ├── Transpile JavaScript from src/ to build/
+   ├── Transpile JavaScript from compiled/ to build/
    └── Preserves CSS import statements
 
 4. Asset copying
-   ├── Copy CSS and other assets from src/ to build/
+   ├── Copy CSS and other assets from compiled/ to build/
    └── Ensures Vite can resolve CSS imports during bundling
 
 5. Vite bundling
@@ -73,18 +73,18 @@ Extends the base `ClientBundleBuilder` to provide Vite integration. Key responsi
    └── Return code + hash
 
 6. Cleanup
-   └── Remove src/ directory
+   └── Remove compiled/ directory
 ```
 
 ### Nested Folder Handling
 
-The compilation system preserves the folder structure of source files when writing to the `src/` directory, similar to TypeScript transpilation. This ensures that relative imports work correctly and prevents file name conflicts.
+The compilation system preserves the folder structure of source files when writing to the `compiled/` directory, similar to TypeScript transpilation. This ensures that relative imports work correctly and prevents file name conflicts.
 
 #### How It Works
 
 1. **Source Root Detection**: The root module's parent directory is identified as the `source_root`
 2. **Relative Path Calculation**: For each dependency file, the relative path from `source_root` is calculated
-3. **Structure Preservation**: Files are written to `src/` maintaining the same relative folder structure
+3. **Structure Preservation**: Files are written to `compiled/` maintaining the same relative folder structure
 
 #### Example
 
@@ -97,9 +97,9 @@ nested-basic/
     └── button.jac
 ```
 
-The compiled output in `src/` will be:
+The compiled output in `compiled/` will be:
 ```
-src/
+compiled/
 ├── app.js                     (from app.jac)
 ├── buttonroot.js              (from buttonroot.jac)
 └── components/
@@ -142,11 +142,11 @@ import "./styles.css";
 ```
 
 #### 2. Asset Copying (`_copy_asset_files`)
-After Babel compilation, CSS and other asset files are copied from `src/` to `build/`:
+After Babel compilation, CSS and other asset files are copied from `compiled/` to `build/`:
 - **Why**: Babel only transpiles JavaScript, so CSS files need manual copying
 - **When**: After `npm run compile`, before `npm run build`
 - **What**: Copies `.css`, `.scss`, `.sass`, `.less`, and image files
-- **Location**: `src/styles.css` → `build/styles.css`
+- **Location**: `compiled/styles.css` → `build/styles.css`
 
 #### 3. Vite CSS Processing
 Vite processes CSS imports during bundling:
@@ -185,11 +185,11 @@ if path.startswith("/static/") and path.endswith(".css"):
 ```
 app.jac (cl import ".styles.css")
   ↓
-src/app.js (import "./styles.css")
+compiled/app.js (import "./styles.css")
   ↓
-Babel: src/app.js → build/app.js (preserves import)
+Babel: compiled/app.js → build/app.js (preserves import)
   ↓
-_copy_asset_files: src/styles.css → build/styles.css
+_copy_asset_files: compiled/styles.css → build/styles.css
   ↓
 Vite: Processes CSS import, extracts to dist/main.css
   ↓
@@ -204,30 +204,182 @@ Server: Serves from dist/main.css
 - **Export collection**: All client exports are aggregated across the dependency tree
 - **React-based**: Entry point uses React 18's `createRoot` API
 - **Hash-based caching**: Bundle hash enables browser cache invalidation
-- **Temp directory isolation**: Builds in `vite_package_json.parent/src/` to avoid conflicts
-- **Folder structure preservation**: Nested folder structures are preserved in `src/` directory, similar to TypeScript transpilation, ensuring relative imports work correctly
+- **Temp directory isolation**: Builds in `vite_package_json.parent/compiled/` to avoid conflicts
+- **Folder structure preservation**: Nested folder structures are preserved in `compiled/` directory, similar to TypeScript transpilation, ensuring relative imports work correctly
 - **CSS asset handling**: CSS files are copied after Babel compilation to ensure Vite can resolve imports, then extracted to separate files for optimal loading
 
-### Vite Configuration
+### Configuration System
 
-The system requires a `vite.config.js` with specific settings:
+The Jac Client uses a **JSON-based configuration system** that allows developers to customize the build process through a simple `config.json` file in the project root.
 
-```javascript
-resolve: {
-  alias: {
-    "@jac-client/utils": path.resolve(__dirname, "src/client_runtime.js"),
+#### Configuration File Structure
+
+The `config.json` file uses a hierarchical structure with predefined keys for different configuration types:
+
+```json
+{
+  "vite": {
+    "plugins": [],
+    "lib_imports": [],
+    "build": {},
+    "server": {},
+    "resolve": {}
   },
+  "ts": {}
 }
 ```
 
-This alias is critical because:
-- Compiled Jac code imports runtime utilities via `import {__jacJsx} from "@jac-client/utils"`
-- Vite resolves this to the generated `src/client_runtime.js` file
-- Enables clean imports without hardcoded relative paths
+#### Configuration Processing
+
+1. **Config Loading** (`JacClientConfig`)
+   - Loads `config.json` from project root
+   - Merges user config with defaults using deep merge
+   - Creates default config file if it doesn't exist
+   - Validates JSON structure
+
+2. **Config Generation** (`ViteBundler.create_vite_config`)
+   - Reads configuration from `config.json`
+   - Generates `vite.config.js` in `.jac-client.configs/` directory
+   - Injects user customizations into the generated config
+   - Automatically includes base plugins and required aliases
+
+3. **Build Execution**
+   - Uses generated `vite.config.js` for Vite bundling
+   - Config is regenerated on each build to reflect latest changes
+
+#### Configuration Keys
+
+##### `vite.plugins`
+Array of plugin function calls to add to Vite config:
+```json
+{
+  "vite": {
+    "plugins": ["tailwindcss()"]
+  }
+}
+```
+
+##### `vite.lib_imports`
+Array of import statements for plugins and libraries:
+```json
+{
+  "vite": {
+    "lib_imports": ["import tailwindcss from '@tailwindcss/vite'"]
+  }
+}
+```
+
+##### `vite.build`
+Object with build options that override defaults:
+```json
+{
+  "vite": {
+    "build": {
+      "sourcemap": true,
+      "minify": "esbuild"
+    }
+  }
+}
+```
+
+##### `vite.server`
+Object with dev server options:
+```json
+{
+  "vite": {
+    "server": {
+      "port": 3000,
+      "open": true
+    }
+  }
+}
+```
+
+##### `vite.resolve`
+Object with resolve options (merged with base aliases):
+```json
+{
+  "vite": {
+    "resolve": {
+      "dedupe": ["react", "react-dom"]
+    }
+  }
+}
+```
+
+#### Base Configuration
+
+The system automatically includes essential configuration:
+
+- **Base plugins**: React plugin (if TypeScript is detected)
+- **Required aliases**:
+  - `@jac-client/utils` → `compiled/client_runtime.js`
+  - `@jac-client/assets` → `compiled/assets`
+- **Build settings**: Entry point, output directory, file naming
+- **Extensions**: JavaScript and TypeScript file extensions
+
+#### Generated Vite Config
+
+The generated `vite.config.js` in `.jac-client.configs/` includes:
+
+```javascript
+export default defineConfig({
+  plugins: [
+    react(),           // Base plugin (if TS)
+    tailwindcss()      // User plugins from config.json
+  ],
+  root: projectRoot,
+  build: {
+    rollupOptions: {
+      input: path.resolve(projectRoot, "build/main.js"),
+      output: {
+        entryFileNames: "client.[hash].js",
+        assetFileNames: "[name].[ext]",
+      },
+    },
+    outDir: path.resolve(projectRoot, "dist"),
+    emptyOutDir: true,
+    // User build overrides from config.json
+  },
+  resolve: {
+    alias: {
+      "@jac-client/utils": path.resolve(projectRoot, "compiled/client_runtime.js"),
+      "@jac-client/assets": path.resolve(projectRoot, "compiled/assets"),
+    },
+    extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
+    // User resolve overrides from config.json
+  },
+});
+```
+
+#### Configuration Workflow
+
+```
+1. Developer edits config.json in project root
+   ↓
+2. Build process loads config.json via JacClientConfig
+   ↓
+3. Config merged with defaults (deep merge)
+   ↓
+4. ViteBundler generates vite.config.js in .jac-client.configs/
+   ↓
+5. Vite uses generated config for bundling
+   ↓
+6. Generated config is gitignored (config.json is committed)
+```
+
+#### Benefits
+
+- **Simple**: JSON format is easy to edit and understand
+- **Standardized**: Predefined keys prevent configuration errors
+- **Extensible**: Easy to add new config types (e.g., `ts`)
+- **Maintainable**: Defaults are always preserved
+- **Version controlled**: `config.json` can be committed to git
+- **Auto-generated**: `vite.config.js` is generated automatically
 
 ### Configuration Parameters
 
 - `vite_package_json`: Path to package.json (must exist)
 - `runtime_path`: Path to client runtime file
-- `vite_output_dir`: Build output (defaults to `src/dist/assets`)
+- `vite_output_dir`: Build output (defaults to `compiled/dist/assets`)
 - `vite_minify`: Enable/disable minification
