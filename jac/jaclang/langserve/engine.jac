@@ -509,6 +509,9 @@ class JacLangServer(JacProgram , LanguageServer) {
                 return make_location(node_selected.sym.decl);
             }
         }
+        try {
+            return make_location(node_selected.sym.defn[0]);
+        } except Exception { }
         ####################################################################
         ##         Ad-hoc handling for impl-def go to def                 ##
         ####################################################################
