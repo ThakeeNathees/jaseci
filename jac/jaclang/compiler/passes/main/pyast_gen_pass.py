@@ -23,7 +23,7 @@ import copy
 import textwrap
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import TypeVar, cast
+from typing import ClassVar, TypeVar, cast
 
 import jaclang.compiler.unitree as uni
 from jaclang.compiler.constant import Constants as Con
@@ -93,6 +93,22 @@ UNARY_OP_MAP: dict[Tok, type[ast3.unaryop]] = {
 
 class PyastGenPass(BaseAstGenPass[ast3.AST]):
     """Jac blue transpilation to python pass."""
+
+    # Cached builtin names, shared across all instances
+    _builtin_names: ClassVar[set[str] | None] = None
+
+    @classmethod
+    def _get_builtin_names(cls) -> set[str]:
+        """Get the set of builtin names, cached after first successful access."""
+        if cls._builtin_names is None:
+            try:
+                import jaclang.runtimelib.builtin as builtin_mod
+
+                cls._builtin_names = set(builtin_mod.__all__)
+            except (ImportError, AttributeError):
+                # Builtin module not yet available during bootstrap
+                return set()
+        return cls._builtin_names
 
     def before_pass(self) -> None:
         self.child_passes: list[PyastGenPass] = self._init_child_passes(PyastGenPass)
@@ -528,7 +544,12 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
             self.builtin_imports.update(child_pass.builtin_imports)
 
         # Add builtin imports if any were used
-        if self.builtin_imports:
+        # Skip when compiling the builtin module itself to avoid self-referential imports
+        is_builtin_module = (
+            node.loc.mod_path.endswith(("builtin.jac", "builtin.py"))
+            and "runtimelib" in node.loc.mod_path
+        )
+        if self.builtin_imports and not is_builtin_module:
             self.preamble.append(
                 self.sync(
                     ast3.ImportFrom(
@@ -3363,10 +3384,7 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
 
     def exit_name(self, node: uni.Name) -> None:
         name = node.sym_name
-        # Track if this name is a known builtin
-        import jaclang.runtimelib.builtin
-
-        if name in set(jaclang.runtimelib.builtin.__all__):
+        if name in self._get_builtin_names():
             self.builtin_imports.add(name)
         node.gen.py_ast = [self.sync(ast3.Name(id=name, ctx=node.py_ctx_func()))]
 
