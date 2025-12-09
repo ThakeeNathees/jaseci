@@ -64,7 +64,7 @@ def test_open_with_syntax_error():
     try:
         helper.open_document()
         helper.assert_has_diagnostics(
-            count=2,
+            count=3,
             message_contains="Arbitary statements must be declared inside an entry block",
         )
 
@@ -97,7 +97,7 @@ def test_did_open_and_simple_syntax_error():
             test_file._get_template_path(CIRCLE_TEMPLATE), "error"
         )
         helper.change_document(broken_code)
-        helper.assert_has_diagnostics(count=2)
+        helper.assert_has_diagnostics(count=3)
         helper.assert_semantic_tokens_count(EXPECTED_CIRCLE_TOKEN_COUNT_ERROR)
     finally:
         ls.shutdown()
@@ -127,7 +127,7 @@ def test_did_save():
         )
         helper.save_document(broken_code)
         helper.assert_semantic_tokens_count(EXPECTED_CIRCLE_TOKEN_COUNT_ERROR)
-        helper.assert_has_diagnostics(count=2, message_contains="Unexpected token")
+        helper.assert_has_diagnostics(count=3, message_contains="Unexpected token")
     finally:
         ls.shutdown()
         test_file.cleanup()
@@ -156,7 +156,7 @@ def test_did_change():
         helper.change_document("\nerror" + test_file.code)
         helper.assert_semantic_tokens_count(EXPECTED_CIRCLE_TOKEN_COUNT)
         helper.assert_has_diagnostics(
-            count=2, message_contains="Unexpected token 'error'"
+            count=3, message_contains="Unexpected token 'error'"
         )
     finally:
         ls.shutdown()
@@ -206,7 +206,7 @@ def test_multifile_workspace():
 
         # Verify initial state
         helper1.assert_no_diagnostics()
-        helper2.assert_has_diagnostics(count=1, message_contains="Unexpected token")
+        helper2.assert_has_diagnostics(count=2, message_contains="Unexpected token")
 
         # Check semantic tokens before change
         helper1.assert_semantic_tokens_count(EXPECTED_GLOB_TOKEN_COUNT)
