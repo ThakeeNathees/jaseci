@@ -15,8 +15,6 @@ import sys
 from collections.abc import Sequence
 from types import ModuleType
 
-from jaclang.runtimelib.runtime import JacRuntime as Jac
-from jaclang.runtimelib.runtime import JacRuntimeInterface
 from jaclang.settings import settings
 from jaclang.utils.log import logging
 from jaclang.utils.module_resolver import get_jac_search_paths, get_py_search_paths
@@ -69,6 +67,17 @@ class JacMetaImporter(importlib.abc.MetaPathFinder, importlib.abc.Loader):
     """Meta path importer to load .jac modules via Python's import system."""
 
     byllm_found: bool = False
+
+    # Modules that require minimal compilation to avoid circular imports.
+    # These are bootstrap-critical modules in runtimelib and compiler.
+    MINIMAL_COMPILE_MODULES: frozenset[str] = frozenset(
+        {
+            "jaclang.runtimelib.builtin",
+            "jaclang.runtimelib.utils",
+            "jaclang.runtimelib.server",
+            "jaclang.runtimelib.client_bundle",
+        }
+    )
 
     def find_spec(
         self,
@@ -170,6 +179,8 @@ class JacMetaImporter(importlib.abc.MetaPathFinder, importlib.abc.Loader):
         module creation from execution. It handles both package (__init__.jac) and
         regular module (.jac/.py) execution.
         """
+        from jaclang.runtimelib.runtime import JacRuntime as Jac
+
         if not module.__spec__ or not module.__spec__.origin:
             raise ImportError(
                 f"Cannot find spec or origin for module {module.__name__}"
@@ -179,10 +190,14 @@ class JacMetaImporter(importlib.abc.MetaPathFinder, importlib.abc.Loader):
         is_pkg = module.__spec__.submodule_search_locations is not None
 
         # Register module in JacRuntime's tracking
-        JacRuntimeInterface.load_module(module.__name__, module)
+        Jac.load_module(module.__name__, module)
+
+        # Use minimal compilation for bootstrap-critical modules to avoid
+        # circular imports (these modules are needed by the compiler itself)
+        use_minimal = module.__name__ in self.MINIMAL_COMPILE_MODULES
 
         # Get and execute bytecode
-        codeobj = Jac.program.get_bytecode(full_target=file_path)
+        codeobj = Jac.program.get_bytecode(full_target=file_path, minimal=use_minimal)
         if not codeobj:
             if is_pkg:
                 # Empty package is OK - just register it
