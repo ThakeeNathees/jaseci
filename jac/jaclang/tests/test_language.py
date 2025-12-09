@@ -6,7 +6,7 @@ import subprocess
 import sys
 import tempfile
 from collections.abc import Callable, Generator
-from contextlib import AbstractContextManager
+from contextlib import AbstractContextManager, redirect_stderr
 from pathlib import Path
 from unittest.mock import patch
 
@@ -240,8 +240,10 @@ def test_free_code_outside_entry_reports_error(
     # Case 1: Free python code not wrapped in `with entry { ... }` is invalid
     prog = JacProgram()
     code = 'print("hello world");'
+
     # Compile and capture stderr via pytest capsys
-    with capture_stdout() as captured_output:
+    stderr_buffer = io.StringIO()
+    with redirect_stderr(stderr_buffer) as captured_output:
         prog.compile(use_str=code, file_path="test.jac")
     captured = captured_output.getvalue()
 
@@ -255,7 +257,8 @@ def test_free_code_outside_entry_reports_error(
         *;
     }
     """
-    with capture_stdout() as captured_output:
+    stderr_buffer = io.StringIO()
+    with redirect_stderr(stderr_buffer) as captured_output:
         prog.compile(use_str=code, file_path="test.jac")
     captured = captured_output.getvalue()
     assert "Arbitary statements must be declared inside an entry block" not in captured
@@ -268,9 +271,8 @@ def test_free_code_outside_entry_reports_error(
             print(f.read());
         }
     """
-    with capture_stdout() as captured_output:
+    with capture_stdout():
         prog.compile(use_str=code, file_path="test.jac")
-    captured = captured_output.getvalue()
     assert len(prog.errors_had) == 0
 
 
