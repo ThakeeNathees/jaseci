@@ -823,7 +823,7 @@ def test_union_reassignment(fixture_path: Callable[[str], str]) -> None:
     assert len(program.errors_had) == 3
     _assert_error_pretty_found(
         """
-        fb = 42;   # <-- Error
+        fb = 42;  # <-- Error
         ^^^^^^^^
     """,
         program.errors_had[0].pretty_print(),
@@ -837,7 +837,7 @@ def test_union_reassignment(fixture_path: Callable[[str], str]) -> None:
     )
     _assert_error_pretty_found(
         """
-        a = Foo(); # <-- Error
+        a = Foo();  # <-- Error
         ^^^^^^^^^^
     """,
         program.errors_had[2].pretty_print(),
