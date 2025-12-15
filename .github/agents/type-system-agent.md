@@ -129,11 +129,12 @@ pytest -n auto jac
 
 # Commands
 
-When I say make PR you should:
+- When I say make PR you should:
+  - Do a git status and git diff to see changes and understand
+  - Make sure in a new branch, if on main, checkout to a new branch.
+  - Commit changes with a meaningful message.
+  - Push the branch to origin.
+  - Open a PR agains upstream main with a meaningful title and description. using `gh` cli tool.
+  - Display the PR link in the terminal.
 
-- Do a git status and git diff to see changes and understand
-- Make sure in a new branch, if on main, checkout to a new branch.
-- Commit changes with a meaningful message.
-- Push the branch to origin.
-- Open a PR agains upstream main with a meaningful title and description. using `gh` cli tool.
-- Display the PR link in the terminal.
+- If anything in this file is incorrect or incomplete, go ahead and fix it as well.

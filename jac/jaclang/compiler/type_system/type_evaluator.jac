@@ -65,6 +65,7 @@ obj PrefetchedTypes {
     has type_var_class: TypeBase | None = None;
     # Prefetch from typing.pyi file
     has protocol_class: TypeBase | None = None;
+    has any_class: TypeBase | None = None;
     # Prefetched from jac_builtins.pyi file
     has root_class: TypeBase | None = None;
 }
@@ -215,6 +216,7 @@ class TypeEvaluator {
         # self.prefetch.mapping_class =
         # self.prefetch.template_class =
         self.prefetch.protocol_class = get_typing_type("Protocol");
+        self.prefetch.any_class = get_typing_type("Any");
 
         self.prefetch.root_class = get_jac_builtin_type("Root");
         self.prefetch.root_class.shared.is_root_class = True;
@@ -781,7 +783,10 @@ class TypeEvaluator {
         }
 
         # Everything is assignable to an object.
-        if dest_type.is_builtin("object") {
+        if (
+            dest_type.is_builtin("object")
+            or dest_type.shared == self.prefetch.any_class.shared
+        ) {
             # TODO: Invariance not handled yet
             # invariant contexts to avoid list[int] <: list[object] errors.
             return True;
