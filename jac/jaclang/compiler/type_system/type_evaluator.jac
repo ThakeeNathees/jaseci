@@ -46,6 +46,7 @@ obj PrefetchedTypes {
     has none_type_class: TypeBase | None = None;
     has object_class: TypeBase | None = None;
     has type_class: TypeBase | None = None;
+    has property_class: TypeBase | None = None;
     has union_type_class: TypeBase | None = None;
     has awaitable_class: TypeBase | None = None;
     has function_class: TypeBase | None = None;
@@ -198,6 +199,7 @@ class TypeEvaluator {
         self.prefetch.none_type_class = get_types_type("NoneType");
         self.prefetch.object_class = get_builtin_type("object");
         self.prefetch.type_class = get_builtin_type("type");
+        self.prefetch.property_class = get_builtin_type("property");
         self.prefetch.union_type_class = get_types_type("UnionType");
         # self.prefetch.awaitable_class =
         # self.prefetch.function_class =
@@ -549,7 +551,9 @@ class TypeEvaluator {
     }
 
     """Return the effective type of an ability."""
-    def get_type_of_ability(self: TypeEvaluator, node_: uni.Ability) -> TypeBase {
+    def get_type_of_ability(
+        self: TypeEvaluator, node_: uni.Ability
+    ) -> types.FunctionType {
         if node_.name_spec.type is not None {
             return node_.name_spec.type;
         }
@@ -823,7 +827,17 @@ class TypeEvaluator {
                 return self.get_type_of_class(node_);
 
             case uni.Ability():
-                return self.get_type_of_ability(node_);
+                ability = self.get_type_of_ability(node_);
+                for decor in (node_.decorators or []) {
+                    decor_type = self.get_type_of_expression(decor);
+                    if (
+                        isinstance(decor_type, types.ClassType)
+                        and decor_type.shared == self.prefetch.property_class.shared
+                    ) {
+                        return ability.return_type;
+                    }
+                }
+                return ability;
 
             case uni.ParamVar():
                 if node_.type_tag {
