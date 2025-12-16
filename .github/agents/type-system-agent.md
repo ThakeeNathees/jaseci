@@ -25,13 +25,14 @@
 
 1. Identify a missing rule.
 2. Update `type_evaluator.jac` to implement the rule (extend `get_type_of_expression()` or add a focused helper).
-3. Create a fixture in `jac/tests/compiler/passes/main/fixtures/` named `checker_<feature>.jac` with OK and Error cases commented. This `checker_*.jac` naming is enforced for all new fixtures.
-   - **IMPORTANT**: Fixture location is `jac/tests/` not `jac/jaclang/`
-4. Add a test in `jac/tests/compiler/passes/main/test_checker_pass.py` following existing patterns.
+3. Create a fixture in `jac/jaclang/compiler/passes/main/tests/fixtures/` named `checker_<feature>.jac` with OK and Error cases commented. This `checker_*.jac` naming is enforced for all new fixtures.
+4. Add a test in `jac/jaclang/compiler/passes/main/tests/test_checker_pass.py` following existing patterns.
 5. Run tests locally:
 
    ```bash
-   cd jac && pytest -k test_<feature> -v
+
+  cd jac && pytest -k test_<feature> -v
+
    ```
 
 6. Add a one-line entry to `docs/docs/communityhub/release_notes/jaclang.md` under the Unreleased section (optionally under “Type Checking Enhancements”).
@@ -39,7 +40,6 @@
 ## Naming Conventions (enforced)
 
 - Fixture files: `checker_<feature>.jac` (e.g., `checker_iife.jac`, `checker_arg_param_match.jac`).
-  - **Location**: `jac/tests/compiler/passes/main/fixtures/` (NOT `jac/jaclang/`)
 - Test function names in `test_checker_pass.py`: `test_<feature>()` so they can be targeted with `pytest -k`.
 
 ## Done Criteria
@@ -115,26 +115,19 @@ with entry {
 
 ```bash
 # Focused type-checker tests
-cd jac && pytest -k test_<feature> -v
-
-# All type-checker tests
-cd jac && pytest tests/compiler/passes/main/test_checker_pass.py -v
+pytest -n auto jac/jaclang/compiler/passes/main/tests/test_checker_pass.py -v
 
 # Full compiler tests
-cd jac && pytest -n auto
+pytest -n auto jac
 
 # Code quality
 ./scripts/check.sh
 ```
 
-## Common Pitfalls
-
-- **Wrong fixture location**: Fixtures go in `jac/tests/compiler/passes/main/fixtures/`, NOT `jac/jaclang/compiler/passes/main/tests/fixtures/`
-- **Test file location**: Tests go in `jac/tests/compiler/passes/main/test_checker_pass.py`, NOT under `jac/jaclang/`
-
 ## Notes
 
 - Pyright is an inspiration for approach; we follow similar methods but not 1:1.
+- Pitfalls: none recorded yet; add to release notes and extend this doc when patterns emerge.
 
 # Commands
 

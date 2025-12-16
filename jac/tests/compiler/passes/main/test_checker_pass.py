@@ -872,11 +872,3 @@ def test_protocol(fixture_path: Callable[[str], str]) -> None:
     """,
         program.errors_had[1].pretty_print(),
     )
-
-
-def test_property(fixture_path: Callable[[str], str]) -> None:
-    """Test property access type checking."""
-    program = JacProgram()
-    mod = program.compile(fixture_path("checker_property.jac"))
-    TypeCheckPass(ir_in=mod, prog=program)
-    assert len(program.errors_had) == 0

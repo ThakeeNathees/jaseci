@@ -551,9 +551,7 @@ class TypeEvaluator {
     }
 
     """Return the effective type of an ability."""
-    def get_type_of_ability(
-        self: TypeEvaluator, node_: uni.Ability
-    ) -> types.FunctionType {
+    def get_type_of_ability(self: TypeEvaluator, node_: uni.Ability) -> TypeBase {
         if node_.name_spec.type is not None {
             return node_.name_spec.type;
         }
@@ -827,17 +825,7 @@ class TypeEvaluator {
                 return self.get_type_of_class(node_);
 
             case uni.Ability():
-                ability = self.get_type_of_ability(node_);
-                for decor in (node_.decorators or []) {
-                    decor_type = self.get_type_of_expression(decor);
-                    if (
-                        isinstance(decor_type, types.ClassType)
-                        and decor_type.shared == self.prefetch.property_class.shared
-                    ) {
-                        return ability.return_type;
-                    }
-                }
-                return ability;
+                return self.get_type_of_ability(node_);
 
             case uni.ParamVar():
                 if node_.type_tag {
@@ -996,6 +984,18 @@ class TypeEvaluator {
                             );
                             if isinstance(expr_type, types.FunctionType) {
                                 expr_type = expr_type.specialize(base_type);
+                            }
+                            # If the memeber is a property the type will be the return value of the property
+                            node_ = symbol.decl.name_of;
+                            if isinstance(node_, uni.Ability) {
+                                assert isinstance(expr_type, types.FunctionType);
+                                for decor in (node_.decorators or []) {
+                                    decor_type = self.get_type_of_expression(decor);
+                                    if isinstance(decor_type, types.ClassType)
+                                    and decor_type.shared == self.prefetch.property_class.shared {
+                                        expr_type = expr_type.return_type;
+                                    }
+                                }
                             }
                             return expr_type;
                         }
