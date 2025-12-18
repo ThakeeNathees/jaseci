@@ -43,31 +43,31 @@ glob DiagnosticCallback = Callable[
 
 """Types whose definitions are prefetched and cached by the type evaluator."""
 obj PrefetchedTypes {
-    has none_type_class: TypeBase | None = None;
-    has object_class: TypeBase | None = None;
-    has type_class: TypeBase | None = None;
-    has union_type_class: TypeBase | None = None;
-    has awaitable_class: TypeBase | None = None;
-    has function_class: TypeBase | None = None;
-    has method_class: TypeBase | None = None;
-    has tuple_class: TypeBase | None = None;
-    has bool_class: TypeBase | None = None;
-    has int_class: TypeBase | None = None;
-    has float_class: TypeBase | None = None;
-    has str_class: TypeBase | None = None;
-    has dict_class: TypeBase | None = None;
-    has module_type_class: TypeBase | None = None;
-    has typed_dict_class: TypeBase | None = None;
-    has typed_dict_private_class: TypeBase | None = None;
-    has supports_keys_and_get_item_class: TypeBase | None = None;
-    has mapping_class: TypeBase | None = None;
-    has template_class: TypeBase | None = None;
-    has type_var_class: TypeBase | None = None;
-    # Prefetch from typing.pyi file
-    has protocol_class: TypeBase | None = None;
-    has any_class: TypeBase | None = None;
-    # Prefetched from jac_builtins.pyi file
-    has root_class: TypeBase | None = None;
+    has none_type_class: TypeBase | None = None,
+        object_class: TypeBase | None = None,
+        type_class: TypeBase | None = None,
+        union_type_class: TypeBase | None = None,
+        awaitable_class: TypeBase | None = None,
+        function_class: TypeBase | None = None,
+        method_class: TypeBase | None = None,
+        tuple_class: TypeBase | None = None,
+        bool_class: TypeBase | None = None,
+        int_class: TypeBase | None = None,
+        float_class: TypeBase | None = None,
+        str_class: TypeBase | None = None,
+        dict_class: TypeBase | None = None,
+        module_type_class: TypeBase | None = None,
+        typed_dict_class: TypeBase | None = None,
+        typed_dict_private_class: TypeBase | None = None,
+        supports_keys_and_get_item_class: TypeBase | None = None,
+        mapping_class: TypeBase | None = None,
+        template_class: TypeBase | None = None,
+        type_var_class: TypeBase | None = None,
+        # Prefetch from typing.pyi file
+        protocol_class: TypeBase | None = None,
+        any_class: TypeBase | None = None,
+        # Prefetched from jac_builtins.pyi file
+        root_class: TypeBase | None = None;
 }
 
 """Represents a single entry in the symbol resolution stack."""
