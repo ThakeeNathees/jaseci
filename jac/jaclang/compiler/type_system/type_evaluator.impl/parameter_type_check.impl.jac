@@ -136,7 +136,7 @@ impl TypeEvaluator.match_args_to_params(
         argument_errors = True;
         self.add_diagnostic(
             expr,
-            f"{func} Not all required parameters were provided in the function call: {names}",
+            f"Not all required parameters were provided in the function call: {names}",
         );
     }
     return MatchArgsToParamsResult(
