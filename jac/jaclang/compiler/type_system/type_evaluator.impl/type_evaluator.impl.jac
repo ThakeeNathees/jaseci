@@ -502,6 +502,7 @@ impl TypeEvaluator._prefetch_types(self: TypeEvaluator) {
     self.prefetch.none_type_class = get_types_type("NoneType");
     self.prefetch.object_class = get_builtin_type("object");
     self.prefetch.type_class = get_builtin_type("type");
+    self.prefetch.classmethod_class = get_builtin_type("classmethod");
     self.prefetch.union_type_class = get_types_type("UnionType");
     # self.prefetch.awaitable_class =
     # self.prefetch.function_class =
