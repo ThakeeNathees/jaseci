@@ -879,4 +879,10 @@ def test_classmethod(fixture_path: Callable[[str], str]) -> None:
     program = JacProgram()
     mod = program.compile(fixture_path("checker_classmethod.jac"))
     TypeCheckPass(ir_in=mod, prog=program)
+def test_any_type_works_with_any_type(fixture_path: Callable[[str], str]) -> None:
+    """Test stdlib typing module imports and Any type work correctly."""
+    program = JacProgram()
+    mod = program.compile(fixture_path("checker_any_type_works.jac"))
+    TypeCheckPass(ir_in=mod, prog=program)
+    # There shouldn't be any errors - Any type accepts any value
     assert len(program.errors_had) == 0

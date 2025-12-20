@@ -66,6 +66,7 @@ obj PrefetchedTypes {
         classmethod_class: TypeBase | None = None,
         # Prefetch from typing.pyi file
         protocol_class: TypeBase | None = None,
+        any_class: TypeBase | None = None,
         # Prefetched from jac_builtins.pyi file
         root_class: TypeBase | None = None;
 }
