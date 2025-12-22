@@ -41,7 +41,7 @@ impl TypeEvaluator.validate_call_args(
     caller_type = self.get_type_of_expression(expr.target);
     # 1. Call to a function.
     if isinstance(caller_type, types.FunctionType) {
-        arg_param_match = self.match_args_to_params(expr, caller_type);
+        arg_param_match = self.match_args_to_params(expr.params, expr, caller_type);
         if not arg_param_match.argument_errors {
             self.validate_arg_types(arg_param_match);
         }
@@ -51,7 +51,7 @@ impl TypeEvaluator.validate_call_args(
     if isinstance(caller_type, types.OverloadedType) {
         for overload in caller_type.overloads {
             arg_param_match = self.match_args_to_params(
-                expr, overload, checking_overload=True
+                expr.params, expr, overload, checking_overload=True
             );
             if not arg_param_match.argument_errors {
                 if self.validate_arg_types(arg_param_match, checking_overload=True) {
@@ -83,14 +83,18 @@ impl TypeEvaluator.validate_call_args(
         if init_method := self._lookup_class_member(caller_type, "__init__") {
             init_fn_type = self.get_type_of_symbol(init_method.symbol);
             if isinstance(init_fn_type, types.FunctionType) {
-                arg_param_match = self.match_args_to_params(expr, init_fn_type);
+                arg_param_match = self.match_args_to_params(
+                    expr.params, expr, init_fn_type
+                );
                 if not arg_param_match.argument_errors {
                     self.validate_arg_types(arg_param_match);
                 }
             }
         } elif caller_type.is_data_class() {
             init_fn_type = self._create_dataclass_init_method(caller_type);
-            arg_param_match = self.match_args_to_params(expr, init_fn_type);
+            arg_param_match = self.match_args_to_params(
+                expr.params, expr, init_fn_type
+            );
             if not arg_param_match.argument_errors {
                 self.validate_arg_types(arg_param_match);
             }
@@ -99,8 +103,9 @@ impl TypeEvaluator.validate_call_args(
     }
     # 5. Call to a callable object (__call__).
     if caller_type.is_class_instance() {
-        # TODO: validate args.
-        magic_call_ret = self.get_type_of_magic_method_call(caller_type, "__call__");
+        magic_call_ret = self.get_type_of_magic_method_call(
+            caller_type, "__call__", expr.params, expr,
+        );
         if magic_call_ret {
             return magic_call_ret;
         }
@@ -117,7 +122,8 @@ This logic is based on PEP 3102: https://www.python.org/dev/peps/pep-3102/
 """
 impl TypeEvaluator.match_args_to_params(
     self: TypeEvaluator,
-    expr: uni.FuncCall,
+    arg_nodes: list[uni.Expr | uni.KWPair],
+    node_for_error: uni.Expr | None,
     func_type: types.FunctionType,
     checking_overload: bool = False,
 ) -> MatchArgsToParamsResult {
@@ -144,7 +150,7 @@ impl TypeEvaluator.match_args_to_params(
     #          We match positional with          |  We match named arguments with
     #          tracked parameter index.          |  param name lookup.
     #
-    for arg in expr.params {
+    for arg in arg_nodes {
         try {
             if isinstance(arg, uni.KWPair) {
                 # Match parameter based on name lookup.
@@ -165,9 +171,9 @@ impl TypeEvaluator.match_args_to_params(
     if unmatched_params := param_tracker.get_unmatched_required_params() {
         argument_errors = True;
         names = ", ".join([f"'{p.name}'" for p in unmatched_params]);
-        if not checking_overload {
+        if not checking_overload and node_for_error {
             self.add_diagnostic(
-                expr,
+                node_for_error,
                 f"Not all required parameters were provided in the function call: {names}",
             );
         }
