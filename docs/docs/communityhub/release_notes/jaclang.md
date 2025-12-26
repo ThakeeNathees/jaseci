@@ -18,6 +18,7 @@ This document provides a summary of new features, improvements, and bug fixes in
 - **Strings supported without escaping within jsx**: Strings supported without escaping within jsx. Example usage: `<h1> "Authentication" App </h1>`
 - **Support output format for dot command**: Output format for dot command is supported. Example Usage: `jac dot filename.jac --format json`
 - **Shared `impl/` Folder for Annex Discovery**: Impl files can now be organized in a shared `impl/` folder within the same directory as the target module. For example, `impl/foo.impl.jac` will be discovered and attached to `foo.jac`, alongside the existing discovery methods (same directory and module-specific `.impl/` folders).
+- **Type Checking Enhancements**: Added type checking support for `Final` type hint.
 
 ## jaclang 0.9.3 (Latest Release)
 
