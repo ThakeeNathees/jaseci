@@ -35,7 +35,7 @@ def get_object(filename: str, id: str, session: str = '', main: bool = True) -> 
 def build(filename: str, typecheck: bool = False) -> None;
 
 @cmd_registry.register
-def check(paths: list, print_errs: bool = True) -> None;
+def check(paths: list, print_errs: bool = True, warnonly: bool = False) -> None;
 
 @cmd_registry.register
 def lsp -> None;
@@ -102,10 +102,32 @@ def serve(
     faux: bool = False
 ) -> None;
 
+#===============================================================================
+# PROJECT MANAGEMENT COMMANDS
+#===============================================================================
+@cmd_registry.register
+def create(name: str = 'main', force: bool = False) -> None;
+
+@cmd_registry.register
+def install(dev: bool = False, verbose: bool = False) -> None;
+
+@cmd_registry.register
+def add(
+    packages: list = [],
+    dev: bool = False,
+    git: str = '',
+    cl: bool = False,
+    verbose: bool = False
+) -> None;
+
+@cmd_registry.register
+def remove(packages: list = [], dev: bool = False, cl: bool = False) -> None;
+
+@cmd_registry.register
+def script(name: str = '', list_scripts: bool = False) -> None;
+
 def start_cli -> None;
 
-with entry {
-    if (__name__ == '__main__') {
-        start_cli();
-    }
+with entry:__main__ {
+    start_cli();
 }

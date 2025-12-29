@@ -19,7 +19,6 @@ import from jaclang.compiler.passes.main.pyast_load_pass { PyastBuildPass }
 import from jaclang.pycore.passes.sym_tab_build_pass { SymTabBuildPass }
 import from jaclang.compiler.type_system { types }
 import from jaclang.runtimelib.utils { read_file_with_encoding }
-import from jaclang.pycore.settings { settings }
 
 with entry {
     if TYPE_CHECKING {
@@ -63,8 +62,10 @@ obj PrefetchedTypes {
         mapping_class: TypeBase | None = None,
         template_class: TypeBase | None = None,
         type_var_class: TypeBase | None = None,
+        classmethod_class: TypeBase | None = None,
         # Prefetch from typing.pyi file
         protocol_class: TypeBase | None = None,
+        any_class: TypeBase | None = None,
         # Prefetched from jac_builtins.pyi file
         root_class: TypeBase | None = None,
         node_class: TypeBase | None = None,
@@ -173,6 +174,7 @@ class TypeEvaluator {
         self: TypeEvaluator, super_cls: types.ClassType, sub_cls: types.ClassType
     ) -> bool;
 
+    def _is_ability_classmethod(self: TypeEvaluator, node_: uni.Ability) -> bool;
     def _assign_class(
         self: TypeEvaluator, src_type: types.ClassType, dest_type: types.ClassType
     ) -> bool;
@@ -225,14 +227,26 @@ class TypeEvaluator {
     ) -> type_utils.ClassMember | None;
 
     def match_args_to_params(
-        self: TypeEvaluator, expr: uni.FuncCall, func_type: types.FunctionType
+        self: TypeEvaluator,
+        expr: uni.FuncCall,
+        func_type: types.FunctionType,
+        checking_overload: bool = False,
     ) -> MatchArgsToParamsResult;
 
     def validate_call_args(self: TypeEvaluator, expr: uni.FuncCall) -> TypeBase;
-    def validate_arg_types(self: TypeEvaluator, args: MatchArgsToParamsResult) -> None;
+    def validate_arg_types(
+        self: TypeEvaluator,
+        args: MatchArgsToParamsResult,
+        checking_overload: bool = False
+    ) -> None;
+
     def _create_dataclass_init_method(
         self: TypeEvaluator, class_type: types.ClassType
     ) -> types.FunctionType;
+
+    def _validate_constructor_method(
+        self: TypeEvaluator, expr: uni.FuncCall, method_type: TypeBase
+    ) -> bool;
 }
 # FIXME: This class implementation is modified from pyright to make it
 # simple and work for now, however this needs to be revisited and

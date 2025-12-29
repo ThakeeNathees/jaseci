@@ -12,7 +12,6 @@ impl CommandRegistry.finalize(self: CommandRegistry) -> None {
     if self._finalized {
         return;
     }
-    self._add_settings_arguments();
     for name in <>list(self.pending_commands.keys()) {
         self._resolve_and_bind_command(name);
     }
@@ -61,9 +60,7 @@ impl CommandRegistry._bind_command_to_argparse(
     );
     first = True;
     for (param_name, param) in cmd.sig.parameters.items() {
-        type_name = param.annotation.__name__
-        if hasattr(param.annotation, '__name__')
-        else str(param.annotation);
+        type_name = param.annotation?.__name__ or str(param.annotation);
         docstring_param_descriptions = extract_param_descriptions(doc);
         if (param_name in docstring_param_descriptions) {
             arg_msg = f"{type_name} - {docstring_param_descriptions[param_name]}";
@@ -113,12 +110,23 @@ impl CommandRegistry._bind_command_to_argparse(
         } elif first {
             arg_msg += f", default: {param.default}";
             first = False;
-            cmd_parser.add_argument(
-                f"{param_name}",
-                <>default=param.default,
-                <>type=eval(param.annotation),
-                help=arg_msg
-            );
+            # Handle list types with nargs='*' to allow zero or more arguments
+            annotation = eval(param.annotation)
+            if isinstance(param.annotation, str)
+            else param.annotation;
+            if annotation is list
+            or (annotation?.__origin__ and annotation?.__origin__ is list) {
+                cmd_parser.add_argument(
+                    f"{param_name}", <>default=param.default, nargs='*', help=arg_msg
+                );
+            } else {
+                cmd_parser.add_argument(
+                    f"{param_name}",
+                    <>default=param.default,
+                    <>type=annotation,
+                    help=arg_msg
+                );
+            }
         } else {
             arg_msg += f", default: {param.default}";
             if (param.annotation is bool or param.annotation == 'bool') {
@@ -172,7 +180,7 @@ impl CommandRegistry.register(
     self: CommandRegistry,
     func: (Callable | None) = None,
     *,
-    priority: CommandPriority = CommandPriority.CORE,
+    priority: (int | CommandPriority) = CommandPriority.CORE,
     source: str = 'core'
 ) -> Callable {
     """Inner registration function.""";
@@ -194,61 +202,11 @@ impl CommandRegistry.register(
     return _register;
 }
 
-"""Add global settings arguments (lazily loaded)."""
-impl CommandRegistry._add_settings_arguments(self: CommandRegistry) -> None {
-    if self._settings_added {
-        return;
-    }
-    self._settings_added = True;
-    import from jaclang.pycore.settings { Settings as JacSettings }
-    settings_group = self.parser.add_argument_group(
-        'settings',
-        'Override Jac settings (from config/env). Provide only flags you want to change.'
-    );
-    for fld in dataclass_fields(JacSettings) {
-        name = fld.name;
-        opt = f"--{name.replace('_', '-')}";
-        if (fld.type is bool) {
-            settings_group.add_argument(
-                opt,
-                dest=name,
-                action='store_true',
-                <>default=None,
-                help=f"bool - Override setting '{name}' to true"
-            );
-            settings_group.add_argument(
-                f"--no-{name.replace('_', '-')}",
-                dest=name,
-                action='store_false',
-                <>default=None,
-                help=f"bool - Override setting '{name}' to false"
-            );
-        } elif (fld.type is int) {
-            settings_group.add_argument(
-                opt,
-                dest=name,
-                <>type=int,
-                <>default=None,
-                help=f"int - Override setting '{name}'"
-            );
-        } else {
-            settings_group.add_argument(
-                opt,
-                dest=name,
-                <>type=str,
-                <>default=None,
-                help=f"str - Override setting '{name}'"
-            );
-        }
-    }
-}
-
 """Initialize a CommandRegistry instance."""
 impl CommandRegistry.init(self: CommandRegistry) -> None {
     self.registry = {};
     self.pending_commands = {};
     self._finalized = False;
-    self._settings_added = False;
     self.parser = argparse.ArgumentParser(
         prog='jac',
         description='Jac Programming Language CLI - A tool for working with Jac programs',

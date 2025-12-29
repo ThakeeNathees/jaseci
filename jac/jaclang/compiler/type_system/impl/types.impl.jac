@@ -38,6 +38,7 @@ impl FunctionType.specialize(self: FunctionType, class_type: ClassType) -> Funct
                 param_type=param.param_type,
                 default_value=param.default_value,
                 is_self=param.is_self,
+                is_cls=param.is_cls,
                 param_kind=param.param_kind
             ) for param in self.parameters
         ]
@@ -78,6 +79,11 @@ impl FunctionType.init(
     self.parameters = parameters or [];
 }
 
+impl OverloadedType.init(self: OverloadedType, overloads: list[FunctionType]) -> None {
+    super.init();
+    self.overloads = overloads;
+}
+
 """Initialize obviously."""
 impl Parameter.init(
     self: Parameter,
@@ -86,6 +92,7 @@ impl Parameter.init(
     param_type: (TypeBase | None),
     default_value: (Expr | None) = None,
     is_self: bool = False,
+    is_cls: bool = False,
     param_kind: ParamKind = ParamKind.NORMAL
 ) -> None {
     super.init();
@@ -94,6 +101,7 @@ impl Parameter.init(
     self.default_value = default_value;
     self.param_type = param_type;
     self.is_self = is_self;
+    self.is_cls = is_cls;
     self.param_kind: ParamKind = param_kind;
 }
 
@@ -139,10 +147,16 @@ impl ClassType.is_builtin(self: ClassType, class_name: (str | None) = None) -> b
 }
 
 """Lookup a member in the class type."""
-impl ClassType.lookup_member_symbol(self: ClassType, member: str) -> (Symbol | None) {
+impl ClassType.lookup_member_symbol(
+    self: ClassType, member: str, r_overloaded: list | None = None
+) -> (Symbol | None) {
     for cls in self.shared.mro {
         members = cls.shared.symbol_table.names_in_scope;
+        overloads = cls.shared.symbol_table.names_in_scope_overload;
         if (member in members) {
+            if r_overloaded is not None and (member in overloads) {
+                r_overloaded.extend(overloads[member]);
+            }
             return members[member];
         }
     }

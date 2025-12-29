@@ -54,8 +54,9 @@ impl TypeEvaluator._lookup_class_member(
     # NOTE: This is a simple implementation to make it work and more robust implementation will
     # be done in a future PR.
     for cls in base_type.shared.mro {
-        if sym := cls.lookup_member_symbol(member) {
-            return type_utils.ClassMember(sym, cls);
+        overloaded_syms: list[uni.Symbol] = [];
+        if sym := cls.lookup_member_symbol(member, overloaded_syms) {
+            return type_utils.ClassMember(sym, cls, overloaded_syms);
         }
     }
     return None;
@@ -202,4 +203,22 @@ impl TypeEvaluator.add_diagnostic(
     if self.diagnostic_callback {
         self.diagnostic_callback(node, message, warning);
     }
+}
+
+impl TypeEvaluator._is_ability_classmethod(
+    self: TypeEvaluator, node_: uni.Ability
+) -> bool {
+    if node_.decorators {
+        for decorator in node_.decorators {
+            decor_type = self.get_type_of_expression(decorator);
+            if (
+                isinstance(decor_type, types.ClassType)
+                and self.prefetch.classmethod_class is not None
+                and self.prefetch.classmethod_class.shared == decor_type.shared
+            ) {
+                return True;
+            }
+        }
+    }
+    return False;
 }

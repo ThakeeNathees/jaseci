@@ -60,11 +60,34 @@ impl TypeEvaluator._get_type_of_expression_core(
                     if member := self._lookup_object_member(
                         base_type, expr.right.value
                     ) {
-                        expr_type = self._set_symbol_to_expr(expr.right, member.symbol);
-                        if isinstance(expr_type, types.FunctionType) {
-                            expr_type = expr_type.specialize(base_type);
+                        overloaded_ty: types.OverloadedType | None = None;
+                        member_ty = self.get_type_of_symbol(member.symbol);
+                        if isinstance(member_ty, types.FunctionType) {
+                            member_ty = member_ty.specialize(base_type);
+                            overloaded_fns: list[types.FunctionType] = [member_ty];
+                            for overload in member.overloads {
+                                overload_member_ty = self.get_type_of_symbol(overload);
+                                if isinstance(overload_member_ty, types.FunctionType) {
+                                    overload_member_ty = overload_member_ty.specialize(
+                                        base_type
+                                    );
+                                    overloaded_fns.append(overload_member_ty);
+                                }
+                            }
+                            if len(overloaded_fns) > 1 {
+                                overloaded_ty = types.OverloadedType(overloaded_fns);
+                            }
                         }
-                        return expr_type;
+                        # NOTE: If this atom trailer is called `<atom_trailer>()` we can resolve
+                        # which overload is being called based on the arguments, and update the type
+                        # based on the call, maybe for future.
+                        #
+                        # This symbol.add_use is what makes the jump to definition work.
+                        #
+                        # expr_type = self._set_symbol_to_expr(expr.right, member.symbol);
+                        member.symbol.add_use(expr.right);
+                        expr.right.type = overloaded_ty or member_ty;
+                        return expr.right.type;
                     }
                     return types.UnknownType();
                 }
@@ -153,6 +176,7 @@ impl TypeEvaluator._get_type_of_expression_core(
             if expr.f_type {
                 filter_type = self.get_type_of_expression(expr.f_type);
                 if isinstance(filter_type, types.ClassType) {
+                    # Compute the MRO for the class.
                     # For each compare in the filter comprehension, set symbol to the right name.
                     for cmp in expr.compares {
                         if isinstance(cmp.left, uni.Name)
@@ -232,6 +256,14 @@ impl TypeEvaluator._get_type_of_expression_core(
                 if symbol := scope.lookup(expr.value, deep=True, incl_inner_scope=True) {
                     symbol = self.resolve_imported_symbols(symbol);
                     symbol.add_use(expr);
+                    # Only set sym if not already set (preserves existing symbol info for declarations)
+                    if expr.sym is None {
+                        expr.sym = symbol;
+                        # Link name_of to the declaration's AstSymbolNode for hover
+                        if symbol.decl and symbol.decl.name_of {
+                            expr.name_of = symbol.decl.name_of;
+                        }
+                    }
                     return self.get_type_of_symbol(symbol);
                 }
             }
@@ -353,7 +385,10 @@ impl TypeEvaluator._assign_class(
         return True;
     }
     # Everything is assignable to an object.
-    if dest_type.is_builtin("object") {
+    if (
+        dest_type.is_builtin("object")
+        or dest_type.shared == self.prefetch.any_class.shared
+    ) {
         # TODO: Invariance not handled yet
         # invariant contexts to avoid list[int] <: list[object] errors.
         return True;
@@ -519,6 +554,7 @@ impl TypeEvaluator._prefetch_types(self: TypeEvaluator) {
     self.prefetch.none_type_class = get_types_type("NoneType");
     self.prefetch.object_class = get_builtin_type("object");
     self.prefetch.type_class = get_builtin_type("type");
+    self.prefetch.classmethod_class = get_builtin_type("classmethod");
     self.prefetch.union_type_class = get_types_type("UnionType");
     # self.prefetch.awaitable_class =
     # self.prefetch.function_class =
@@ -536,6 +572,7 @@ impl TypeEvaluator._prefetch_types(self: TypeEvaluator) {
     # self.prefetch.mapping_class =
     # self.prefetch.template_class =
     self.prefetch.protocol_class = get_typing_type("Protocol");
+    self.prefetch.any_class = get_typing_type("Any");
     self.prefetch.root_class = get_jac_builtin_type("Root");
     self.prefetch.root_class.shared.is_root_class = True;
     self.prefetch.node_class = get_jac_builtin_type("Node");
@@ -545,12 +582,7 @@ impl TypeEvaluator._prefetch_types(self: TypeEvaluator) {
 """Load and return builtins stub module."""
 impl TypeEvaluator._load_stub_module(self: TypeEvaluator, path: str) -> uni.Module {
     if not os.path.exists(path) {
-        if not settings.all_warnings {
-            raise FileNotFoundError(f"Stub file not found at {path}") ;
-        } else {
-            print(f"Warning: Stub file not found at {path}");
-            exit(0);
-        }
+        raise FileNotFoundError(f"Stub file not found at {path}") ;
     }
     file_content = read_file_with_encoding(path);
     uni_source = uni.Source(file_content, path);
@@ -596,3 +628,5 @@ impl TypeEvaluator.init(self: TypeEvaluator, program: "JacProgram") -> None {
     );
     self._prefetch_types();
 }
+# Cache the type, pyright is doing invalidateTypeCacheIfCanceled()
+# we're not doing that any time sooner.
