@@ -68,7 +68,9 @@ obj PrefetchedTypes {
         any_class: TypeBase | None = None,
         # Prefetched from jac_builtins.pyi file
         final_class: TypeBase | None = None,
-        root_class: TypeBase | None = None;
+        root_class: TypeBase | None = None,
+        node_class: TypeBase | None = None,
+        walker_class: TypeBase | None = None;
 }
 
 """Represents a single entry in the symbol resolution stack."""
@@ -222,6 +224,10 @@ class TypeEvaluator {
     def _get_enclosing_method(
         self: TypeEvaluator, node: uni.UniNode
     ) -> uni.Ability | None;
+
+    def _get_enclosing_class(
+        self: TypeEvaluator, node: uni.UniNode
+    ) -> uni.Archetype | None;
 
     def _get_type_of_self(self: TypeEvaluator, node_: uni.SpecialVarRef) -> TypeBase;
     def _get_type_of_root(self: TypeEvaluator, node_: uni.SpecialVarRef) -> TypeBase;
