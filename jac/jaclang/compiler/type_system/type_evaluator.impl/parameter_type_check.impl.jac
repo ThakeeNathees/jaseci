@@ -176,10 +176,14 @@ impl TypeEvaluator.match_args_to_params(
         argument_errors = True;
         names = ", ".join([f"'{p.name}'" for p in unmatched_params]);
         if not checking_overload {
-            self.add_diagnostic(
-                expr,
-                f"Not all required parameters were provided in the function call: {names}",
-            );
+            # Use node_for_error if available, otherwise fall back to first arg
+            error_node = node_for_error or (arg_nodes[0] if arg_nodes else None);
+            if error_node {
+                self.add_diagnostic(
+                    error_node,
+                    f"Not all required parameters were provided in the function call: {names}",
+                );
+            }
         }
     }
     return MatchArgsToParamsResult(
