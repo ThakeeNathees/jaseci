@@ -351,19 +351,23 @@ impl TypeEvaluator._get_type_of_symbol(
             # ---- Handle member assignment: for <name> in <expr> ----
             if isinstance(node_.parent, uni.InForStmt) {
                 collection_type = self.get_type_of_expression(node_.parent.collection);
-                # FIXME: This is the proper way to do it however Iterator[T] cannot be
-                # resolved as a generic type because of the definition. So I'm doing this ad-hoc
-                # way, will come back and have to fix it properly.
-                #
-                # iter_type = self.get_type_of_magic_method_call(collection_type, "__iter__");
-                #
                 iter_type = self.get_type_of_magic_method_call(
-                    collection_type,
-                    "__getitem__",
-                    [node_.parent.collection],
-                    node_.parent,
+                    collection_type, "__iter__", [], node_.parent,
                 );
-                return iter_type or types.UnknownType();
+                # TODO: Ensure the iter_type is an Iterator[T].
+                # The iter_tpe should be Iterator[T] and the return type should be T.
+                if isinstance(iter_type, types.ClassType) and isinstance(collection_type, types.ClassType) {
+                    if len(iter_type.private.type_args) == 1 {
+                        specialized = iter_type.specialize_generics(collection_type.private.type_args);
+                        if len(specialized.private.type_args) == 1 {
+                            iterable_type = specialized.private.type_args[0];
+                            if isinstance(iterable_type, types.ClassType) {
+                                return iterable_type.clone_as_instance();
+                            }
+                        }
+                    }
+                }
+                return types.UnknownType();
             }
 
             if isinstance(node_.parent, uni.ModulePath) {
