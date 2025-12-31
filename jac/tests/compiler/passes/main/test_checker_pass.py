@@ -976,7 +976,7 @@ def test_overload_decorator(fixture_path: Callable[[str], str]) -> None:
     )
     _assert_error_pretty_found(
         """
-        foo.do_something("hello"); # <-- Error
+        foo.do_something("hello");  # <-- Error
         ^^^^^^^^^^^^^^^^^^^^^^^^^
     """,
         do_something_error,
@@ -990,7 +990,7 @@ def test_overload_decorator(fixture_path: Callable[[str], str]) -> None:
     assert add_error is not None, 'Expected error for foo + "hello"'
     _assert_error_pretty_found(
         """
-        foo + "hello"; # <-- Error
+        foo + "hello";  # <-- Error
         ^^^^^^^^^^^^^
     """,
         add_error,
