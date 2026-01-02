@@ -1021,3 +1021,19 @@ def test_function_overload_decorator(fixture_path: Callable[[str], str]) -> None
     """,
         cast_error,
     )
+
+
+def test_union_type_checking(fixture_path: Callable[[str], str]) -> None:
+    """Test that union type checking works correctly."""
+    program = JacProgram()
+    mod = program.compile(fixture_path("checker_union_type.jac"))
+    TypeCheckPass(ir_in=mod, prog=program)
+    # Expect 1 error: y: str | None = 3.14 (float cannot be assigned to str | None)
+    assert len(program.errors_had) == 1
+    _assert_error_pretty_found(
+        """
+        y: str | None = 3.14;  # <-- Error
+        ^^^^^^^^^^^^^^^^^^^^
+    """,
+        program.errors_had[0].pretty_print(),
+    )
