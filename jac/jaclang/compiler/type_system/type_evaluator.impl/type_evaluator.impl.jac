@@ -552,6 +552,14 @@ impl TypeEvaluator.assign_type(
     src_type = type_utils.type_unwrap(
         src_type, self.prefetch.final_class, self.prefetch.literal_class
     );
+    # Convert unwrapped types to instances if they're ClassTypes
+    # (unwrapping Final[int] gives int which might be a class type, not an instance)
+    if isinstance(dest_type, types.ClassType) {
+        dest_type = self._convert_to_instance(dest_type);
+    }
+    if isinstance(src_type, types.ClassType) {
+        src_type = self._convert_to_instance(src_type);
+    }
     if src_type == dest_type {
         return True;
     }
