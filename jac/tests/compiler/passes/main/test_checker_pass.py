@@ -1028,12 +1028,39 @@ def test_union_type_checking(fixture_path: Callable[[str], str]) -> None:
     program = JacProgram()
     mod = program.compile(fixture_path("checker_union_type.jac"))
     TypeCheckPass(ir_in=mod, prog=program)
-    # Expect 1 error: y: str | None = 3.14 (float cannot be assigned to str | None)
-    assert len(program.errors_had) == 1
+    # Expect 2 errors:
+    # 1. y: str | None = 3.14 (float cannot be assigned to str | None)
+    # 2. union_of_union_2: None | float | int = "" (str cannot be assigned to None | float | int)
+    assert len(program.errors_had) == 2
+
+    error_messages = [err.pretty_print() for err in program.errors_had]
+
+    # Check for y: str | None = 3.14 error
+    y_error = next(
+        (err for err in error_messages if "y: str | None" in err and "3.14" in err),
+        None,
+    )
+    assert y_error is not None, "Expected error for y: str | None = 3.14"
     _assert_error_pretty_found(
         """
         y: str | None = 3.14;  # <-- Error
         ^^^^^^^^^^^^^^^^^^^^
     """,
-        program.errors_had[0].pretty_print(),
+        y_error,
+    )
+
+    # Check for union_of_union_2 error
+    union_error = next(
+        (err for err in error_messages if "union_of_union_2" in err and '""' in err),
+        None,
+    )
+    assert union_error is not None, (
+        'Expected error for union_of_union_2: None | float | int = ""'
+    )
+    _assert_error_pretty_found(
+        """
+        union_of_union_2: None | float | int = "";  # <-- Error
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    """,
+        union_error,
     )
