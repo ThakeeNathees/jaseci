@@ -7,6 +7,7 @@ import from typing { TYPE_CHECKING }
 import jaclang.pycore.unitree as uni;
 import from jaclang.pycore.constant { Tokens as Tok }
 import from . { types as jtypes }
+import from . { type_utils }
 
 with entry {
     if TYPE_CHECKING {
@@ -76,15 +77,29 @@ def get_type_of_binary_operation(
             }
         }
         (magic, rmagic) = BINARY_OPERATOR_MAP[expr.op.name];
-        return (
+        # Try numeric type promotion first (if applicable) to avoid adding diagnostics
+        # for failed normal calls when promotion would succeed
+        if _are_potentially_promotable_numeric_types(evaluator, left_type, right_type) {
+            promoted_result = _try_numeric_type_promotion(
+                evaluator, left_type, right_type, magic, rmagic, expr
+            );
+            if promoted_result and not isinstance(promoted_result, jtypes.UnknownType) {
+                return promoted_result;
+            }
+        }
+        # Try normal magic method calls
+        result = (
             evaluator.get_type_of_magic_method_call(
                 left_type, magic, [expr.right], expr
             )
             or evaluator.get_type_of_magic_method_call(
                 right_type, rmagic, [expr.left], expr
             )
-            or jtypes.UnknownType()
         );
+        if result {
+            return result;
+        }
+        return jtypes.UnknownType();
     }
 
     # Connection operations
@@ -152,4 +167,121 @@ def get_type_of_binary_operation(
         }
     }
     return jtypes.UnknownType();
+}
+
+"""
+Check if two types are potentially promotable numeric types.
+
+Returns True if the types are numeric types (int, float, complex) that can be
+promoted (e.g., int + float, int + complex, float + complex).
+"""
+def _are_potentially_promotable_numeric_types(
+    evaluator: 'TypeEvaluator',
+    left_type: jtypes.TypeBase,
+    right_type: jtypes.TypeBase,
+) -> bool {
+    # Get underlying numeric types, unwrapping Final and Literal if necessary
+    left_unwrapped = type_utils.type_unwrap(
+        left_type, evaluator.prefetch.final_class, evaluator.prefetch.literal_class
+    );
+    right_unwrapped = type_utils.type_unwrap(
+        right_type, evaluator.prefetch.final_class, evaluator.prefetch.literal_class
+    );
+    if not (
+        isinstance(left_unwrapped, jtypes.ClassType)
+        and isinstance(right_unwrapped, jtypes.ClassType)
+    ) {
+        return False;
+    }
+    return (
+        (left_unwrapped.is_builtin("int") and right_unwrapped.is_builtin("float"))
+        or (left_unwrapped.is_builtin("float") and right_unwrapped.is_builtin("int"))
+        or (left_unwrapped.is_builtin("int") and right_unwrapped.is_builtin("complex"))
+        or (left_unwrapped.is_builtin("complex") and right_unwrapped.is_builtin("int"))
+        or (
+            left_unwrapped.is_builtin("float")
+            and right_unwrapped.is_builtin("complex")
+        )
+        or (
+            left_unwrapped.is_builtin("complex")
+            and right_unwrapped.is_builtin("float")
+        )
+    );
+}
+
+"""
+Handle numeric type promotion for binary operations.
+
+Python allows int to be implicitly converted to float/complex.
+According to PEP 484, int is acceptable where float is expected.
+This function handles promotion rules:
+- int + float -> float
+- int + complex -> complex
+- float + complex -> complex
+
+Also handles Literal types: Literal[1] + float -> float, etc.
+"""
+def _try_numeric_type_promotion(
+    evaluator: 'TypeEvaluator',
+    left_type: jtypes.TypeBase,
+    right_type: jtypes.TypeBase,
+    magic: str,
+    rmagic: str,
+    expr: uni.BinaryExpr,
+) -> jtypes.TypeBase | None {
+    # Get underlying numeric types, unwrapping Final and Literal if necessary
+    left_unwrapped = type_utils.type_unwrap(
+        left_type, evaluator.prefetch.final_class, evaluator.prefetch.literal_class
+    );
+    right_unwrapped = type_utils.type_unwrap(
+        right_type, evaluator.prefetch.final_class, evaluator.prefetch.literal_class
+    );
+    if not (
+        isinstance(left_unwrapped, jtypes.ClassType)
+        and isinstance(right_unwrapped, jtypes.ClassType)
+    ) {
+        return None;
+    }
+    left_numeric = left_unwrapped;
+    right_numeric = right_unwrapped;
+    promoted_left: jtypes.ClassType | None = None;
+    promoted_right: jtypes.ClassType | None = None;
+    # int + float -> promote int to float, try float operations
+    if left_numeric.is_builtin("int") and right_numeric.is_builtin("float") {
+        promoted_left = right_numeric;  # int promoted to float
+        promoted_right = right_numeric;
+    } elif left_numeric.is_builtin("float") and right_numeric.is_builtin("int") {
+        promoted_left = left_numeric;
+        promoted_right = left_numeric;  # int promoted to float
+    }
+    # int + complex -> promote int to complex
+    elif left_numeric.is_builtin("int") and right_numeric.is_builtin("complex") {
+        promoted_left = right_numeric;
+        promoted_right = right_numeric;
+    } elif left_numeric.is_builtin("complex") and right_numeric.is_builtin("int") {
+        promoted_left = left_numeric;
+        promoted_right = left_numeric;
+    }
+    # float + complex -> promote float to complex
+    elif left_numeric.is_builtin("float") and right_numeric.is_builtin("complex") {
+        promoted_left = right_numeric;
+        promoted_right = right_numeric;
+    } elif left_numeric.is_builtin("complex") and right_numeric.is_builtin("float") {
+        promoted_left = left_numeric;
+        promoted_right = left_numeric;
+    }
+    # Try magic method calls with promoted types
+    # The type checker will allow int->float conversion via assign_type logic
+    if promoted_left and promoted_right {
+        return (
+            evaluator.get_type_of_magic_method_call(
+                promoted_left, magic, [expr.right], expr
+            )
+            or evaluator.get_type_of_magic_method_call(
+                promoted_right, rmagic, [expr.left], expr
+            )
+            or None
+        );
+    }
+    return None;
 }

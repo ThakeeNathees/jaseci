@@ -96,3 +96,17 @@ def lookup_symtab(
 ) -> (Symbol | None);
 
 def class_implements_protocol(cls: types.ClassType, proto: types.ClassType) -> bool;
+
+def unwrap_literal_type(
+    ty: types.TypeBase, literal_class: types.TypeBase | None
+) -> types.TypeBase;
+
+def unwrap_final_type(
+    ty: types.TypeBase, final_class: types.TypeBase | None
+) -> types.TypeBase;
+
+def type_unwrap(
+    ty: types.TypeBase,
+    final_class: types.TypeBase | None,
+    literal_class: types.TypeBase | None,
+) -> types.TypeBase;

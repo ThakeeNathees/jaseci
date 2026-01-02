@@ -435,15 +435,7 @@ impl TypeEvaluator._get_type_of_symbol(
 impl TypeEvaluator._assign_class(
     self: TypeEvaluator, src_type: types.ClassType, dest_type: types.ClassType
 ) -> bool {
-    # If the type is Final[T], unwrap it to T.
-    # TODO: We can actually check if the Final type is modified and
-    # prevent that, but for now just unwrap it.
-    if dest_type.shared == self.prefetch.final_class.shared {
-        dest_type = dest_type.private.type_args[0];
-    }
-    if src_type.shared == self.prefetch.final_class.shared {
-        src_type = src_type.private.type_args[0];
-    }
+    # Types are already unwrapped in assign_type, so we can proceed with class assignment
     if src_type.shared == dest_type.shared {
         return True;
     }
@@ -552,6 +544,14 @@ impl TypeEvaluator.assign_type(
         # For strict mode we should disallow usage of unknown unless explicitly ignored.
         return True;
     }
+    # Unwrap Final and Literal types recursively before checking assignment compatibility
+    # Handles nested cases like Literal[Final[T]] or Final[Literal[T]]
+    dest_type = type_utils.type_unwrap(
+        dest_type, self.prefetch.final_class, self.prefetch.literal_class
+    );
+    src_type = type_utils.type_unwrap(
+        src_type, self.prefetch.final_class, self.prefetch.literal_class
+    );
     if src_type == dest_type {
         return True;
     }
@@ -668,6 +668,7 @@ impl TypeEvaluator._prefetch_types(self: TypeEvaluator) {
     # self.prefetch.template_class =
     self.prefetch.protocol_class = get_typing_type("Protocol");
     self.prefetch.any_class = get_typing_type("Any");
+    self.prefetch.literal_class = get_typing_type("Literal");
     # Prefetched Jaclang builtin types
     self.prefetch.root_class = get_jac_builtin_type("Root");
     self.prefetch.root_class.shared.is_root_class = True;

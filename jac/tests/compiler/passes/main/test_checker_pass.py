@@ -1064,3 +1064,12 @@ def test_union_type_checking(fixture_path: Callable[[str], str]) -> None:
     """,
         union_error,
     )
+
+
+def test_numeric_type_promotion(fixture_path: Callable[[str], str]) -> None:
+    """Test that numeric type promotion works correctly for int + float operations."""
+    program = JacProgram()
+    mod = program.compile(fixture_path("checker_numeric_promotion.jac"))
+    TypeCheckPass(ir_in=mod, prog=program)
+    # Should have no errors - int + float should promote to float
+    assert len(program.errors_had) == 0

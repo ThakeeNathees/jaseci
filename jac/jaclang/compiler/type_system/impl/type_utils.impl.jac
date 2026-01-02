@@ -241,3 +241,99 @@ impl compute_mro_linearization(cls: types.ClassType) -> None {
         }
     }
 }
+
+"""
+Unwrap Literal types to get the underlying type.
+
+Literal[1] -> int, Literal[3.14] -> float, int -> int, float -> float
+If the type is not a Literal type, returns it unchanged.
+"""
+impl unwrap_literal_type(
+    ty: types.TypeBase, literal_class: types.TypeBase | None
+) -> types.TypeBase {
+    if not isinstance(ty, types.ClassType) {
+        return ty;
+    }
+    # Unwrap Literal types (similar to how Final is unwrapped)
+    # Literal[T] should be treated as T for numeric operations
+    if literal_class and isinstance(literal_class, types.ClassType) {
+        if ty.shared == literal_class.shared {
+            if len(ty.private.type_args) > 0 {
+                underlying = ty.private.type_args[0];
+                return underlying;
+            }
+        }
+    }
+    return ty;
+}
+
+"""
+Unwrap Final types to get the underlying type.
+
+Final[T] -> T
+If the type is not a Final type, returns it unchanged.
+"""
+impl unwrap_final_type(
+    ty: types.TypeBase, final_class: types.TypeBase | None
+) -> types.TypeBase {
+    if not isinstance(ty, types.ClassType) {
+        return ty;
+    }
+    # Unwrap Final types
+    # Final[T] should be treated as T
+    # TODO: We can actually check if the Final type is modified and
+    # prevent that, but for now just unwrap it.
+    if final_class and isinstance(final_class, types.ClassType) {
+        if ty.shared == final_class.shared {
+            if len(ty.private.type_args) > 0 {
+                underlying = ty.private.type_args[0];
+                return underlying;
+            }
+        }
+    }
+    return ty;
+}
+
+"""
+Recursively unwrap Final and Literal types until there's nothing left to unwrap.
+
+Handles nested cases like Literal[Final[T]] or Final[Literal[T]].
+Examples:
+- Final[T] -> T
+- Literal[T] -> T
+- Literal[Final[T]] -> T
+- Final[Literal[T]] -> T
+- Final[Literal[Final[T]]] -> T
+"""
+impl type_unwrap(
+    ty: types.TypeBase,
+    final_class: types.TypeBase | None,
+    literal_class: types.TypeBase | None,
+) -> types.TypeBase {
+    if not isinstance(ty, types.ClassType) {
+        return ty;
+    }
+    # Keep unwrapping until no more Final or Literal wrappers remain
+    prev_ty: types.TypeBase | None = None;
+    current_ty: types.TypeBase = ty;
+    # Limit recursion to prevent infinite loops (shouldn't happen in practice)
+    max_iterations = 100;
+    iteration = 0;
+    while iteration < max_iterations {
+        iteration += 1;
+        prev_ty = current_ty;
+        # Try unwrapping Final first
+        current_ty = unwrap_final_type(current_ty, final_class);
+        # Then try unwrapping Literal
+        current_ty = unwrap_literal_type(current_ty, literal_class);
+        # If nothing changed, we're done
+        if current_ty == prev_ty {
+            break;
+        }
+        # If the unwrapped type is no longer a ClassType, we're done
+        if not isinstance(current_ty, types.ClassType) {
+            break;
+        }
+    }
+    return current_ty;
+}
