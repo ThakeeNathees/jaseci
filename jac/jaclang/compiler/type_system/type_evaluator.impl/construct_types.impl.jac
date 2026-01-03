@@ -123,11 +123,17 @@ impl TypeEvaluator.get_type_of_ability(
 
         # For Python stub methods, check if first parameter is named 'self' or 'cls'
         # In addition to the Jac-specific checks
+        # Note: For static methods, 'self' is just a regular parameter, not special
         is_self_param = (
             idx == 0
             and (
                 self._is_expr_self(param.name)
-                or (isinstance(param.name, uni.Name) and param.name.value == "self")
+                or (
+                    isinstance(param.name, uni.Name)
+                    and param.name.value == "self"
+                    and node_.signature
+                    and not node_.signature.is_static
+                )
             )
         );
         is_cls_param = (
