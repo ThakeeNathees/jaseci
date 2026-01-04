@@ -186,7 +186,7 @@ class TypeEvaluator {
         obj_type: TypeBase,
         method_name: str,
         arg_nodes: list[uni.Expr],
-        node_for_error: uni.Expr | None = None,
+        node_for_error: uni.Expr | None = None
     ) -> TypeBase | None;
 
     def is_sub_class(
@@ -250,7 +250,7 @@ class TypeEvaluator {
         arg_nodes: list[uni.Expr | uni.KWPair],
         node_for_error: uni.Expr | None,
         func_type: types.FunctionType,
-        checking_overload: bool = False,
+        checking_overload: bool = False
     ) -> MatchArgsToParamsResult;
 
     def validate_call_args(self: TypeEvaluator, expr: uni.FuncCall) -> TypeBase;
