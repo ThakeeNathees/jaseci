@@ -147,16 +147,51 @@ impl serve(
     Jac.set_base_path(base);
     try {
         if filename.endswith(('.jac', '.py')) {
-            Jac.jac_import(target=mod, base_path=base, lng=lng);
+            Jac.jac_import(
+                target=mod,
+                base_path=base,
+                override_name='__main__' if main else None,
+                lng=lng
+            );
         } elif filename.endswith('.jir') {
             with open(filename, 'rb') as f {
                 Jac.attach_program(pickle.load(f));
-                Jac.jac_import(target=mod, base_path=base, lng=lng);
+                Jac.jac_import(
+                    target=mod,
+                    base_path=base,
+                    override_name='__main__' if main else None,
+                    lng=lng
+                );
             }
         }
+        # Check if module was successfully loaded
+        expected_module_name = '__main__' if main else mod;
+        module_loaded = expected_module_name in Jac.loaded_modules;
         if Jac.program.errors_had {
             for error in Jac.program.errors_had {
                 print(f"Error: {error}", file=sys.stderr);
+            }
+            # In faux mode, still try to print docs if module was loaded
+            if faux and module_loaded {
+                session_path = session or os.path.join(base, f"{mod}.session");
+                server = JacAPIServer(
+                    module_name=expected_module_name,
+                    session_path=session_path,
+                    port=port,
+                    base_path=base
+                );
+                try {
+                    server.print_endpoint_docs();
+                    mach.close();
+                    return;
+                } except Exception as e {
+                    print(
+                        f"Error generating endpoint documentation: {e}",
+                        file=sys.stderr
+                    );
+                    mach.close();
+                    <>exit(1);
+                }
             }
             mach.close();
             <>exit(1);
@@ -167,8 +202,12 @@ impl serve(
         <>exit(1);
     }
     session_path = session or os.path.join(base, f"{mod}.session");
+    expected_module_name = '__main__' if main else mod;
     server = JacAPIServer(
-        module_name=mod, session_path=session_path, port=port, base_path=base
+        module_name=expected_module_name,
+        session_path=session_path,
+        port=port,
+        base_path=base
     );
     if faux {
         try {
