@@ -188,6 +188,7 @@ impl TypeEvaluator.get_type_of_class(
     # other classes are with symbol type TYPE.
     # TODO: We need to handle @dataclass decorator as well.
     is_data_class = node_.sym_category != SymbolType.TYPE;
+    is_enum_class = node_.sym_category == SymbolType.ENUM_ARCH;
     cls_type = types.ClassType(
         types.ClassType.ClassDetailsShared(
             class_name=node_.name_spec.sym_name,
@@ -196,6 +197,7 @@ impl TypeEvaluator.get_type_of_class(
             base_classes=base_classes,
             is_builtin_class=is_builtin_class,
             is_data_class=is_data_class,
+            is_enum_class=is_enum_class,
         ),
         private=None,
         flags=types.TypeFlags.Instantiable,
