@@ -560,7 +560,7 @@ impl TypeEvaluator.is_any_type(self: TypeEvaluator, ty: TypeBase) -> bool {
         if ty.is_builtin("object") {
             return True;
         }
-        if ty.shared == self.prefetch.any_class.shared {
+        if (self.prefetch.any_class and ty.shared == self.prefetch.any_class.shared) {
             return True;
         }
         if (
