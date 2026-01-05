@@ -577,12 +577,11 @@ impl TypeEvaluator.is_any_type(self: TypeEvaluator, ty: TypeBase) -> bool {
 impl TypeEvaluator.assign_type(
     self: TypeEvaluator, src_type: TypeBase, dest_type: TypeBase
 ) -> bool {
-    if types.TypeCategory.Unknown in (src_type.category, dest_type.category) {
-        # NOTE: For now if we don't have the type info, we assume it's compatible.
-        # For strict mode we should disallow usage of unknown unless explicitly ignored.
+    if src_type == dest_type {
         return True;
     }
-    if src_type == dest_type {
+    # Everything is assignable to object, Any, Unknown, or TypeVar.
+    if self.is_any_type(dest_type) or self.is_any_type(src_type) {
         return True;
     }
     # If destination is a union type, check if source is compatible with any of the
@@ -594,10 +593,6 @@ impl TypeEvaluator.assign_type(
                 return True;
             }
         }
-    }
-    # Everything is assignable to object, Any, Unknown, or TypeVar.
-    if self.is_any_type(dest_type) {
-        return True;
     }
     if dest_type.is_class_instance() and src_type.is_class_instance() {
         assert isinstance(dest_type, types.ClassType);
