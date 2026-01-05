@@ -167,6 +167,8 @@ class TypeEvaluator {
     def get_type_of_float(self: TypeEvaluator, node: uni.Float) -> TypeBase;
     # Pyright equivalent function name = getTypeOfExpression();
     def get_type_of_expression(self: TypeEvaluator, node_: uni.Expr) -> TypeBase;
+    # Check if a type is Any, object, Unknown, or TypeVar.
+    def is_any_type(self: TypeEvaluator, ty: TypeBase) -> bool;
     # Comments from pyright:
     # // Determines if the source type can be assigned to the dest type.
     # // If constraint are provided, type variables within the destType are

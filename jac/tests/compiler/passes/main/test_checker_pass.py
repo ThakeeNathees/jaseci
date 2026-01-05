@@ -1083,3 +1083,12 @@ def test_union_type_annotation(fixture_path: Callable[[str], str]) -> None:
     TypeCheckPass(ir_in=mod, prog=program)
     # Should have no errors - int | None annotation should be valid
     assert len(program.errors_had) == 0
+
+
+def test_list_indexing(fixture_path: Callable[[str], str]) -> None:
+    """Test that list indexing works correctly and can be used with len()."""
+    program = JacProgram()
+    mod = program.compile(fixture_path("checker_list_indexing.jac"))
+    TypeCheckPass(ir_in=mod, prog=program)
+    # Should have no errors - len(some[0]) should work correctly
+    assert len(program.errors_had) == 0

@@ -545,6 +545,34 @@ impl TypeEvaluator.get_type_of_magic_method_call(
     return None;
 }
 
+"""Check if a type is Any, object, Unknown, or TypeVar."""
+impl TypeEvaluator.is_any_type(self: TypeEvaluator, ty: TypeBase) -> bool {
+    # Check for UnknownType
+    if isinstance(ty, types.UnknownType) {
+        return True;
+    }
+    # Check for TypeVarType
+    if isinstance(ty, types.TypeVarType) {
+        return True;
+    }
+    # Check for object, Any, or TypeVar class types
+    if isinstance(ty, types.ClassType) {
+        if ty.is_builtin("object") {
+            return True;
+        }
+        if ty.shared == self.prefetch.any_class.shared {
+            return True;
+        }
+        if (
+            self.prefetch.type_var_class
+            and ty.shared == self.prefetch.type_var_class.shared
+        ) {
+            return True;
+        }
+    }
+    return False;
+}
+
 """Assign the source type to the destination type."""
 impl TypeEvaluator.assign_type(
     self: TypeEvaluator, src_type: TypeBase, dest_type: TypeBase
@@ -567,12 +595,8 @@ impl TypeEvaluator.assign_type(
             }
         }
     }
-    # Everything is assignable to object or Any.
-    if isinstance(dest_type, types.ClassType)
-    and (
-        dest_type.is_builtin("object")
-        or dest_type.shared == self.prefetch.any_class.shared
-    ) {
+    # Everything is assignable to object, Any, Unknown, or TypeVar.
+    if self.is_any_type(dest_type) {
         return True;
     }
     if dest_type.is_class_instance() and src_type.is_class_instance() {
