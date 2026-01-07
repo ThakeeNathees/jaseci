@@ -26,6 +26,12 @@ impl TypeEvaluator._get_type_of_expression_core(expr: uni.Expr) -> TypeBase {
                 return self._convert_to_instance(self.prefetch.none_type_class);
             }
 
+        case uni.ListVal():
+            if self.prefetch and self.prefetch.list_class {
+                # TODO: We can do some inference inside the list to get the element type.
+                return self._convert_to_instance(self.prefetch.list_class);
+            }
+
         # TODO: Boolean literals.
 
         # ----------------------------------------------------------------------
@@ -682,6 +688,7 @@ impl TypeEvaluator._prefetch_types{
     self.prefetch.float_class = get_builtin_type("float");
     self.prefetch.str_class = get_builtin_type("str");
     self.prefetch.dict_class = get_builtin_type("dict");
+    self.prefetch.list_class = get_builtin_type("list");
     # self.prefetch.module_type_class =
     # self.prefetch.typed_dict_class =
     # self.prefetch.typed_dict_private_class =

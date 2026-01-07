@@ -35,6 +35,21 @@ def test_explicit_type_annotation_in_assignment(
     )
 
 
+def test_list_assignment_to_int(fixture_path: Callable[[str], str]) -> None:
+    """Test that assigning a list to an int variable produces an error."""
+    program = JacProgram()
+    mod = program.compile(fixture_path("checker_list_assignment.jac"))
+    TypeCheckPass(ir_in=mod, prog=program)
+    assert len(program.errors_had) == 1
+    _assert_error_pretty_found(
+        """
+        foo = [1,2,3];  # <-- Error
+        ^^^^^^^^^^^^^^
+    """,
+        program.errors_had[0].pretty_print(),
+    )
+
+
 def test_float_types(fixture_path: Callable[[str], str]) -> None:
     program = JacProgram()
     mod = program.compile(fixture_path("checker_float.jac"))
