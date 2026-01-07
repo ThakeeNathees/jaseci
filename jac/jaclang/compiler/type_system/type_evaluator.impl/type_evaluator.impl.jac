@@ -341,6 +341,20 @@ impl TypeEvaluator._get_type_of_symbol(symbol: uni.Symbol) -> TypeBase {
         case uni.ParamVar():
             if node_.type_tag {
                 annotation_type = self.get_type_of_expression(node_.type_tag.tag);
+                if node_.is_vararg {
+                    # FIXME: *args are actually a tuple, not a list. But tuples are
+                    # complicated to handle, so we'll use list for now. Will revisit this later.
+                    param_type = self.prefetch.list_class.clone_as_instance();
+                    param_type.private.type_args = [annotation_type];
+                    return param_type;
+                } elif node_.is_kwargs {
+                    param_type = self.prefetch.dict_class.clone_as_instance();
+                    param_type.private.type_args = [
+                        self.prefetch.str_class,
+                        annotation_type
+                    ];
+                    return param_type;
+                }
                 return self._convert_to_instance(annotation_type);
             }
 
@@ -522,6 +536,13 @@ impl TypeEvaluator.get_type_of_magic_method_call(
             if isinstance(member_ty, types.FunctionType) {
                 member_ty = member_ty.specialize(obj_type);
                 overloaded_fns.append(member_ty);
+                for overload in member.overloads {
+                    overload_member_ty = self.get_type_of_symbol(overload);
+                    if isinstance(overload_member_ty, types.FunctionType) {
+                        overload_member_ty = overload_member_ty.specialize(obj_type);
+                        overloaded_fns.append(overload_member_ty);
+                    }
+                }
                 # Validate arguments for each overloaded function.
                 for fn in overloaded_fns {
                     arg_param_match = self.match_args_to_params(
