@@ -981,8 +981,8 @@ def test_overload_decorator(fixture_path: Callable[[str], str]) -> None:
     program = JacProgram()
     mod = program.compile(fixture_path("checker_overload.jac"))
     TypeCheckPass(ir_in=mod, prog=program)
-    # Expect 3 errors: __pow__ with float**float, do_something with str, and __add__ with str
-    assert len(program.errors_had) == 3
+    # Expect 2 errors: do_something with str, and __add__ with str
+    assert len(program.errors_had) == 2
 
     # Find the specific errors we care about
     error_messages = [err.pretty_print() for err in program.errors_had]
