@@ -900,6 +900,15 @@ def test_classmethod(fixture_path: Callable[[str], str]) -> None:
     TypeCheckPass(ir_in=mod, prog=program)
 
 
+def test_datetime_now(fixture_path: Callable[[str], str]) -> None:
+    """Test datetime.now() classmethod - cls parameter should be skipped for parameter check."""
+    program = JacProgram()
+    mod = program.compile(fixture_path("checker_datetime_now.jac"))
+    TypeCheckPass(ir_in=mod, prog=program)
+    # Should have no errors - datetime.now() is a classmethod and cls parameter should be skipped
+    assert len(program.errors_had) == 0
+
+
 def test_any_type_works_with_any_type(fixture_path: Callable[[str], str]) -> None:
     """Test stdlib typing module imports and Any type work correctly."""
     program = JacProgram()
