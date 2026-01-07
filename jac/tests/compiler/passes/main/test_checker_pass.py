@@ -1098,12 +1098,19 @@ def test_builtin_constructors(fixture_path: Callable[[str], str]) -> None:
 
 
 def test_union_type_annotation(fixture_path: Callable[[str], str]) -> None:
-    """Test union type annotation with None (e.g., int | None)."""
+    """Test union type annotation with None (e.g., int | None) and union subset checking."""
     program = JacProgram()
     mod = program.compile(fixture_path("checker_union_type_annotation.jac"))
     TypeCheckPass(ir_in=mod, prog=program)
-    # Should have no errors - int | None annotation should be valid
-    assert len(program.errors_had) == 0
+    # Should have 1 error - int | str is not subset of int | None
+    assert len(program.errors_had) == 1
+    _assert_error_pretty_found(
+        """
+        a: int | None = get_int_or_str();  # <-- Error: int | str is not subset of int | None
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    """,
+        program.errors_had[0].pretty_print(),
+    )
 
 
 def test_list_indexing(fixture_path: Callable[[str], str]) -> None:
