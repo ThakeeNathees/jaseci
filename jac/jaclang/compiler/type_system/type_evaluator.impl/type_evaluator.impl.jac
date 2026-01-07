@@ -259,7 +259,9 @@ impl TypeEvaluator._get_type_of_expression_core(expr: uni.Expr) -> TypeBase {
             }
 
             if scope := expr.find_parent_of_type(uni.UniScopeNode) {
-                if symbol := scope.lookup(expr.value, deep=True, incl_inner_scope=True) {
+                if symbol := type_utils.lookup_symtab(
+                    scope, expr.value, self.builtins_module
+                ) {
                     symbol = self.resolve_imported_symbols(symbol);
                     symbol.add_use(expr);
                     # Only set sym if not already set (preserves existing symbol info for declarations)

@@ -2781,14 +2781,19 @@ impl PyastBuildPass.proc_function_def(
             sig.add_kids_right([sig.return_type]);
         }
     }
-    kid = (
-        ([doc] if doc else []) + (
-            [name, sig, *valid_body] if sig else [name, *valid_body]
-        )
-    );
     if not sig {
         raise self.ice('Function signature not found') ;
     }
+    kid = [];
+    if doc {
+        kid.append(doc);
+    }
+    if valid_decorators {
+        kid.extend(valid_decorators);
+    }
+    kid.append(name);
+    kid.append(sig);
+    kid.extend(valid_body);
     ret = uni.Ability(
         name_ref=name,
         is_async=False,
