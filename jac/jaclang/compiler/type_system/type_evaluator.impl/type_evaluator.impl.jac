@@ -615,6 +615,27 @@ impl TypeEvaluator.assign_type(src_type: TypeBase, dest_type: TypeBase) -> bool 
     # If destination is a union type, check if source is compatible with any of the
     # constituent types.
     if isinstance(dest_type, types.UnionType) {
+        # TODO: pre mature optimization is the root of all evil.
+        # If source is also union, we need to check if the source type args are subset of the dest type args.
+        if isinstance(src_type, types.UnionType) {
+            for src_type_arg in src_type.types {
+                matched = False;
+                src_type_inst = self._convert_to_instance(src_type_arg);
+                for dest_type_arg in dest_type.types {
+                    dest_type_inst = self._convert_to_instance(dest_type_arg);
+                    if self.assign_type(src_type_inst, dest_type_inst) {
+                        matched = True;
+                        break;  # Break out of the inner loop.
+                    }
+                }
+                # If we didn't find a match for this src_type_arg, return False.
+                if not matched {
+                    return False;
+                }
+            }
+            # If we reached here, all src_type_args matched at least one dest_type_arg.
+            return True;
+        }
         for union_type in dest_type.types {
             new_dest_type = self._convert_to_instance(union_type);
             if self.assign_type(src_type, new_dest_type) {
