@@ -2764,6 +2764,22 @@ impl PyastBuildPass.proc_function_def(
     else None;
     self.in_type_annotation = True;
     ret_sig = self.convert(<>node.returns) if <>node.returns else None;
+    # NOTE: if python function doesn't have a return annotation, we set the return type to "object"
+    # because no return considerred as returning "None value".
+    if ret_sig is None {
+        ret_sig = uni.Name(
+            orig_src=self.orig_src,
+            name=Tok.NAME,
+            value='object',
+            line=<>node.lineno,
+            end_line=<>node.lineno,
+            col_start=<>node.col_offset,
+            col_end=<>node.col_offset,
+            pos_start=0,
+            pos_end=0,
+            is_kwesc=False,
+        );
+    }
     self.in_type_annotation = False;
     if isinstance(ret_sig, uni.Expr) {
         if not sig {
