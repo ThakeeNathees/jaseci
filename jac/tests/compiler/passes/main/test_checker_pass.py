@@ -1122,3 +1122,38 @@ def test_range_function(fixture_path: Callable[[str], str]) -> None:
     TypeCheckPass(ir_in=mod, prog=program)
     # Should have no errors - range() should work with 1 or 2 arguments
     assert len(program.errors_had) == 0
+
+
+def test_varargs_type_checking(fixture_path: Callable[[str], str]) -> None:
+    """Test type checking for variadic parameters (*args, **kwargs)."""
+    program = JacProgram()
+    mod = program.compile(fixture_path("checker_varargs_type.jac"))
+    TypeCheckPass(ir_in=mod, prog=program)
+    # Expect 4 errors:
+    # 1. y: int = b; (b is tuple, not int)
+    # 2. z: str = c; (c is dict, not str)
+    # 3. i: str = b[1]; (b[1] is int, not str)
+    # 4. k: int = c["a"]; (c["a"] is str, not int)
+    assert len(program.errors_had) == 4
+
+    expected_errors = [
+        """
+        y: int = b;  # <-- Error
+        ^^^^^^^^^^^
+        """,
+        """
+        z: str = c;  # <-- Error
+        ^^^^^^^^^^^
+        """,
+        """
+        i: str = b[1]; # <-- Error
+        ^^^^^^^^^^^^^
+        """,
+        """
+        k: int = c["a"]; # <-- Error
+        ^^^^^^^^^^^^^^^
+        """,
+    ]
+
+    for i, expected in enumerate(expected_errors):
+        _assert_error_pretty_found(expected, program.errors_had[i].pretty_print())
