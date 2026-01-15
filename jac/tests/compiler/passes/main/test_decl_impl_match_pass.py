@@ -215,3 +215,15 @@ def test_impl_body_symbol_resolution(fixture_path: Callable[[str], str]) -> None
                 assert chain[0].sym.sym_name == "self", (
                     f"Expected 'self' symbol, got {chain[0].sym.sym_name}"
                 )
+
+
+def test_edge_type_resolution_in_impl(fixture_path: Callable[[str], str]) -> None:
+    """Test that edge types in node ability impls are resolved correctly.
+
+    This tests the fix for symbol resolution in .impl.jac files where edge types
+    used in expressions like 'self +>: EdgeType :+> self' weren't being resolved
+    because the impl file's lookup didn't use the base module's scope.
+    """
+    out = JacProgram()
+    out.compile(fixture_path("node_edge_ability.jac"))
+    assert len(out.errors_had) == 0, f"Expected no errors, got: {out.errors_had}"

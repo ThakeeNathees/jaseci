@@ -20,13 +20,15 @@ impl lookup_symtab(
     mod: (uni.Module | None) = None;
     if isinstance(symtable, uni.Module) {
         mod = symtable;
+    } elif isinstance(symtable, uni.ImplDef) and symtable.decl_link {
+        mod = symtable.decl_link.find_parent_of_type(uni.Module);
     } else {
         mod = symtable.find_parent_of_type(uni.Module);
     }
     if (mod and ((mod.parent_scope is None) and (mod != builtins_to_inject))) {
         mod.parent_scope = builtins_to_inject;
     }
-    return symtable.lookup(name, deep=True, incl_inner_scope=True);
+    return mod.lookup(name, deep=True, incl_inner_scope=True);
 }
 
 """Return a list of completion items for the type."""
