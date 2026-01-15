@@ -28,7 +28,7 @@ impl lookup_symtab(
     if (mod and ((mod.parent_scope is None) and (mod != builtins_to_inject))) {
         mod.parent_scope = builtins_to_inject;
     }
-    return mod.lookup(name, deep=True, incl_inner_scope=True);
+    return symtable.lookup(name, deep=True, incl_inner_scope=True);
 }
 
 """Return a list of completion items for the type."""

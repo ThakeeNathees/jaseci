@@ -410,6 +410,14 @@ class UniScopeNode(UniNode):
         ):
             return sym
 
+        if (
+            deep
+            and isinstance(self, ImplDef)
+            and isinstance(self.decl_link, UniScopeNode)
+            and (sym := self.decl_link.lookup(name, deep, incl_inner_scope))
+        ):
+            return sym
+
         if incl_inner_scope:
             for kid in self.kid_scope:
                 if isinstance(
