@@ -143,7 +143,14 @@ def get_type_of_binary_operation(
             );
         }
         # If both methods fail, emit diagnostic and return UnknownType
-        return result or jtypes.UnknownType();
+        if result is None {
+            evaluator.add_diagnostic(
+                expr,
+                f'No matching overload found for method "{magic}" with the given arguments'
+            );
+            return jtypes.UnknownType();
+        }
+        return result;
     }
 
     # Connection operations
