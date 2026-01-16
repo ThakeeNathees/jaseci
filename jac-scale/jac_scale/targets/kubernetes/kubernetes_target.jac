@@ -299,7 +299,7 @@ class KubernetesTarget(DeploymentTarget) {
             'command': [
                 'sh',
                 '-c',
-                f"mkdir -p {self.k8s_config.app_mount_path} && rm -rf {self.k8s_config.app_mount_path}/* && cp -r {self.k8s_config.workspace_path}/. {self.k8s_config.app_mount_path}/"
+                f"mkdir -p {self.k8s_config.app_mount_path} && rm -rf {self.k8s_config.app_mount_path}/* && rsync -av --exclude='.jac' {self.k8s_config.workspace_path}/ {self.k8s_config.app_mount_path}/"
             ],
             'volumeMounts': [
                 {'name': 'app-code', 'mountPath': self.k8s_config.app_mount_path},
@@ -706,9 +706,7 @@ class KubernetesTarget(DeploymentTarget) {
                         core_v1.delete_namespaced_persistent_volume_claim(
                             name=pvc.metadata.name, namespace=namespace
                         );
-                    } except Exception {
-                        pass;
-                    }
+                    } except Exception { }
                 }
             }
 
