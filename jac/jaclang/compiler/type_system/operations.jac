@@ -37,12 +37,8 @@ glob BINARY_OPERATOR_MAP:
          Tok.LTE: ('__le__', '__ge__'),
          Tok.GT: ('__gt__', '__lt__'),
          Tok.GTE: ('__ge__', '__le__')
-     };
-
-# Arithmetic operators that support numeric type promotion (int -> float)
-glob ARITHMETIC_OPERATORS: set[str] = {
-    Tok.PLUS, Tok.MINUS, Tok.STAR_MUL, Tok.DIV, Tok.FLOOR_DIV, Tok.MOD, Tok.STAR_POW
-};
+     },
+     ARITHMETIC_OPERATORS: set[str] = {Tok.PLUS,Tok.MINUS,Tok.STAR_MUL,Tok.DIV,Tok.FLOOR_DIV,Tok.MOD,Tok.STAR_POW};
 
 """
 Apply numeric type promotion for arithmetic operations.
@@ -62,7 +58,8 @@ def get_numeric_promotion_type(
     op: str
 ) -> jtypes.TypeBase | None {
     # Check if both types are numeric (int or float)
-    if not isinstance(left_type, jtypes.ClassType) or not isinstance(right_type, jtypes.ClassType) {
+    if not isinstance(left_type, jtypes.ClassType)
+    or not isinstance(right_type, jtypes.ClassType) {
         return None;
     }
     left_is_int = left_type.is_builtin("int");
@@ -126,7 +123,6 @@ def get_type_of_binary_operation(
             }
         }
         (magic, rmagic) = BINARY_OPERATOR_MAP[expr.op.name];
-
         # Apply numeric type promotion for arithmetic operations (int -> float)
         if expr.op.name in ARITHMETIC_OPERATORS {
             promoted_type = get_numeric_promotion_type(
@@ -136,7 +132,6 @@ def get_type_of_binary_operation(
                 return promoted_type;
             }
         }
-
         # Try forward magic method first (e.g., left.__add__(right))
         result = evaluator.get_type_of_magic_method_call(
             left_type, magic, [expr.right], None
@@ -234,3 +229,4 @@ def get_type_of_binary_operation(
     }
     return jtypes.UnknownType();
 }
+# Arithmetic operators that support numeric type promotion (int -> float)
