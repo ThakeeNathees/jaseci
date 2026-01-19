@@ -40,11 +40,11 @@ def test_module_type_str() -> None:
     # Test with mod_name
     module1 = types.ModuleType(mod_name="test_module")
     assert str(module1) == "<module test_module>"
-    
+
     # Test with file_uri
     module2 = types.ModuleType(file_uri=Path("/path/to/module.jac"))
     assert str(module2) == "<module /path/to/module.jac>"
-    
+
     # Test with empty/default values
     module3 = types.ModuleType()
     assert str(module3) == "<module>"
@@ -55,7 +55,7 @@ def test_function_type_str() -> None:
     # Test function with no parameters
     func1 = types.FunctionType(func_name="test_func")
     assert str(func1) == "<function test_func()>"
-    
+
     # Test function with parameters
     param1 = types.Parameter(
         name="x",
@@ -73,14 +73,14 @@ def test_function_type_str() -> None:
         return_type=types.AnyType(),
     )
     assert str(func2) == "<function add(x: <Any>, y: <Any>) -> <Any>>"
-    
+
     # Test function with return type only
     func3 = types.FunctionType(
         func_name="get_value",
         return_type=types.AnyType(),
     )
     assert str(func3) == "<function get_value() -> <Any>>"
-    
+
     # Test anonymous function
     func4 = types.FunctionType()
     assert str(func4) == "<function <anonymous>()>"
@@ -91,7 +91,7 @@ def test_overloaded_type_str() -> None:
     # Test with no overloads
     overload1 = types.OverloadedType()
     assert str(overload1) == "<overload 0 overloads>"
-    
+
     # Test with overloads
     func1 = types.FunctionType(func_name="test")
     func2 = types.FunctionType(func_name="test")
@@ -104,20 +104,22 @@ def test_union_type_str() -> None:
     # Test empty union
     union1 = types.UnionType(types=[])
     assert str(union1) == "<Union>"
-    
+
     # Test union with types
     int_type = types.AnyType()  # Using AnyType as placeholder
     str_type = types.AnyType()
     union2 = types.UnionType(types=[int_type, str_type])
     # Since both are AnyType, they'll both stringify to "<Any>"
     assert str(union2) == "<Any> | <Any>"
-    
+
     # Test union with different types
-    union3 = types.UnionType(types=[
-        types.UnknownType(),
-        types.NeverType(),
-        types.AnyType(),
-    ])
+    union3 = types.UnionType(
+        types=[
+            types.UnknownType(),
+            types.NeverType(),
+            types.AnyType(),
+        ]
+    )
     assert str(union3) == "<Unknown> | <Never> | <Any>"
 
 
@@ -127,13 +129,14 @@ def test_class_type_str() -> None:
     # Note: ClassType requires a proper symbol_table (UniScopeNode)
     # We'll use unittest.mock to create a minimal mock
     from unittest.mock import MagicMock
+
     from jaclang.pycore.unitree import Module
-    
+
     # Create a mock symbol table with required attributes
     mock_module = MagicMock(spec=Module)
     mock_module.names_in_scope = {}
     mock_module.names_in_scope_overload = {}
-    
+
     shared = types.ClassType.ClassDetailsShared(
         class_name="TestClass",
         symbol_table=mock_module,
