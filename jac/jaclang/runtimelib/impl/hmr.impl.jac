@@ -3,11 +3,15 @@
 Handles file change events and coordinates module reloading.
 """
 
+import logging;
 import os;
 import sys;
 import time;
 import from pathlib { Path }
 import from typing { Any }
+import from jaclang.pycore.constant { CodeContext }
+
+glob logger = logging.getLogger(__name__);
 
 """Start the hot reloader and begin watching for changes."""
 impl HotReloader.start -> None {
@@ -19,7 +23,7 @@ impl HotReloader.start -> None {
     # Start watching
     self.watcher.start();
     self._running = True;
-    print(f"[HMR] Hot reloader started for module: {self.module_name}", flush=True);
+    logger.debug(f"Hot reloader started for module: {self.module_name}");
 }
 
 """Stop the hot reloader and file watcher."""
@@ -30,7 +34,7 @@ impl HotReloader.stop -> None {
     self._running = False;
     # Stop the watcher
     self.watcher.stop();
-    print("[HMR] Hot reloader stopped", flush=True);
+    logger.debug("Hot reloader stopped");
 }
 
 """Callback for file change events from the watcher."""
@@ -145,8 +149,20 @@ impl HotReloader._recompile_client_code(file_path: str) -> None {
             js_code = jac_runtime_import + '\n' + js_code;
         }
 
-        # Ensure output directory exists
-        output_dir = Path(self.base_path) / self._client_output_dir;
+        # Preserve directory structure: components/AuthForm.cl.jac -> components/AuthForm.js
+        base_dir = Path(self.base_path).resolve();
+        source_dir = source_path.parent;
+        try {
+            # Get the relative path from base_path to source file's directory
+            rel_dir = source_dir.relative_to(base_dir);
+        } except ValueError {
+            # File is not under base_path, put in root
+            rel_dir = Path('.');
+        }
+
+        # Build output path preserving directory structure
+        output_base = Path(self.base_path) / self._client_output_dir;
+        output_dir = output_base / rel_dir;
         output_dir.mkdir(parents=True, exist_ok=True);
 
         # Generate output filename (foo.jac -> foo.js, foo.cl.jac -> foo.js)
@@ -191,10 +207,10 @@ impl HotReloader._classify_declarations(file_path: str) -> tuple[bool, bool] {
         prog = JacProgram();
         mod = prog.compile(file_path, no_cgen=True);
 
-        # Check top-level declarations in module body for is_client_decl
+        # Check top-level declarations in module body for code_context
         for node in mod.body {
-            if node?.is_client_decl {
-                if node.is_client_decl {
+            if node?.code_context {
+                if node.code_context == CodeContext.CLIENT {
                     has_client = True;
                 } else {
                     has_server = True;

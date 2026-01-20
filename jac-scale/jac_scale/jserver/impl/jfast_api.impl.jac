@@ -58,7 +58,8 @@ impl JFastApiServer.run_server(
     self: JFastApiServer, host: str = '0.0.0.0', port: int = 8000
 ) -> None {
     app = self.create_server();
-    uvicorn.run(app, host=host, port=port);
+    # Suppress INFO logs to avoid duplicate server messages (we show our own JAC DEV SERVER banner)
+    uvicorn.run(app, host=host, port=port, log_level="warning");
 }
 
 """Get the underlying FastAPI application instance."""
@@ -298,7 +299,7 @@ impl JFastApiServer._create_endpoint_function(
                 if required {
                     param_str = f"{param_name}: {type_name} = Header(..., description='{description}')";
                 } elif (default_value is None) {
-                    param_str = f"{param_name}: Optional[{type_name}] = Header(description='{description}')";
+                    param_str = f"{param_name}: Optional[{type_name}] = Header(default=None, description='{description}')";
                 } else {
                     param_str = f"{param_name}: Optional[{type_name}] = Header({repr(
                         default_value
