@@ -142,8 +142,14 @@ def get_type_of_binary_operation(
                 right_type, rmagic, [expr.left], None
             );
         }
-        # If both methods fail, emit diagnostic and return UnknownType
+        # If both methods fail, handle specially for | operator, else emit diagnostic
         if result is None {
+            # For | operator, fall back to UnionType when magic method fails.
+            # This handles type annotation contexts where | is used for union types
+            # but operands weren't detected as annotation types by is_annotation_type().
+            if expr.op.name == Tok.BW_OR {
+                return jtypes.UnionType(types=[left_type, right_type]);
+            }
             evaluator.add_diagnostic(
                 expr,
                 f'No matching overload found for method "{magic}" with the given arguments'
