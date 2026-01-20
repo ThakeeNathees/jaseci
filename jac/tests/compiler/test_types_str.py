@@ -96,11 +96,13 @@ def test_all_type_str_methods() -> None:
     assert str(union2) == "<Any> | <Any>"
 
     # Test UnionType - union with different types
-    union3 = types.UnionType(types=[
-        types.UnknownType(),
-        types.NeverType(),
-        types.AnyType(),
-    ])
+    union3 = types.UnionType(
+        types=[
+            types.UnknownType(),
+            types.NeverType(),
+            types.AnyType(),
+        ]
+    )
     assert str(union3) == "<Unknown> | <Never> | <Any>"
 
     # Test ClassType
