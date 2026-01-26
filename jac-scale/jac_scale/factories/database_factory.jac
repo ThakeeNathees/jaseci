@@ -5,20 +5,6 @@ import from jac_scale.abstractions.deployment_target { DeploymentTarget }
 
 """Factory for creating database provider instances."""
 class DatabaseProviderFactory {
-    """Create a database provider based on type.
-
-    Args:
-        provider_type: Type of database provider ('kubernetes_mongo', 'kubernetes_redis', etc.)
-        target: Deployment target instance (for target-specific providers)
-        config: Optional provider-specific configuration
-
-    Returns:
-        DatabaseProvider instance
-
-    Raises:
-        ValueError: If provider_type is not supported
-        NotImplementedError: If provider is not yet implemented
-    """
     static def create(
         provider_type: str,
         target: (DeploymentTarget | None) = None,

@@ -1111,7 +1111,6 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
     server = self;
     """Handle HTTP requests.""";
     class JacRequestHandler(BaseHTTPRequestHandler) {
-        """Extract auth token from Authorization header."""
         def _get_auth_token(self: JacRequestHandler) -> (str | None) {
             auth_header = self.headers.get('Authorization');
             return auth_header[7:]
@@ -1119,13 +1118,11 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
             else None;
         }
 
-        """Authenticate request and return username."""
         def _authenticate(self: JacRequestHandler) -> (str | None) {
             token = self._get_auth_token();
             return server.user_manager.validate_token(token) if token else None;
         }
 
-        """Read and parse JSON from request body."""
         def _read_json(self: JacRequestHandler) -> dict[str, Any] {
             content_length = int(self.headers.get('Content-Length', 0));
             body = self.rfile.read(content_length).decode()
@@ -1134,10 +1131,6 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
             return json.loads(body);
         }
 
-        """Send response to client (supports both Response and TransportResponse).
-
-        Uses HTTPTransport to demonstrate transport abstraction layer.
-        """
         def _send_response(
             self: JacRequestHandler, response: (Response | TransportResponse)
         ) -> None {
@@ -1150,7 +1143,6 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
             }
         }
 
-        """Handle OPTIONS requests (CORS preflight)."""
         def do_OPTIONS(self: JacRequestHandler) -> None {
             self.send_response(200);
             ResponseBuilder._add_cors_headers(self);
@@ -1158,7 +1150,6 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
             self.end_headers();
         }
 
-        """Handle GET requests."""
         def do_GET(self: JacRequestHandler) -> None {
             parsed_path = urlparse(self.path);
             path = parsed_path.path;
@@ -1429,7 +1420,6 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
             }
         }
 
-        """Handle POST requests."""
         def do_POST(self: JacRequestHandler) -> None {
             parsed_path = urlparse(self.path);
             path = parsed_path.path;
@@ -1509,7 +1499,6 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
             }
         }
 
-        """Handle PUT requests for user updates."""
         def do_PUT(self: JacRequestHandler) -> None {
             parsed_path = urlparse(self.path);
             path = parsed_path.path;
@@ -1552,7 +1541,6 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
             Jac.send_json(self, 404, {'error': 'Not found'});
         }
 
-        """Log HTTP requests."""
         def log_message(self: JacRequestHandler, format: str, *args: object) -> None {
             print(f"{self.address_string()} - {(format % args)}");
         }

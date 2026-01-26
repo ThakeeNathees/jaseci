@@ -786,7 +786,9 @@ class UniCFGNode(UniNode):
         self._nodes_out.append(next)
         next._nodes_in.append(self)
 
-    def set_next_conditional(self, next_true: UniCFGNode, next_false: UniCFGNode) -> None:
+    def set_next_conditional(
+        self, next_true: UniCFGNode, next_false: UniCFGNode
+    ) -> None:
         """Set next nodes for conditional node."""
         self._nodes_out.append(next_true)
         self._nodes_out.append(next_false)

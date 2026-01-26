@@ -79,23 +79,9 @@ class JServer(ABC, Generic[T]) {
     @abstractmethod
     def _delete(self: JServer, endpoint: JEndPoint) -> 'JServer[T]';
 
-    """
-    Create a complete server with all endpoints registered.
-
-    This is a convenience method that gets all endpoints and executes them
-    to create a fully configured server. The return type depends on the
-    concrete implementation.
-
-    Args:
-        app (Optional[FastAPI]): Optional FastAPI instance to use (ignored in base implementation)
-
-    Returns:
-        Any: Implementation-specific configured server
-    """
     @abstractmethod
     def create_server(self: JServer) -> T { }
 
-    """Run the server on the specified host and port."""
     @abstractmethod
     def run_server(self: JServer, host: str = 'localhost', port: int = 8000) -> None { }
 }

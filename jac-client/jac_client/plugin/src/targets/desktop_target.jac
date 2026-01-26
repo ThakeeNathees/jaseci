@@ -16,10 +16,7 @@ class DesktopTarget(ClientTarget) {
         self.output_dir = Path("src-tauri/target/release/bundle");
     }
 
-    """Setup desktop target - scaffold Tauri project structure."""
     override def setup(self: DesktopTarget, project_dir: Path) -> None;
-
-    """Build desktop app - build web bundle first, then wrap with Tauri."""
     override def build(
         self: DesktopTarget,
         entry_file: Path,
@@ -27,10 +24,7 @@ class DesktopTarget(ClientTarget) {
         platform: Optional[str] = None
     ) -> Path;
 
-    """Start desktop dev server - start web dev server and launch tauri dev."""
     override def dev(self: DesktopTarget, entry_file: Path, project_dir: Path) -> None;
-
-    """Start desktop app - build web bundle and launch Tauri with built bundle."""
     override def start(
         self: DesktopTarget, entry_file: Path, project_dir: Path
     ) -> None;

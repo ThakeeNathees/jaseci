@@ -6,20 +6,6 @@ import from jac_scale.abstractions.logger { Logger }
 
 """Factory for creating deployment target instances."""
 class DeploymentTargetFactory {
-    """Create a deployment target based on type.
-
-    Args:
-        target_type: Type of deployment target ('kubernetes', 'aws', 'gcp', etc.)
-        config: Configuration dictionary
-        logger: Optional logger instance
-
-    Returns:
-        DeploymentTarget instance
-
-    Raises:
-        ValueError: If target_type is not supported
-        NotImplementedError: If target is not yet implemented
-    """
     static def create(
         target_type: str, config: dict[str, Any], logger: (Logger | None) = None
     ) -> DeploymentTarget {
