@@ -60,7 +60,7 @@ impl CFGBuildPass.exit_module(self, node_: uni.UniNode) -> None {
 }
 
 
-def _connect_list_of_stments(self, origin: uni.UniCFGNode, nodes: list[uni.UniNode]) -> list[uni.UniCFGNode] {
+impl CFGBuildPass._connect_list_of_stments(self, origin: uni.UniCFGNode, nodes: list[uni.UniNode]) -> list[uni.UniCFGNode] {
     # TODO: Handle return, break, continue, assert, raise, yield, await and jac specific control flows.
     _empty_list = [];
     for stmt in nodes {
