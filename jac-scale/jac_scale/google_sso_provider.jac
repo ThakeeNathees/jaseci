@@ -19,7 +19,6 @@ obj GoogleSSOProvider(SSOProvider) {
         allow_insecure_http: bool = True,
         _google_sso: (GoogleSSO | None) = None;
 
-    """Initialize the Google SSO provider."""
     def postinit -> None {
         self._google_sso = GoogleSSO(
             client_id=self.client_id,
@@ -29,14 +28,6 @@ obj GoogleSSOProvider(SSOProvider) {
         );
     }
 
-    """Initiate Google OAuth authentication flow.
-
-    Args:
-        operation: The operation type ('login' or 'register')
-
-    Returns:
-        RedirectResponse to Google's OAuth authorization page
-    """
     async def initiate_auth(operation: str) -> Response {
         if not self._google_sso {
             raise RuntimeError("GoogleSSO not initialized") ;
@@ -47,17 +38,6 @@ obj GoogleSSOProvider(SSOProvider) {
         }
     }
 
-    """Handle the OAuth callback from Google.
-
-    Args:
-        request: The FastAPI request object containing OAuth callback data
-
-    Returns:
-        SSOUserInfo: Standardized user information from Google
-
-    Raises:
-        Exception: If authentication fails or user info cannot be retrieved
-    """
     async def handle_callback(request: Request) -> SSOUserInfo {
         if not self._google_sso {
             raise RuntimeError("GoogleSSO not initialized") ;
@@ -74,11 +54,6 @@ obj GoogleSSOProvider(SSOProvider) {
         }
     }
 
-    """Get the platform identifier.
-
-    Returns:
-        str: 'google'
-    """
     def get_platform_name -> str {
         return "google";
     }

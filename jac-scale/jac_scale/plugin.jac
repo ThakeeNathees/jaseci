@@ -77,7 +77,6 @@ def _scale_pre_hook(context: HookContext) -> None {
 
 """Jac CLI."""
 class JacCmd {
-    """Create Jac CLI cmds."""
     @hookimpl
     static def create_cmd -> None {
         """Jac Scale functionality.""";
@@ -186,7 +185,6 @@ class JacScalePlugin {
         return ctx;
     }
 
-    """Create the API server instance."""
     @hookimpl
     static def create_server(
         jac_server: JacServer, host: str, port: int
@@ -194,13 +192,11 @@ class JacScalePlugin {
         return JFastApiServer([]);
     }
 
-    """Provide jac-scale's enhanced JacAPIServer class."""
     @hookimpl
     static def get_api_server_class -> type {
         return JacAPIServer;
     }
 
-    """Provide jac-scale's UserManager."""
     @hookimpl
     static def get_user_manager(base_path: str) -> UserManager {
         return JacScaleUserManager(base_path=base_path);
