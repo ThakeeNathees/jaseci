@@ -766,13 +766,16 @@ class UniCFGNode(UniNode):
         self._nodes_out.append(next)
         next._nodes_in.append(self)
 
-    def set_next_conditional(self, next_true: UniCFGNode, next_false: UniCFGNode) -> None:
+    def set_next_conditional(
+        self, next_true: UniCFGNode, next_false: UniCFGNode
+    ) -> None:
         """Set next nodes."""
         assert len(self._nodes_out) == 0, "Next nodes already set"
         self._nodes_out.append(next_true)
         next_true._nodes_in.append(self)
         self._nodes_out.append(next_false)
         next_false._nodes_in.append(self)
+
 
 class Expr(UniCFGNode):
     """Expression is a combination of values, variables operators and fuctions that are evaluated to produce a value.
