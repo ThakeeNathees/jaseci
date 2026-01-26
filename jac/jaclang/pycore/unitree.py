@@ -763,41 +763,38 @@ class WalkerStmtOnlyNode(UniNode):
 
 
 class UniCFGNode(UniNode):
-    """BasicBlockStmt node type for Jac Uniir."""
+    """BasicBlockStmt node type for Jac Uniir.
+
+    NOTE: the _nodes_out is a list of nodes (instead of labeled edge approach) where:
+    - For unconditional nodes, the _nodes_out is a list of length 1.
+    - For conditional nodes, the _nodes_out is a list of length >= 2.
+      - _nodes_out[0] is the true branch
+      - _nodes_out[1] is the false branch
+    - For match / switch statements, the _nodes_out is a list of length >= 2.
+
+    TODO: I'm not sure how to proceed with the exceptions at the moment but
+    this might change slightly in the near future.
+    """
 
     def __init__(self) -> None:
         """Initialize basic block statement node."""
-        self.bb_in: list[UniCFGNode] = []
-        self.bb_out: list[UniCFGNode] = []
+        self._nodes_in: list[UniCFGNode] = []
+        self._nodes_out: list[UniCFGNode] = []
 
-    def get_head(self) -> UniCFGNode:
-        """Get head by walking up the CFG iteratively."""
-        node = self
-        while (
-            node.bb_in
-            and len(node.bb_in) == 1
-            and not isinstance(node.bb_in[0], (InForStmt, IterForStmt, WhileStmt))
-            and node.bb_in[0].bb_out
-            and len(node.bb_in[0].bb_out) == 1
-        ):
-            node = node.bb_in[0]
-        return node
+    def set_next(self, next: UniCFGNode) -> None:
+        """Set next node."""
+        self._nodes_out.append(next)
+        next._nodes_in.append(self)
 
-    def get_tail(self) -> UniCFGNode:
-        """Get tail by walking down the CFG iteratively."""
-        node = self
-        while (
-            node.bb_out
-            and len(node.bb_out) == 1
-            and not isinstance(node.bb_out[0], (InForStmt, IterForStmt, WhileStmt))
-            and node.bb_out[0].bb_in
-            and len(node.bb_out[0].bb_in) == 1
-        ):
-            node = node.bb_out[0]
-        return node
+    def set_next_conditional(self, next_true: UniCFGNode, next_false: UniCFGNode) -> None:
+        """Set next nodes for conditional node."""
+        self._nodes_out.append(next_true)
+        self._nodes_out.append(next_false)
+        next_true._nodes_in.append(self)
+        next_false._nodes_in.append(self)
 
 
-class Expr(UniNode):
+class Expr(UniCFGNode):
     """Expression is a combination of values, variables operators and fuctions that are evaluated to produce a value.
 
     1. Literal Expressions.
@@ -866,15 +863,15 @@ class AtomExpr(Expr, AstSymbolStubNode):
     """AtomExpr node type for Jac Ast."""
 
 
-class ElementStmt(AstDocNode):
+class ElementStmt(UniCFGNode):
     """ElementStmt node type for Jac Ast."""
 
 
-class ArchBlockStmt(UniNode):
+class ArchBlockStmt(UniCFGNode):
     """ArchBlockStmt node type for Jac Ast."""
 
 
-class EnumBlockStmt(UniNode):
+class EnumBlockStmt(UniCFGNode):
     """EnumBlockStmt node type for Jac Ast."""
 
     def __init__(self, is_enum_stmt: bool) -> None:
@@ -884,12 +881,8 @@ class EnumBlockStmt(UniNode):
 class CodeBlockStmt(UniCFGNode):
     """CodeBlockStmt node type for Jac Ast."""
 
-    def __init__(self) -> None:
-        """Initialize code block statement node."""
-        UniCFGNode.__init__(self)
 
-
-class AstImplNeedingNode(AstSymbolNode, Generic[T]):
+class AstImplNeedingNode(AstSymbolNode):
     """AstImplNeedingNode node type for Jac Ast."""
 
     def __init__(self, body: T | None) -> None:
@@ -1709,7 +1702,6 @@ class Archetype(
     ArchBlockStmt,
     AstImplNeedingNode,
     UniScopeNode,
-    UniCFGNode,
 ):
     """ObjectArch node type for Jac Ast."""
 
