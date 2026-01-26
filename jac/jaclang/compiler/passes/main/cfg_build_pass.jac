@@ -9,8 +9,12 @@ obj CFGBuildPass(UniPass) {
 
     def before_pass -> None;
 
+    # Simple statements
     def exit_assignment(self, node_: uni.UniNode) -> None;
     def exit_expr_stmt(self, node_: uni.UniNode) -> None;
+
+    # Compound statements
+    def exit_if_stmt(self, node_: uni.UniNode) -> None;
 
     def exit_module(self, node_: uni.UniNode) -> None;
 
