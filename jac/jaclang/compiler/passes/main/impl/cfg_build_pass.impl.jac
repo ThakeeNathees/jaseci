@@ -74,5 +74,3 @@ def _connect_list_of_stments(self, origin: uni.UniCFGNode, nodes: list[uni.UniNo
     }
     return self.exit_nodes_of.get(origin, _empty_list);
 }
-
-
