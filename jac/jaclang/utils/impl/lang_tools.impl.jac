@@ -104,9 +104,6 @@ impl AstTool.ir(args: list[str]) -> str {
             case 'ast.':
                 return ir.printgraph();
 
-            case 'cfg.':
-                return cfg_dot_from_file(file_name);
-
             case 'unparse':
                 return ir.unparse();
 
