@@ -781,6 +781,16 @@ class UniCFGNode(UniNode):
         self._nodes_in: list[UniCFGNode] = []
         self._nodes_out: list[UniCFGNode] = []
 
+        # If conditional, the nodes_out index 0, 1 are true and false branches respectively.
+        self._is_conditional = False
+
+        # TODO: Figure out how to handle match / switch statement branch
+        # labeling.
+
+    @property
+    def is_conditional(self) -> bool:
+        return self._is_conditional
+
     def set_next(self, next: UniCFGNode) -> None:
         """Set next node."""
         self._nodes_out.append(next)
@@ -790,10 +800,32 @@ class UniCFGNode(UniNode):
         self, next_true: UniCFGNode, next_false: UniCFGNode
     ) -> None:
         """Set next nodes for conditional node."""
+        self._is_conditional = True
         self._nodes_out.append(next_true)
-        self._nodes_out.append(next_false)
         next_true._nodes_in.append(self)
+        self._nodes_out.append(next_false)
         next_false._nodes_in.append(self)
+
+class CFGPatchNode(UniCFGNode):
+    """A placeholder node that need to be patched with a correct node."""
+
+    def __init__(self, from_node: UniCFGNode) -> None:
+        UniCFGNode.__init__(self)
+        from_node.set_next(self)
+
+    def patch_with(self, node: UniCFGNode) -> None:
+        """This will replace this (self) node with the given node."""
+        assert len(self._nodes_in) == 1
+        #
+        # Before:
+        # [from_node] --> [patch_node]
+        #
+        # After:
+        # [from_node] --> [node]
+        #
+        from_node = self._nodes_in[0]
+        idx = from_node._nodes_out.index(self)
+        from_node._nodes_out[idx] = node
 
 
 class Expr(UniCFGNode):
@@ -1018,7 +1050,7 @@ class SubTag(UniNode, Generic[T]):
 
 # AST Mid Level Node Types
 # --------------------------
-class Module(AstDocNode, UniScopeNode):
+class Module(AstDocNode, UniScopeNode, UniCFGNode):
     """Whole Program node type for Jac Ast."""
 
     def __init__(
@@ -3159,6 +3191,15 @@ class CtrlStmt(CodeBlockStmt):
         new_kid: list[UniNode] = [self.ctrl, self.gen_token(Tok.SEMI)]
         self.set_kids(nodes=new_kid)
         return res
+
+    def is_break_stmt(self) -> bool:
+        return self.ctrl.name == Tok.KW_BREAK
+
+    def is_continue_stmt(self) -> bool:
+        return self.ctrl.name == Tok.KW_CONTINUE
+
+    def is_skip_stmt(self) -> bool:
+        return self.ctrl.name == Tok.KW_SKIP
 
 
 class DeleteStmt(CodeBlockStmt):
