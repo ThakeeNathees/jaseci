@@ -923,8 +923,8 @@ class CodeBlockStmt(UniCFGNode):
 class AstImplNeedingNode(AstSymbolNode):
     """AstImplNeedingNode node type for Jac Ast."""
 
-    def __init__(self, body: T | None) -> None:
-        self.body = body
+    def __init__(self, body: UniNode | Sequence[UniNode] | None) -> None:
+        self.body: UniNode | Sequence[UniNode] | None = body
 
     @property
     def needs_impl(self) -> bool:
@@ -1175,7 +1175,7 @@ class ProgramModule(UniNode):
         self.hub: dict[str, Module] = {self.loc.mod_path: main_mod} if main_mod else {}
 
 
-class GlobalVars(ContextAwareNode, ElementStmt, AstAccessNode):
+class GlobalVars(ContextAwareNode, ElementStmt, AstAccessNode, AstDocNode):
     """GlobalVars node type for Jac Ast."""
 
     def __init__(
@@ -1220,7 +1220,7 @@ class GlobalVars(ContextAwareNode, ElementStmt, AstAccessNode):
         return res
 
 
-class Test(ContextAwareNode, AstSymbolNode, ElementStmt, UniScopeNode):
+class Test(ContextAwareNode, AstSymbolNode, ElementStmt, UniScopeNode, AstDocNode):
     """Test node type for Jac Ast."""
 
     TEST_COUNT = 0
@@ -1294,7 +1294,7 @@ class Test(ContextAwareNode, AstSymbolNode, ElementStmt, UniScopeNode):
         return res
 
 
-class ModuleCode(ContextAwareNode, ElementStmt, ArchBlockStmt, EnumBlockStmt):
+class ModuleCode(ContextAwareNode, ElementStmt, ArchBlockStmt, EnumBlockStmt, AstDocNode):
     """ModuleCode node type for Jac Ast."""
 
     def __init__(
@@ -1466,7 +1466,7 @@ class NativeBlock(ElementStmt):
         return res
 
 
-class PyInlineCode(ElementStmt, ArchBlockStmt, EnumBlockStmt, CodeBlockStmt):
+class PyInlineCode(ElementStmt, ArchBlockStmt, EnumBlockStmt, CodeBlockStmt, AstDocNode):
     """PyInlineCode node type for Jac Ast."""
 
     def __init__(
@@ -1495,7 +1495,7 @@ class PyInlineCode(ElementStmt, ArchBlockStmt, EnumBlockStmt, CodeBlockStmt):
         return res
 
 
-class Import(ContextAwareNode, ElementStmt, CodeBlockStmt):
+class Import(ContextAwareNode, ElementStmt, CodeBlockStmt, AstDocNode):
     """Import node type for Jac Ast."""
 
     def __init__(
@@ -1746,8 +1746,11 @@ class Archetype(
     ArchBlockStmt,
     AstImplNeedingNode,
     UniScopeNode,
+    AstDocNode,
 ):
     """ObjectArch node type for Jac Ast."""
+
+    body: Sequence[ArchBlockStmt] | ImplDef | None
 
     def __init__(
         self,
@@ -2056,8 +2059,11 @@ class Enum(
     AstImplNeedingNode,
     ArchBlockStmt,
     UniScopeNode,
+    AstDocNode,
 ):
     """Enum node type for Jac Ast."""
+
+    body: Sequence[EnumBlockStmt] | ImplDef | None
 
     def __init__(
         self,
@@ -2155,8 +2161,11 @@ class Ability(
     CodeBlockStmt,
     AstImplNeedingNode,
     UniScopeNode,
+    AstDocNode,
 ):
     """Ability node type for Jac Ast."""
+
+    body: Sequence[CodeBlockStmt] | ImplDef | Expr | None
 
     def __init__(
         self,

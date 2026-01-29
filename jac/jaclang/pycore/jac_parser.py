@@ -621,7 +621,8 @@ class JacParser(Transform[uni.Source, uni.Module]):
             """
             doc = self.consume(uni.String)
             element = self.consume(uni.ElementStmt)
-            element.doc = doc
+            if isinstance(element, uni.AstDocNode):
+                element.doc = doc
             element.add_kids_left([doc])
             return element
 

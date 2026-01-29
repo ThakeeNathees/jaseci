@@ -500,7 +500,7 @@ walker MyWalker {
     # Find the walker and its ability
     walker = module.body[0]
     assert isinstance(walker, uni.Archetype)
-    assert walker.body is not None
+    assert walker.body is not None and not isinstance(walker.body, uni.ImplDef)
     abilities = [stmt for stmt in walker.body if type(stmt).__name__ == "Ability"]
     assert len(abilities) == 1
 
@@ -526,7 +526,7 @@ walker MyWalker {
 
     walker = module.body[0]
     assert isinstance(walker, uni.Archetype)
-    assert walker.body is not None
+    assert walker.body is not None and not isinstance(walker.body, uni.ImplDef)
     abilities = [stmt for stmt in walker.body if type(stmt).__name__ == "Ability"]
     ability = abilities[0]
     assert isinstance(ability, uni.Ability)
@@ -547,7 +547,7 @@ walker MyWalker {
 
     walker = module.body[0]
     assert isinstance(walker, uni.Archetype)
-    assert walker.body is not None
+    assert walker.body is not None and not isinstance(walker.body, uni.ImplDef)
     abilities = [stmt for stmt in walker.body if type(stmt).__name__ == "Ability"]
     ability = abilities[0]
     assert isinstance(ability, uni.Ability)
@@ -571,7 +571,7 @@ walker MyWalker {
 
     walker = module.body[0]
     assert isinstance(walker, uni.Archetype)
-    assert walker.body is not None
+    assert walker.body is not None and not isinstance(walker.body, uni.ImplDef)
     abilities = [stmt for stmt in walker.body if type(stmt).__name__ == "Ability"]
     assert len(abilities) == 2
 
