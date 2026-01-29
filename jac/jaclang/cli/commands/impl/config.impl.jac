@@ -20,8 +20,9 @@ glob CONFIG_GROUPS = [
          "environment"
      ];
 
-"""Manage Jac plugins - list, disable, or enable plugins."""
-impl plugins(action: str = 'list', names: list = [], verbose: bool = False) -> int {
+"""Manage Jac plugins - list, disable, or enable plugins.""" impl plugins(
+    action: str = 'list', names: list = [], verbose: bool = False
+) -> int {
     import from jaclang.pycore.runtime { plugin_manager }
     import from jaclang.cli.registry { get_registry }
     import from jaclang.project.config { get_config, JacConfig, find_project_root }
@@ -444,8 +445,7 @@ impl plugins(action: str = 'list', names: list = [], verbose: bool = False) -> i
     return 0;
 }
 
-"""View and modify jac.toml configuration settings."""
-impl config(
+"""View and modify jac.toml configuration settings.""" impl config(
     action: str = 'show',
     key: str = '',
     value: str = '',

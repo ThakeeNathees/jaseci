@@ -9,22 +9,19 @@ impl JacToJSCompiler.add_runtime_imports(self: JacToJSCompiler, js_code: str) ->
     return f"{jac_jsx_import}\n{js_code}";
 }
 
-"""Extract client globals from manifest and module."""
-impl JacToJSCompiler.extract_globals(
+"""Extract client globals from manifest and module.""" impl JacToJSCompiler.extract_globals(
     self: JacToJSCompiler, manifest: (ClientManifest | None), module: ModuleType
 ) -> dict[str, Any] {
     return self._extract_client_globals(manifest, module);
 }
 
-"""Extract client exports from manifest."""
-impl JacToJSCompiler.extract_exports(
+"""Extract client exports from manifest.""" impl JacToJSCompiler.extract_exports(
     self: JacToJSCompiler, manifest: (ClientManifest | None)
 ) -> list[str] {
     return self._extract_client_exports(manifest);
 }
 
-"""Compile a Jac module to JavaScript."""
-impl JacToJSCompiler.compile_module(
+"""Compile a Jac module to JavaScript.""" impl JacToJSCompiler.compile_module(
     self: JacToJSCompiler, module_path: Path
 ) -> tuple[str, (ModuleType | None), (ClientManifest | None)] {
     (module_js, mod) = self._compile_to_js(module_path);
@@ -32,8 +29,7 @@ impl JacToJSCompiler.compile_module(
     return (module_js, mod, manifest);
 }
 
-"""Initialize the Jac to JS compiler."""
-impl JacToJSCompiler.init(
+"""Initialize the Jac to JS compiler.""" impl JacToJSCompiler.init(
     self: JacToJSCompiler,
     compile_to_js_func: Callable[([Path], tuple[(str, (ModuleType | None))])],
     extract_exports_func: Callable[([Any], list[str])],

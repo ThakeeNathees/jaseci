@@ -14,31 +14,28 @@ impl JacLangServer.shutdown -> None {
     }
 }
 
-"""Log a message."""
-impl JacLangServer.log_py(message: str) -> None {
+"""Log a message.""" impl JacLangServer.log_py(message: str) -> None {
     logging.info(message);
 }
 
-"""Log an info message."""
-impl JacLangServer.log_info(message: str) -> None {
+"""Log an info message.""" impl JacLangServer.log_info(message: str) -> None {
     self.show_message_log(message, lspt.MessageType.Info);
     self.show_message(message, lspt.MessageType.Info);
 }
 
-"""Log a warning message."""
-impl JacLangServer.log_warning(message: str) -> None {
+"""Log a warning message.""" impl JacLangServer.log_warning(message: str) -> None {
     self.show_message_log(message, lspt.MessageType.Warning);
     self.show_message(message, lspt.MessageType.Warning);
 }
 
-"""Log an error message."""
-impl JacLangServer.log_error(message: str) -> None {
+"""Log an error message.""" impl JacLangServer.log_error(message: str) -> None {
     self.show_message_log(message, lspt.MessageType.Error);
     self.show_message(message, lspt.MessageType.Error);
 }
 
-"""Return semantic tokens for a file."""
-impl JacLangServer.get_semantic_tokens(file_path: str) -> lspt.SemanticTokens {
+"""Return semantic tokens for a file.""" impl JacLangServer.get_semantic_tokens(
+    file_path: str
+) -> lspt.SemanticTokens {
     fs_path = uris.to_fs_path(file_path);
     sem_mgr = self.sem_managers.get(fs_path);
     if not sem_mgr {
@@ -48,8 +45,7 @@ impl JacLangServer.get_semantic_tokens(file_path: str) -> lspt.SemanticTokens {
     return lspt.SemanticTokens(data=sem_mgr.sem_tokens);
 }
 
-"""Rename a symbol in a file."""
-impl JacLangServer.rename_symbol(
+"""Rename a symbol in a file.""" impl JacLangServer.rename_symbol(
     file_path: str, position: lspt.Position, new_name: str
 ) -> Optional[lspt.WorkspaceEdit] {
     node_selected = self.get_token_at_position(file_path, position);
@@ -67,8 +63,7 @@ impl JacLangServer.rename_symbol(
     return None;
 }
 
-"""Return references for a file."""
-impl JacLangServer.get_references(
+"""Return references for a file.""" impl JacLangServer.get_references(
     file_path: str, position: lspt.Position
 ) -> list[lspt.Location] {
     node_selected = self.get_token_at_position(file_path, position);
@@ -84,8 +79,7 @@ impl JacLangServer.get_references(
     return [];
 }
 
-"""Return definition location for a file."""
-impl JacLangServer.get_definition(
+"""Return definition location for a file.""" impl JacLangServer.get_definition(
     file_path: str, position: lspt.Position
 ) -> Optional[lspt.Location] {
     def make_location(node_: uni.UniNode, is_module: bool = False) -> lspt.Location {
@@ -149,8 +143,9 @@ impl JacLangServer.get_definition(
     return None;
 }
 
-"""Return document symbols for a file."""
-impl JacLangServer.get_outline(file_path: str) -> list[lspt.DocumentSymbol] {
+"""Return document symbols for a file.""" impl JacLangServer.get_outline(
+    file_path: str
+) -> list[lspt.DocumentSymbol] {
     fs_path = uris.to_fs_path(file_path);
     if fs_path in self.mod.hub and (root_node := self.mod.hub[fs_path].sym_tab) {
         return utils.get_symbols_for_outline(root_node);
@@ -158,8 +153,9 @@ impl JacLangServer.get_outline(file_path: str) -> list[lspt.DocumentSymbol] {
     return [];
 }
 
-"""Extract meaningful information from the AST node."""
-impl JacLangServer.get_node_info(sym_node: uni.AstSymbolNode) -> Optional[str] {
+"""Extract meaningful information from the AST node.""" impl JacLangServer.get_node_info(
+    sym_node: uni.AstSymbolNode
+) -> Optional[str] {
     try {
         if isinstance(sym_node, uni.NameAtom) {
             sym_node = sym_node.name_of;
@@ -187,8 +183,7 @@ impl JacLangServer.get_node_info(sym_node: uni.AstSymbolNode) -> Optional[str] {
     return node_info.strip();
 }
 
-"""Return hover information for a file."""
-impl JacLangServer.get_hover_info(
+"""Return hover information for a file.""" impl JacLangServer.get_hover_info(
     file_path: str, position: lspt.Position
 ) -> Optional[lspt.Hover] {
     node_selected = self.get_token_at_position(file_path, position);
@@ -203,8 +198,9 @@ impl JacLangServer.get_hover_info(
     return None;
 }
 
-"""Return formatted jac."""
-impl JacLangServer.formatted_jac(file_path: str) -> list[lspt.TextEdit] {
+"""Return formatted jac.""" impl JacLangServer.formatted_jac(
+    file_path: str
+) -> list[lspt.TextEdit] {
     try {
         document = self.workspace.get_text_document(file_path);
         prog = JacProgram.jac_str_formatter(
@@ -230,8 +226,7 @@ impl JacLangServer.formatted_jac(file_path: str) -> list[lspt.TextEdit] {
     ];
 }
 
-"""Delete module."""
-impl JacLangServer.delete_module(uri: str) -> None {
+"""Delete module.""" impl JacLangServer.delete_module(uri: str) -> None {
     if uri in self.mod.hub {
         del (self.mod.hub[uri], );
     }
@@ -240,8 +235,9 @@ impl JacLangServer.delete_module(uri: str) -> None {
     }
 }
 
-"""Rename module."""
-impl JacLangServer.rename_module(old_path: str, new_path: str) -> None {
+"""Rename module.""" impl JacLangServer.rename_module(
+    old_path: str, new_path: str
+) -> None {
     if old_path in self.mod.hub and new_path != old_path {
         self.mod.hub[new_path] = self.mod.hub[old_path];
         self.sem_managers[new_path] = self.sem_managers[old_path];
@@ -250,8 +246,7 @@ impl JacLangServer.rename_module(old_path: str, new_path: str) -> None {
     }
 }
 
-"""Get type members for completion."""
-impl JacLangServer.get_completion_items_of(
+"""Get type members for completion.""" impl JacLangServer.get_completion_items_of(
     ty: TypeBase | uni.UniScopeNode
 ) -> lspt.CompletionList {
     evaluator = self.get_type_evaluator();
@@ -273,8 +268,9 @@ impl JacLangServer.get_completion_items_of(
     return lspt.CompletionList(is_incomplete=False, items=items,);
 }
 
-"""Return the type of an AST node if it has one."""
-impl JacLangServer.get_node_type(n: uni.AstNode) -> Optional[TypeBase] {
+"""Return the type of an AST node if it has one.""" impl JacLangServer.get_node_type(
+    n: uni.AstNode
+) -> Optional[TypeBase] {
     if isinstance(n, uni.Expr) {
         typ = self.get_type_evaluator().get_type_of_expression(n);
         self.debug("found type " + str(typ) + " for expr " + str(n));
@@ -325,15 +321,13 @@ impl JacLangServer.wait_till_idle -> None {
     self.debug("Queue is now empty");
 }
 
-"""Synchronous version of wait_till_idle for testing."""
-impl JacLangServer.wait_till_idle_sync -> None {
+"""Synchronous version of wait_till_idle for testing.""" impl JacLangServer.wait_till_idle_sync -> None {
     self.debug("Waiting for queue to empty (sync)...");
     self.queue.join();
     self.debug("Queue is now empty");
 }
 
-"""Return completion for a file."""
-impl JacLangServer.get_completion(
+"""Return completion for a file.""" impl JacLangServer.get_completion(
     file_uri: str, position: lspt.Position, completion_trigger: Optional[str]
 ) -> lspt.CompletionList {
     # NOTE: We may only need to wait for the current file's type check.
@@ -429,8 +423,7 @@ impl JacLangServer.type_check(file_uri: str) -> None {
     self.queue.put(self.last_task);
 }
 
-"""Rebuild a file and its dependencies (typecheck)."""
-impl JacLangServer.type_check_file(
+"""Rebuild a file and its dependencies (typecheck).""" impl JacLangServer.type_check_file(
     file_uri: str, cancel_token: Event | None = None, annex_view: Optional[str] = None,
     # This parameter will be passed recursively
     # and dont need to pass when the function itself is called
@@ -485,26 +478,29 @@ impl JacLangServer.type_check_file(
     }
 }
 
-"""Update modules in JacProgram's hub and semantic managers."""
-impl JacLangServer.update_modules(
+"""Update modules in JacProgram's hub and semantic managers.""" impl JacLangServer.update_modules(
     file_path: str, build: uni.Module, need: bool = True
 ) -> None {
     self.log_py(f"'Updating modules for '{file_path}");
     self.module_manager.update(file_path, build, update_annexed=need);
 }
 
-"""Get IR for a file path."""
-impl JacLangServer.get_ir(file_path: str) -> Optional[uni.Module] {
+"""Get IR for a file path.""" impl JacLangServer.get_ir(
+    file_path: str
+) -> Optional[uni.Module] {
     return self.mod.hub.get(file_path);
 }
 
-"""Remove errors and warnings for a specific file from the lists."""
-impl JacLangServer._clear_alerts_for_file(file_path: str) -> None {
+"""Remove errors and warnings for a specific file from the lists.""" impl JacLangServer._clear_alerts_for_file(
+    file_path: str
+) -> None {
     self.module_manager.clear_alerts_for_file(file_path);
 }
 
-"""Return diagnostics for all files as a dict {uri: diagnostics}."""
-impl JacLangServer.diagnostics -> dict[str, list] {
+"""Return diagnostics for all files as a dict {uri: diagnostics}.""" impl JacLangServer.diagnostics -> dict[
+    str,
+    list
+] {
     result = {};
     for file_path in self.mod.hub {
         uri = uris.from_fs_path(file_path);
@@ -542,8 +538,7 @@ impl JacLangServer.dispatcher -> None {
     }
 }
 
-"""Initialize JacLangServer."""
-impl JacLangServer.postinit -> None {
+"""Initialize JacLangServer.""" impl JacLangServer.postinit -> None {
     LanguageServer.init(self, 'jac-lsp', 'v0.1');
     JacProgram.init(self);
     self.module_manager = ModuleManager(self, self.sem_managers);

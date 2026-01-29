@@ -87,8 +87,7 @@ impl validate_resource_limits(
     }
 }
 
-"""Stage the application code inside the PVC using a transient helper pod."""
-impl sync_code_to_pvc(
+"""Stage the application code inside the PVC using a transient helper pod.""" impl sync_code_to_pvc(
     core_v1: client.CoreV1Api,
     namespace: str,
     pvc_name: str,
@@ -198,8 +197,9 @@ impl sync_code_to_pvc(
     }
 }
 
-"""Execute a kubectl command and surface useful error details."""
-impl run_kubectl_command(args: list[str], cwd: str | Path | None = None) -> None {
+"""Execute a kubectl command and surface useful error details.""" impl run_kubectl_command(
+    args: list[str], cwd: str | Path | None = None
+) -> None {
     import shutil;
     import subprocess;
     if (shutil.which('kubectl') is None) {
@@ -216,8 +216,7 @@ impl run_kubectl_command(args: list[str], cwd: str | Path | None = None) -> None
     }
 }
 
-"""Block until the pod disappears from the API."""
-impl wait_for_pod_deletion(
+"""Block until the pod disappears from the API.""" impl wait_for_pod_deletion(
     core_v1: client.CoreV1Api, namespace: str, pod_name: str, timeout: int = 120
 ) -> None {
     start_time = time.time();
@@ -235,8 +234,7 @@ impl wait_for_pod_deletion(
     raise TimeoutError(f"Timed out waiting for pod '{pod_name}' deletion.") ;
 }
 
-"""Poll the pod until it reaches one of the desired phases."""
-impl wait_for_pod_phase(
+"""Poll the pod until it reaches one of the desired phases.""" impl wait_for_pod_phase(
     core_v1: client.CoreV1Api,
     namespace: str,
     pod_name: str,
@@ -268,8 +266,7 @@ impl wait_for_pod_phase(
     ) ;
 }
 
-"""Create a PersistentVolumeClaim if it does not already exist."""
-impl ensure_pvc_exists(
+"""Create a PersistentVolumeClaim if it does not already exist.""" impl ensure_pvc_exists(
     core_v1: client.CoreV1Api,
     namespace: str,
     pvc_name: str,
@@ -306,8 +303,7 @@ Detect if the current connected cluster is AWS or local.
 
     Returns:
         'aws' for AWS EKS clusters, 'local' for local/other clusters.
-"""
-impl cluster_type -> str {
+""" impl cluster_type -> str {
     try {
         import from kubernetes { client }
         v1 = client.CoreV1Api();
@@ -351,8 +347,7 @@ impl cluster_type -> str {
 
     Can work with either NodePort (localhost:node_port) or NLB (AWS Load Balancer URL).
     If nlb_url is provided, it will be used. Otherwise, localhost:node_port will be used.
-"""
-impl check_deployment_status(
+""" impl check_deployment_status(
     node_port: int,
     path: str = '/docs',
     interval: int = 15,
@@ -383,8 +378,7 @@ impl check_deployment_status(
     return False;
 }
 
-"""Create or update ConfigMap with binary tar.gz using Kubernetes API."""
-impl create_or_update_configmap(
+"""Create or update ConfigMap with binary tar.gz using Kubernetes API.""" impl create_or_update_configmap(
     namespace: str, configmap_name: str, tar_path: str
 ) -> None {
     config.load_kube_config();
@@ -413,8 +407,7 @@ impl create_or_update_configmap(
 
 """
     Create a tar.gz file from the source directory using only os module.
-"""
-impl create_tarball(source_dir: str, tar_path: str) -> None {
+""" impl create_tarball(source_dir: str, tar_path: str) -> None {
     if not os.path.exists(source_dir) {
         raise FileNotFoundError(f"Source directory not found: {source_dir}") ;
     }
@@ -427,8 +420,7 @@ impl create_tarball(source_dir: str, tar_path: str) -> None {
 """
     Ensure that a given namespace exists in the Kubernetes cluster.
     If it doesn't exist and is not 'default', it will be created.
-"""
-impl ensure_namespace_exists(namespace: str) -> None {
+""" impl ensure_namespace_exists(namespace: str) -> None {
     if (namespace == 'default') {
         return;
     }
@@ -454,8 +446,7 @@ impl ensure_namespace_exists(namespace: str) -> None {
     }
 }
 
-"""Deploy example."""
-impl delete_if_exists(
+"""Deploy example.""" impl delete_if_exists(
     delete_func: Callable, name: str, namespace: str, kind: str
 ) -> None {
     try {
@@ -471,8 +462,7 @@ impl delete_if_exists(
 
 """
     Checks if Kubernetes config is configured and the K8s API server is reachable.
-"""
-impl check_K8s_status -> None {
+""" impl check_K8s_status -> None {
     try {
         config.load_kube_config();
     } except ConfigException {
@@ -492,8 +482,9 @@ impl check_K8s_status -> None {
     }
 }
 
-"""Load env variables in .env to aws beanstalk environment."""
-impl load_env_variables(code_folder: str) -> list {
+"""Load env variables in .env to aws beanstalk environment.""" impl load_env_variables(
+    code_folder: str
+) -> list {
     env_file = os.path.join(code_folder, '.env');
     env_vars = dotenv_values(env_file);
     env_list = [];
@@ -511,8 +502,7 @@ impl load_env_variables(code_folder: str) -> list {
     Args:
         statement (str): The message to print.
         debug_only (bool): If True, print the statement; otherwise, do nothing.
-"""
-impl debug_print(statement: str, debug_only: bool = False) -> None {
+""" impl debug_print(statement: str, debug_only: bool = False) -> None {
     if debug_only {
         print(statement);
     }

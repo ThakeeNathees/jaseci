@@ -114,8 +114,7 @@ impl JacAPIServer.start(dev: bool = False) -> None {
     self.server.run_server(port=self.port);
 }
 
-"""Configure OpenAPI security scheme to only apply to walker endpoints that require auth."""
-impl JacAPIServer._configure_openapi_security -> None {
+"""Configure OpenAPI security scheme to only apply to walker endpoints that require auth.""" impl JacAPIServer._configure_openapi_security -> None {
     import from fastapi.openapi.utils { get_openapi }
     def custom_openapi -> dict[str, Any] {
         if self.server.app.openapi_schema {
@@ -180,8 +179,9 @@ impl JacAPIServer._configure_openapi_security -> None {
     self.server.app.openapi = custom_openapi;
 }
 
-"""Serve root-level assets like /img.png, /icons/logo.svg, etc."""
-impl JacAPIServer.serve_root_asset(file_path: str) -> Response {
+"""Serve root-level assets like /img.png, /icons/logo.svg, etc.""" impl JacAPIServer.serve_root_asset(
+    file_path: str
+) -> Response {
     allowed_extensions = {'.png','.jpg','.jpeg','.gif','.webp','.svg','.ico','.woff','.woff2','.ttf','.otf','.eot','.mp4','.webm','.mp3','.wav','.css','.js','.json','.pdf','.txt','.xml'};
     file_ext = Path(file_path).suffix.lower();
     if (not file_ext or (file_ext not in allowed_extensions)) {
@@ -237,8 +237,7 @@ impl JacAPIServer.serve_root_asset(file_path: str) -> Response {
     );
 }
 
-"""Register root-level asset serving endpoint for files like /img.png, /logo.svg"""
-impl JacAPIServer.register_root_asset_endpoint -> None {
+"""Register root-level asset serving endpoint for files like /img.png, /logo.svg""" impl JacAPIServer.register_root_asset_endpoint -> None {
     self.server.add_endpoint(
         JEndPoint(
             method=HTTPMethod.GET,
@@ -262,8 +261,9 @@ impl JacAPIServer.register_root_asset_endpoint -> None {
     );
 }
 
-"""Serve a static file given its path."""
-impl JacAPIServer.serve_static_file(file_path: str) -> Response {
+"""Serve a static file given its path.""" impl JacAPIServer.serve_static_file(
+    file_path: str
+) -> Response {
     try {
         # Find project root (where jac.toml is) instead of using base_path_dir
         # base_path_dir might be src/ when serving src/app.jac, but we need project root
@@ -340,8 +340,7 @@ impl JacAPIServer.serve_static_file(file_path: str) -> Response {
     }
 }
 
-"""Register the static file serving endpoint using JEndPoint."""
-impl JacAPIServer.register_static_file_endpoint -> None {
+"""Register the static file serving endpoint using JEndPoint.""" impl JacAPIServer.register_static_file_endpoint -> None {
     self.server.add_endpoint(
         JEndPoint(
             method=HTTPMethod.GET,
@@ -365,8 +364,7 @@ impl JacAPIServer.register_static_file_endpoint -> None {
     );
 }
 
-"""Register the client.js serving endpoint using JEndPoint."""
-impl JacAPIServer.register_client_js_endpoint -> None {
+"""Register the client.js serving endpoint using JEndPoint.""" impl JacAPIServer.register_client_js_endpoint -> None {
     self.server.add_endpoint(
         JEndPoint(
             method=HTTPMethod.GET,
@@ -381,8 +379,10 @@ impl JacAPIServer.register_client_js_endpoint -> None {
     );
 }
 
-"""Create callback to serve the client.js file."""
-impl JacAPIServer.serve_client_js_callback -> Callable[..., Response] {
+"""Create callback to serve the client.js file.""" impl JacAPIServer.serve_client_js_callback -> Callable[
+    ...,
+    Response
+] {
     def callback -> Response {
         try {
             self.introspector.load();
@@ -398,8 +398,7 @@ impl JacAPIServer.serve_client_js_callback -> Callable[..., Response] {
     return callback;
 }
 
-"""Register the page rendering endpoint using JEndPoint."""
-impl JacAPIServer.register_page_endpoint -> None {
+"""Register the page rendering endpoint using JEndPoint.""" impl JacAPIServer.register_page_endpoint -> None {
     import from jaclang.project.config { get_config }
     config = get_config();
     cl_route_prefix = config.serve.cl_route_prefix if config else "cl";
@@ -443,8 +442,10 @@ impl JacAPIServer.register_page_endpoint -> None {
     }
 }
 
-"""Create callback that extracts all query parameters from FastAPI Request."""
-impl JacAPIServer.render_page_callback -> Callable[..., HTMLResponse] {
+"""Create callback that extracts all query parameters from FastAPI Request.""" impl JacAPIServer.render_page_callback -> Callable[
+    ...,
+    HTMLResponse
+] {
     """Render a page by name with all query parameters.""";
     def callback(page_name: str, **kwargs: JsonValue) -> HTMLResponse {
         try {
@@ -464,8 +465,7 @@ impl JacAPIServer.render_page_callback -> Callable[..., HTMLResponse] {
     return callback;
 }
 
-"""Create callback for base route app rendering."""
-impl JacAPIServer.render_base_route_callback(
+"""Create callback for base route app rendering.""" impl JacAPIServer.render_base_route_callback(
     app_name: str
 ) -> Callable[..., HTMLResponse] {
     """Render the base route app.""";
@@ -1219,8 +1219,9 @@ impl JacAPIServer.register_sso_endpoints -> None {
 # ============================================================================
 # HMR (Hot Module Replacement) Dynamic Routing Support
 # ============================================================================
-"""Enable HMR mode - file changes trigger reload on next request."""
-impl JacAPIServer.enable_hmr(hot_reloader: Any) -> None {
+"""Enable HMR mode - file changes trigger reload on next request.""" impl JacAPIServer.enable_hmr(
+    hot_reloader: Any
+) -> None {
     self._hot_reloader = hot_reloader;
     # Callback when file changes - sets pending flag
     def on_change(event: Any) -> None {
@@ -1237,8 +1238,7 @@ impl JacAPIServer.enable_hmr(hot_reloader: Any) -> None {
 Instead of pre-registering /walker/WalkerA, /walker/WalkerB, etc.,
 we register catch-all routes that look up walkers at request time.
 This enables HMR since introspector.load() is called per-request.
-"""
-impl JacAPIServer.register_dynamic_walker_endpoint -> None {
+""" impl JacAPIServer.register_dynamic_walker_endpoint -> None {
     import from jaclang.runtimelib.transport { TransportResponse, Meta }
     import from fastapi { Request }
     # Dynamic handler that looks up walker at request time
@@ -1413,8 +1413,7 @@ impl JacAPIServer.register_dynamic_walker_endpoint -> None {
 """Register a single dynamic endpoint for all functions.
 
 Similar to dynamic walker routing, this enables HMR for functions.
-"""
-impl JacAPIServer.register_dynamic_function_endpoint -> None {
+""" impl JacAPIServer.register_dynamic_function_endpoint -> None {
     import from fastapi.responses { JSONResponse }
     import from fastapi { Request }
     import from jaclang.runtimelib.transport { TransportResponse, Meta }
@@ -1531,8 +1530,7 @@ impl JacAPIServer.register_dynamic_function_endpoint -> None {
 
 These endpoints allow clients to discover what walkers and functions are available,
 which is especially useful in HMR mode where the list can change dynamically.
-"""
-impl JacAPIServer.register_dynamic_introspection_endpoints -> None {
+""" impl JacAPIServer.register_dynamic_introspection_endpoints -> None {
     import from fastapi.responses { JSONResponse }
     def list_walkers -> dict[str, Any] {
         # Reload introspector if files changed (HMR)
@@ -1651,16 +1649,14 @@ impl JacAPIServer.register_dynamic_introspection_endpoints -> None {
     );
 }
 
-"""Get or create the API key manager instance."""
-impl JacAPIServer.get_api_key_manager -> ApiKeyManager {
+"""Get or create the API key manager instance.""" impl JacAPIServer.get_api_key_manager -> ApiKeyManager {
     if self._api_key_manager is None {
         self._api_key_manager = ApiKeyManager();
     }
     return self._api_key_manager;
 }
 
-"""Create a new API key for the authenticated user."""
-impl JacAPIServer.create_api_key(
+"""Create a new API key for the authenticated user.""" impl JacAPIServer.create_api_key(
     name: str, expiry_days: int | None = None, Authorization: str | None = None
 ) -> TransportResponse {
     # Validate JWT token to get username
@@ -1681,8 +1677,9 @@ impl JacAPIServer.create_api_key(
     );
 }
 
-"""List all API keys for the authenticated user."""
-impl JacAPIServer.list_api_keys(Authorization: str | None = None) -> TransportResponse {
+"""List all API keys for the authenticated user.""" impl JacAPIServer.list_api_keys(
+    Authorization: str | None = None
+) -> TransportResponse {
     # Validate JWT token to get username
     token: str | None = None;
     if Authorization and Authorization.startswith('Bearer ') {
@@ -1699,8 +1696,7 @@ impl JacAPIServer.list_api_keys(Authorization: str | None = None) -> TransportRe
     return self.get_api_key_manager().list_api_keys(username);
 }
 
-"""Revoke an API key for the authenticated user."""
-impl JacAPIServer.revoke_api_key(
+"""Revoke an API key for the authenticated user.""" impl JacAPIServer.revoke_api_key(
     api_key_id: str, Authorization: str | None = None
 ) -> TransportResponse {
     # Validate JWT token to get username
@@ -1719,8 +1715,7 @@ impl JacAPIServer.revoke_api_key(
     return self.get_api_key_manager().revoke_api_key(username, api_key_id);
 }
 
-"""Register API key management endpoints."""
-impl JacAPIServer.register_api_key_endpoints -> None {
+"""Register API key management endpoints.""" impl JacAPIServer.register_api_key_endpoints -> None {
     # Create API key
     self.server.add_endpoint(
         JEndPoint(
@@ -1813,8 +1808,9 @@ impl JacAPIServer.register_api_key_endpoints -> None {
     );
 }
 
-"""Get the transport type for a walker by checking its restspec."""
-impl JacAPIServer.get_transport_type_for_walker(walker_name: str) -> str {
+"""Get the transport type for a walker by checking its restspec.""" impl JacAPIServer.get_transport_type_for_walker(
+    walker_name: str
+) -> str {
     walkers = self.get_walkers();
     if walker_name not in walkers {
         return TransportType.HTTP;
@@ -1827,8 +1823,7 @@ impl JacAPIServer.get_transport_type_for_walker(walker_name: str) -> str {
     return TransportType.HTTP;
 }
 
-"""Create webhook callback for a walker with HMAC-SHA256 signature verification."""
-impl JacAPIServer.create_webhook_callback(
+"""Create webhook callback for a walker with HMAC-SHA256 signature verification.""" impl JacAPIServer.create_webhook_callback(
     walker_name: str
 ) -> Callable[..., TransportResponse] {
     async def callback(request: Request, **kwargs: JsonValue) -> TransportResponse {
@@ -1912,8 +1907,9 @@ impl JacAPIServer.create_webhook_callback(
     return callback;
 }
 
-"""Create parameters for webhook endpoint."""
-impl JacAPIServer.create_webhook_parameters(walker_name: str) -> list[APIParameter] {
+"""Create parameters for webhook endpoint.""" impl JacAPIServer.create_webhook_parameters(
+    walker_name: str
+) -> list[APIParameter] {
     parameters: list[APIParameter] = [];
     # API key header (required for webhooks)
     # Use underscore naming for valid Python identifiers - FastAPI auto-converts to hyphenated headers
@@ -1962,8 +1958,7 @@ impl JacAPIServer.create_webhook_parameters(walker_name: str) -> list[APIParamet
     return parameters;
 }
 
-"""Register webhook endpoints for walkers with transport_type=WEBHOOK."""
-impl JacAPIServer.register_webhook_endpoints -> None {
+"""Register webhook endpoints for walkers with transport_type=WEBHOOK.""" impl JacAPIServer.register_webhook_endpoints -> None {
     for walker_name in self.get_walkers() {
         transport_type = self.get_transport_type_for_walker(walker_name);
 
@@ -1984,8 +1979,7 @@ impl JacAPIServer.register_webhook_endpoints -> None {
     }
 }
 
-"""Register dynamic webhook endpoint for HMR support."""
-impl JacAPIServer.register_dynamic_webhook_endpoint -> None {
+"""Register dynamic webhook endpoint for HMR support.""" impl JacAPIServer.register_dynamic_webhook_endpoint -> None {
     async def dynamic_webhook_handler(
         request: Request, walker_name: str
     ) -> TransportResponse {

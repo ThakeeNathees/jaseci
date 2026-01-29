@@ -1,7 +1,6 @@
 """Implementation of Bun installer utility."""
 
-"""Check if bun is available, add to PATH if needed, or prompt to install."""
-impl ensure_bun_available -> bool {
+"""Check if bun is available, add to PATH if needed, or prompt to install.""" impl ensure_bun_available -> bool {
     import os;
     import shutil;
     # Check if bun is already in PATH
@@ -21,8 +20,7 @@ impl ensure_bun_available -> bool {
     return prompt_install_bun();
 }
 
-"""Prompt user to install Bun and install if confirmed."""
-impl prompt_install_bun -> bool {
+"""Prompt user to install Bun and install if confirmed.""" impl prompt_install_bun -> bool {
     import os;
     import subprocess;
     import sys;

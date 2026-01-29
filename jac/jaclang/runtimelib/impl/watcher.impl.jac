@@ -9,8 +9,7 @@ import from typing { Any }
 
 glob logger = logging.getLogger(__name__);
 
-"""Start watching for file changes."""
-impl JacFileWatcher.start -> None {
+"""Start watching for file changes.""" impl JacFileWatcher.start -> None {
     if self._running {
         return;
     }
@@ -61,8 +60,7 @@ impl JacFileWatcher.start -> None {
     logger.debug(f"Watching for changes in: {self.watch_paths}");
 }
 
-"""Stop watching for file changes."""
-impl JacFileWatcher.stop -> None {
+"""Stop watching for file changes.""" impl JacFileWatcher.stop -> None {
     if not self._running {
         return;
     }
@@ -75,15 +73,15 @@ impl JacFileWatcher.stop -> None {
     logger.debug("File watcher stopped");
 }
 
-"""Add a callback to be invoked on file changes."""
-impl JacFileWatcher.add_callback(callback: Callable[[FileChangeEvent], None]) -> None {
+"""Add a callback to be invoked on file changes.""" impl JacFileWatcher.add_callback(
+    callback: Callable[[FileChangeEvent], None]
+) -> None {
     if callback not in self._callbacks {
         self._callbacks.append(callback);
     }
 }
 
-"""Remove a previously added callback."""
-impl JacFileWatcher.remove_callback(
+"""Remove a previously added callback.""" impl JacFileWatcher.remove_callback(
     callback: Callable[[FileChangeEvent], None]
 ) -> None {
     if callback in self._callbacks {
@@ -91,8 +89,9 @@ impl JacFileWatcher.remove_callback(
     }
 }
 
-"""Internal: Handle a file change event from watchdog."""
-impl JacFileWatcher._on_change(path: str, change_type: ChangeType) -> None {
+"""Internal: Handle a file change event from watchdog.""" impl JacFileWatcher._on_change(
+    path: str, change_type: ChangeType
+) -> None {
     # Ignore files in .jac directory to prevent infinite loops
     if '/.jac/' in path or '\\.jac\\' in path {
         return;
@@ -106,8 +105,7 @@ impl JacFileWatcher._on_change(path: str, change_type: ChangeType) -> None {
     self._pending_events[path] = event;
 }
 
-"""Internal: Flush pending events after debounce period."""
-impl JacFileWatcher._debounce_flush -> None {
+"""Internal: Flush pending events after debounce period.""" impl JacFileWatcher._debounce_flush -> None {
     now = time.time();
     debounce_sec = float(self._debounce_ms) / 1000.0;
     # Find events that are old enough to flush
@@ -129,15 +127,17 @@ impl JacFileWatcher._debounce_flush -> None {
     }
 }
 
-"""Internal: Check if a path matches the watch pattern."""
-impl JacFileWatcher._matches_pattern(path: str) -> bool {
+"""Internal: Check if a path matches the watch pattern.""" impl JacFileWatcher._matches_pattern(
+    path: str
+) -> bool {
     filename = Path(path).name;
     patterns = (self.pattern, *self.additional_patterns);
     return any(fnmatch.fnmatch(filename, p) for p in patterns);
 }
 
-"""Internal: Notify all callbacks of an event."""
-impl JacFileWatcher._notify_callbacks(event: FileChangeEvent) -> None {
+"""Internal: Notify all callbacks of an event.""" impl JacFileWatcher._notify_callbacks(
+    event: FileChangeEvent
+) -> None {
     for callback in self._callbacks {
         try {
             callback(event);

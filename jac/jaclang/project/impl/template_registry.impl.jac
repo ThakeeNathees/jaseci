@@ -5,8 +5,10 @@ import from typing { Any }
 # ===============================================================================
 # ProjectTemplate Implementation
 # ===============================================================================
-"""Convert to dict for serialization (e.g., JSON bundling)."""
-impl ProjectTemplate.to_dict -> dict[str, Any] {
+"""Convert to dict for serialization (e.g., JSON bundling).""" impl ProjectTemplate.to_dict -> dict[
+    str,
+    Any
+] {
     return {
         "name": self.name,
         "description": self.description,
@@ -20,8 +22,9 @@ impl ProjectTemplate.to_dict -> dict[str, Any] {
 # ===============================================================================
 # TemplateRegistry Implementation
 # ===============================================================================
-"""Register a new template from plugin hook data."""
-impl TemplateRegistry.register(template_info: dict[str, Any]) -> None {
+"""Register a new template from plugin hook data.""" impl TemplateRegistry.register(
+    template_info: dict[str, Any]
+) -> None {
     import from jaclang.project.template_registry { ProjectTemplate }
     name = template_info.get("name");
     if not name {
@@ -49,14 +52,14 @@ impl TemplateRegistry.register(template_info: dict[str, Any]) -> None {
     self._templates[name] = template;
 }
 
-"""Get template by name (e.g., 'default', 'client')."""
-impl TemplateRegistry.get(name: str) -> ProjectTemplate | None {
+"""Get template by name (e.g., 'default', 'client').""" impl TemplateRegistry.get(
+    name: str
+) -> ProjectTemplate | None {
     import from jaclang.project.template_registry { ProjectTemplate }
     return self._templates.get(name);
 }
 
-"""Get the default template."""
-impl TemplateRegistry.get_default -> ProjectTemplate {
+"""Get the default template.""" impl TemplateRegistry.get_default -> ProjectTemplate {
     import from jaclang.project.template_registry { ProjectTemplate }
     default_tmpl = self._templates.get("default");
     if default_tmpl is None {
@@ -65,8 +68,9 @@ impl TemplateRegistry.get_default -> ProjectTemplate {
     return default_tmpl;
 }
 
-"""List all registered templates as (name, description) tuples."""
-impl TemplateRegistry.list_templates -> list[tuple[str, str]] {
+"""List all registered templates as (name, description) tuples.""" impl TemplateRegistry.list_templates -> list[
+    tuple[str, str]
+] {
     result: list[tuple[str, str]] = [];
     # Put "default" first if it exists
     if "default" in self._templates {
@@ -81,21 +85,20 @@ impl TemplateRegistry.list_templates -> list[tuple[str, str]] {
     return result;
 }
 
-"""Check if a template is registered."""
-impl TemplateRegistry.has_template(name: str) -> bool {
+"""Check if a template is registered.""" impl TemplateRegistry.has_template(
+    name: str
+) -> bool {
     return name in self._templates;
 }
 
-"""Clear all registered templates (for testing)."""
-impl TemplateRegistry.clear -> None {
+"""Clear all registered templates (for testing).""" impl TemplateRegistry.clear -> None {
     self._templates.clear();
 }
 
 # ===============================================================================
 # Module-level Functions Implementation
 # ===============================================================================
-"""Get or create the global template registry."""
-impl get_template_registry -> TemplateRegistry {
+"""Get or create the global template registry.""" impl get_template_registry -> TemplateRegistry {
     import from jaclang.project.template_registry { TemplateRegistry }
     global _registry;
     if _registry is None {
@@ -104,8 +107,7 @@ impl get_template_registry -> TemplateRegistry {
     return _registry;
 }
 
-"""Initialize the registry by registering default template and calling plugin hooks."""
-impl initialize_template_registry -> None {
+"""Initialize the registry by registering default template and calling plugin hooks.""" impl initialize_template_registry -> None {
     import from jaclang.pycore.runtime { JacRuntime }
     registry = get_template_registry();
     # Register the default template first

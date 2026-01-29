@@ -45,8 +45,7 @@ impl AssetProcessor.copy_custom_asset_types(
     return;
 }
 
-"""Copy TypeScript files (.ts, .tsx) from source to destination recursively."""
-impl AssetProcessor.copy_typescript_files(
+"""Copy TypeScript files (.ts, .tsx) from source to destination recursively.""" impl AssetProcessor.copy_typescript_files(
     self: AssetProcessor,
     src_dir: Path,
     dest_dir: Path,
@@ -86,8 +85,7 @@ impl AssetProcessor.copy_typescript_files(
     copy_recursive(src_dir, dest_dir);
 }
 
-"""Copy CSS and other asset files from source to destination recursively."""
-impl AssetProcessor.copy_assets(
+"""Copy CSS and other asset files from source to destination recursively.""" impl AssetProcessor.copy_assets(
     self: AssetProcessor,
     src_dir: Path,
     dest_dir: Path,

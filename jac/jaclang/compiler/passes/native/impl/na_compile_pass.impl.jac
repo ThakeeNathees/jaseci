@@ -7,8 +7,7 @@ impl NativeCompilePass.init(
     super.init(ir_in=ir_in, prog=prog, cancel_token=cancel_token);
 }
 
-"""Compile the LLVM IR module if one was generated."""
-impl NativeCompilePass.before_pass -> None {
+"""Compile the LLVM IR module if one was generated.""" impl NativeCompilePass.before_pass -> None {
     module = self.ir_in;
     if module.gen.llvm_ir is None {
         return;

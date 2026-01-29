@@ -9,8 +9,9 @@ impl Media.to_dict -> list[dict] {
 #-------------------------------------------------------------------------------
 # Text
 #-------------------------------------------------------------------------------
-"""Convert the text content to a dictionary."""
-impl Text.to_dict -> list[dict] {
+"""Convert the text content to a dictionary.""" impl Text.to_dict -> list[
+    dict
+] {
     return [{"type": "text", "text": self.text}];
 }
 
@@ -27,8 +28,7 @@ Supported inputs:
 - File-like objects (BytesIO or any IO[bytes])
 - os.PathLike
 - PIL.Image.Image instances
-"""
-impl Image.postinit -> None {
+""" impl Image.postinit -> None {
     value = self.url;
     # Handle path-like inputs by converting to string
     if isinstance(value, os.PathLike) {
@@ -125,8 +125,9 @@ impl Image.postinit -> None {
     ) ;
 }
 
-"""Map a PIL format name to a MIME type with sensible fallbacks."""
-impl Image._format_to_mime(fmt: str | None) -> str {
+"""Map a PIL format name to a MIME type with sensible fallbacks.""" impl Image._format_to_mime(
+    fmt: str | None
+) -> str {
     fmt = (fmt or "PNG").upper();
     if fmt == "WEBP" {
         return "image/webp";
@@ -142,8 +143,9 @@ impl Image._format_to_mime(fmt: str | None) -> str {
     return mime or "image/png";
 }
 
-"""Create a data URL from raw bytes with the appropriate MIME type."""
-impl Image._data_url_from_bytes(data: bytes, fmt: str | None) -> str {
+"""Create a data URL from raw bytes with the appropriate MIME type.""" impl Image._data_url_from_bytes(
+    data: bytes, fmt: str | None
+) -> str {
     mime = self.mime_type or self._format_to_mime(fmt);
     # Ensure mime_type is set on the instance for downstream usage
     self.mime_type = mime;
@@ -151,8 +153,9 @@ impl Image._data_url_from_bytes(data: bytes, fmt: str | None) -> str {
     return f"data:{mime};base64,{b64}";
 }
 
-"""Convert the image to a dictionary for LLM API calls."""
-impl Image.to_dict -> list[dict] {
+"""Convert the image to a dictionary for LLM API calls.""" impl Image.to_dict -> list[
+    dict
+] {
     image_url = {"url": self.url};
     if self.mime_type {
         image_url["format"] = self.mime_type;
@@ -163,15 +166,13 @@ impl Image.to_dict -> list[dict] {
 #-------------------------------------------------------------------------------
 # Video
 #-------------------------------------------------------------------------------
-"""Validate that the video path exists."""
-impl Video.postinit -> None {
+"""Validate that the video path exists.""" impl Video.postinit -> None {
     if not os.path.exists(self.path) {
         raise ValueError(f"Video file does not exist: {self.path}") ;
     }
 }
 
-"""Load video frames as base64-encoded images at the specified FPS."""
-impl Video.load_frames -> None {
+"""Load video frames as base64-encoded images at the specified FPS.""" impl Video.load_frames -> None {
     try {
         import cv2;
     } except ImportError {
@@ -201,8 +202,9 @@ impl Video.load_frames -> None {
     }
 }
 
-"""Convert the video frames to a list of image dictionaries."""
-impl Video.to_dict -> list[dict] {
+"""Convert the video frames to a list of image dictionaries.""" impl Video.to_dict -> list[
+    dict
+] {
     if self._base64frames is None {
         self.load_frames();
     }

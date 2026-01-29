@@ -6,8 +6,7 @@ impl ImportProcessor.should_process_import(
     return (import_path.suffix in {'.jac','.js'});
 }
 
-"""Process client imports for Vite bundling."""
-impl ImportProcessor.process_vite_imports(
+"""Process client imports for Vite bundling.""" impl ImportProcessor.process_vite_imports(
     self: ImportProcessor, manifest: (ClientManifest | None), module_path: Path
 ) -> list[(Path | None)] {
     imported_js_modules: list[(Path | None)] = [];

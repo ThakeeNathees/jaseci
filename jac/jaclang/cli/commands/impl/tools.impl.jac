@@ -41,8 +41,9 @@ def _proc_file(filename: str) -> tuple {
     return (base, mod, mach);
 }
 
-"""Run the specified AST tool with optional arguments."""
-impl tool(tool: str, args: list = []) -> int {
+"""Run the specified AST tool with optional arguments.""" impl tool(
+    tool: str, args: list = []
+) -> int {
     import from jaclang.utils.lang_tools { AstTool }
     if hasattr(AstTool, tool) {
         try {
@@ -63,8 +64,7 @@ impl tool(tool: str, args: list = []) -> int {
     }
 }
 
-"""Generate graph visualization."""
-impl dot(
+"""Generate graph visualization.""" impl dot(
     filename: str,
     initial: str = "",
     depth: int = -1,
@@ -121,8 +121,7 @@ impl dot(
     }
 }
 
-"""Run Jac Language Server Protocol."""
-impl lsp -> int {
+"""Run Jac Language Server Protocol.""" impl lsp -> int {
     import from jaclang.langserve.server { run_lang_server }
     try {
         run_lang_server();

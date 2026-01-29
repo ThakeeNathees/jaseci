@@ -9,13 +9,15 @@ This file only implements plugin-specific methods.
 import from pathlib { Path }
 import from typing { Any }
 
-"""Get the plugin section name for byllm."""
-impl JacByllmConfig.get_plugin_name(self: JacByllmConfig) -> str {
+"""Get the plugin section name for byllm.""" impl JacByllmConfig.get_plugin_name(
+    self: JacByllmConfig
+) -> str {
     return "byllm";
 }
 
-"""Get default configuration structure for byllm."""
-impl JacByllmConfig.get_default_config(self: JacByllmConfig) -> dict[str, Any] {
+"""Get default configuration structure for byllm.""" impl JacByllmConfig.get_default_config(
+    self: JacByllmConfig
+) -> dict[str, Any] {
     return {
         'model': {
             'default_model': 'gpt-4o-mini',
@@ -30,8 +32,9 @@ impl JacByllmConfig.get_default_config(self: JacByllmConfig) -> dict[str, Any] {
     };
 }
 
-"""Get model configuration from jac.toml."""
-impl JacByllmConfig.get_model_config(self: JacByllmConfig) -> dict[str, Any] {
+"""Get model configuration from jac.toml.""" impl JacByllmConfig.get_model_config(
+    self: JacByllmConfig
+) -> dict[str, Any] {
     config = self.load();
     model_config = config.get('model', {});
     return {
@@ -43,8 +46,9 @@ impl JacByllmConfig.get_model_config(self: JacByllmConfig) -> dict[str, Any] {
     };
 }
 
-"""Get default call parameters configuration from jac.toml."""
-impl JacByllmConfig.get_call_params_config(self: JacByllmConfig) -> dict[str, Any] {
+"""Get default call parameters configuration from jac.toml.""" impl JacByllmConfig.get_call_params_config(
+    self: JacByllmConfig
+) -> dict[str, Any] {
     config = self.load();
     call_params = config.get('call_params', {});
     temperature = call_params.get('temperature', 0.7);
@@ -57,8 +61,9 @@ impl JacByllmConfig.get_call_params_config(self: JacByllmConfig) -> dict[str, An
     return result;
 }
 
-"""Get LiteLLM-specific configuration from jac.toml."""
-impl JacByllmConfig.get_litellm_config(self: JacByllmConfig) -> dict[str, Any] {
+"""Get LiteLLM-specific configuration from jac.toml.""" impl JacByllmConfig.get_litellm_config(
+    self: JacByllmConfig
+) -> dict[str, Any] {
     config = self.load();
     litellm_config = config.get('litellm', {});
     return {
@@ -67,8 +72,9 @@ impl JacByllmConfig.get_litellm_config(self: JacByllmConfig) -> dict[str, Any] {
     };
 }
 
-"""Get or create the global JacByllmConfig instance."""
-impl get_byllm_config(project_dir: Path | None = None) -> JacByllmConfig {
+"""Get or create the global JacByllmConfig instance.""" impl get_byllm_config(
+    project_dir: Path | None = None
+) -> JacByllmConfig {
     global _byllm_config_instance;
     # If project_dir is provided and differs from cached instance, recreate
     if (
@@ -84,14 +90,14 @@ impl get_byllm_config(project_dir: Path | None = None) -> JacByllmConfig {
     return _byllm_config_instance;
 }
 
-"""Get system prompt from jac.toml configuration."""
-impl JacByllmConfig.get_system_prompt(self: JacByllmConfig) -> str {
+"""Get system prompt from jac.toml configuration.""" impl JacByllmConfig.get_system_prompt(
+    self: JacByllmConfig
+) -> str {
     config = self.load();
     return config.get('system_prompt', '');
 }
 
-"""Reset the global config instance (useful for testing)."""
-impl reset_byllm_config -> None {
+"""Reset the global config instance (useful for testing).""" impl reset_byllm_config -> None {
     global _byllm_config_instance;
     _byllm_config_instance = None;
 }

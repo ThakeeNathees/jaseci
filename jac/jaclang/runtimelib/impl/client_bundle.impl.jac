@@ -6,8 +6,9 @@ impl ClientBundleBuilder.postinit -> None {
     }
 }
 
-"""Build (or reuse) a client bundle for the supplied module."""
-impl ClientBundleBuilder.build(module: ModuleType, force: bool = False) -> ClientBundle {
+"""Build (or reuse) a client bundle for the supplied module.""" impl ClientBundleBuilder.build(
+    module: ModuleType, force: bool = False
+) -> ClientBundle {
     if not module?.__file__ {
         raise ClientBundleError(
             f"Module '{module.__name__}' has no __file__ attribute"
@@ -46,8 +47,7 @@ module_path: Path to the module being processed
 
 Returns:
 ProcessedImports containing JavaScript code pieces and bundled module names
-"""
-impl ClientBundleBuilder._process_imports(
+""" impl ClientBundleBuilder._process_imports(
     manifest: (ClientManifest | None), module_path: Path
 ) -> ProcessedImports {
     import_pieces: list[str] = [];
@@ -148,8 +148,7 @@ manifest: The client manifest, or None
 
 Returns:
 Sorted list of client export names
-"""
-impl ClientBundleBuilder._extract_client_exports(
+""" impl ClientBundleBuilder._extract_client_exports(
     manifest: (ClientManifest | None)
 ) -> list[str] {
     return sorted(<>dict.fromkeys(manifest.exports)) if manifest else [];
@@ -163,8 +162,7 @@ module: The Python module
 
 Returns:
 Dictionary of global names to their values
-"""
-impl ClientBundleBuilder._extract_client_globals(
+""" impl ClientBundleBuilder._extract_client_globals(
     manifest: (ClientManifest | None), module: ModuleType
 ) -> dict[str, Any] {
     client_globals_map: dict[(str, Any)] = {};
@@ -182,8 +180,7 @@ impl ClientBundleBuilder._extract_client_globals(
     return {key: client_globals_map[key] for key in sorted(client_globals_map)};
 }
 
-"""Compile bundle pieces and stitch them together."""
-impl ClientBundleBuilder._compile_bundle(
+"""Compile bundle pieces and stitch them together.""" impl ClientBundleBuilder._compile_bundle(
     module: ModuleType, module_path: Path
 ) -> ClientBundle {
     import from jaclang { JacRuntime as Jac }
@@ -225,8 +222,7 @@ impl ClientBundleBuilder._compile_bundle(
 
 Returns:
 Tuple of (js_code, compiled_module) where compiled_module contains the client_manifest
-"""
-impl ClientBundleBuilder._compile_to_js(source_path: Path) -> tuple[str, Module] {
+""" impl ClientBundleBuilder._compile_to_js(source_path: Path) -> tuple[str, Module] {
     import from jaclang { JacRuntime as Jac }
     program = Jac.program;
     source_key = str(source_path);
@@ -252,8 +248,7 @@ bundled_modules: Set of module names that are being bundled
 
 Returns:
 JavaScript code with bundled imports removed
-"""
-impl ClientBundleBuilder._strip_import_statements(
+""" impl ClientBundleBuilder._strip_import_statements(
     js_code: str, bundled_modules: set[str]
 ) -> str {
     import re;
@@ -276,8 +271,9 @@ impl ClientBundleBuilder._strip_import_statements(
     return '\n'.join(filtered_lines);
 }
 
-"""Compute a cache signature based on file modification times."""
-impl ClientBundleBuilder._signature(paths: Iterable[Path]) -> str {
+"""Compute a cache signature based on file modification times.""" impl ClientBundleBuilder._signature(
+    paths: Iterable[Path]
+) -> str {
     parts: list[str] = [];
     for path in paths {
         try {
@@ -290,8 +286,7 @@ impl ClientBundleBuilder._signature(paths: Iterable[Path]) -> str {
     return hashlib.sha256('|'.join(parts).encode('utf-8')).hexdigest();
 }
 
-"""Generate registration code that exposes client symbols globally."""
-impl ClientBundleBuilder._generate_registration_js(
+"""Generate registration code that exposes client symbols globally.""" impl ClientBundleBuilder._generate_registration_js(
     module_name: str, client_functions: Sequence[str], client_globals: dict[(str, Any)]
 ) -> str {
     globals_entries: list[str] = [];

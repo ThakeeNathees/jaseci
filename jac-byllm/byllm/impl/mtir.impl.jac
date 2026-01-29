@@ -13,8 +13,7 @@ glob SYSTEM_PERSONA = """\
 
 Builds the message history with system persona, user input, and any media.
 Prepares tools including the finish_tool for ReAct-style interactions.
-"""
-impl MTRuntime.factory(mtir: MTIR) -> MTRuntime {
+""" impl MTRuntime.factory(mtir: MTIR) -> MTRuntime {
     # Prepare the tools for the LLM call.
     caller = mtir.caller;
     args = mtir.args;
@@ -166,8 +165,10 @@ impl MTRuntime.factory(mtir: MTIR) -> MTRuntime {
     );
 }
 
-"""Build the parameter dict for the LLM API call."""
-impl MTRuntime.dispatch_params -> dict[str, object] {
+"""Build the parameter dict for the LLM API call.""" impl MTRuntime.dispatch_params -> dict[
+    str,
+    object
+] {
     params = {
         "messages": self.get_msg_list(),
         "tools": self.get_tool_list() or None,
@@ -180,20 +181,23 @@ impl MTRuntime.dispatch_params -> dict[str, object] {
     return params;
 }
 
-"""Add a message to the conversation history."""
-impl MTRuntime.add_message(message: MessageType) -> None {
+"""Add a message to the conversation history.""" impl MTRuntime.add_message(
+    message: MessageType
+) -> None {
     self.messages.append(message);
 }
 
-"""Return the messages in a format suitable for LLM API."""
-impl MTRuntime.get_msg_list -> list[dict[str, object] | LiteLLMMessage] {
+"""Return the messages in a format suitable for LLM API.""" impl MTRuntime.get_msg_list -> list[
+    dict[str, object] | LiteLLMMessage
+] {
     return [
         msg.to_dict() if isinstance(msg, Message) else msg for msg in self.messages
     ];
 }
 
-"""Parse the LLM response string into the expected return type."""
-impl MTRuntime.parse_response(response: str) -> object {
+"""Parse the LLM response string into the expected return type.""" impl MTRuntime.parse_response(
+    response: str
+) -> object {
     # To use validate_json the string should contains quotes.
     #     example: '"The weather at New York is sunny."'
     # but the response from LLM will not have quotes, so
@@ -208,8 +212,9 @@ impl MTRuntime.parse_response(response: str) -> object {
     return response;
 }
 
-"""Get a tool by its function name."""
-impl MTRuntime.get_tool(tool_name: str) -> Tool | None {
+"""Get a tool by its function name.""" impl MTRuntime.get_tool(
+    tool_name: str
+) -> Tool | None {
     for tool in self.tools {
         if tool.func.__name__ == tool_name {
             return tool;
@@ -218,13 +223,13 @@ impl MTRuntime.get_tool(tool_name: str) -> Tool | None {
     return None;
 }
 
-"""Return the tools as JSON schemas for the LLM API."""
-impl MTRuntime.get_tool_list -> list[dict] {
+"""Return the tools as JSON schemas for the LLM API.""" impl MTRuntime.get_tool_list -> list[
+    dict
+] {
     return [tool.get_json_schema() for tool in self.tools];
 }
 
-"""Return the JSON schema for the response type, if applicable."""
-impl MTRuntime.get_output_schema -> dict | None {
+"""Return the JSON schema for the response type, if applicable.""" impl MTRuntime.get_output_schema -> dict | None {
     assert (len(self.tools) == 0 or self.get_tool("finish_tool") is not None);  #Finish tool should be present in the tools list.
     if len(self.tools) == 0 and self.resp_type {
         if self.resp_type is str {

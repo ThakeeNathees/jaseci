@@ -6,8 +6,7 @@ Direct implementations - no delegation to cli.jac.
 import ast as ast3;
 import sys;
 
-"""Convert Python to Jac."""
-impl py2jac(filename: str) -> int {
+"""Convert Python to Jac.""" impl py2jac(filename: str) -> int {
     import jaclang.pycore.unitree as uni;
     import from jaclang.compiler.passes.main { PyastBuildPass }
     import from jaclang.pycore.program { JacProgram }
@@ -37,8 +36,7 @@ impl py2jac(filename: str) -> int {
     return 0;
 }
 
-"""Convert Jac to Python."""
-impl jac2py(filename: str) -> int {
+"""Convert Jac to Python.""" impl jac2py(filename: str) -> int {
     import from jaclang.pycore.program { JacProgram }
     if filename.endswith('.jac') {
         code = JacProgram().compile(file_path=filename).gen.py;
@@ -54,8 +52,7 @@ impl jac2py(filename: str) -> int {
     }
 }
 
-"""Convert Jac to JavaScript."""
-impl js(filename: str) -> int {
+"""Convert Jac to JavaScript.""" impl js(filename: str) -> int {
     import from jaclang.pycore.program { JacProgram }
     if filename.endswith('.jac') {
         try {

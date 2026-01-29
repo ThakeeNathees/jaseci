@@ -19,13 +19,13 @@ import from jaclang.pycore.mtp {
     type_to_str
 }
 
-"""Initialize the pass with the input IR and program context."""
-impl MTIRGenPass.postinit -> None {
+"""Initialize the pass with the input IR and program context.""" impl MTIRGenPass.postinit -> None {
     super.init(self.ir_in, self.prog, self.cancel_token);
 }
 
-"""Check if a type expression represents a primitive type."""
-impl MTIRGenPass._is_primitive_type(type_expr: uni.Expr | None) -> bool {
+"""Check if a type expression represents a primitive type.""" impl MTIRGenPass._is_primitive_type(
+    type_expr: uni.Expr | None
+) -> bool {
     if type_expr is None {
         return False;
     }
@@ -36,8 +36,7 @@ impl MTIRGenPass._is_primitive_type(type_expr: uni.Expr | None) -> bool {
 }
 
 """Parse a unitree type expression into a primitive name, ClassInfo,
-or tuple-based generic representation (using mk_list/mk_dict/mk_tuple)."""
-impl MTIRGenPass._parse_type_expr(
+or tuple-based generic representation (using mk_list/mk_dict/mk_tuple).""" impl MTIRGenPass._parse_type_expr(
     type_expr: uni.Expr | None, scope: uni.UniScopeNode
 ) -> ClassInfo | str | tuple | None {
     if type_expr is None {
@@ -109,8 +108,7 @@ impl MTIRGenPass._parse_type_expr(
     return None;
 }
 
-"""Extract symbol from type expression if it's not a primitive type."""
-impl MTIRGenPass._extract_type_symbol(
+"""Extract symbol from type expression if it's not a primitive type.""" impl MTIRGenPass._extract_type_symbol(
     type_expr: uni.Expr | None, scope: uni.UniScopeNode
 ) -> uni.Symbol | None {
     if (type_expr is None) or self._is_primitive_type(type_expr) {
@@ -125,8 +123,9 @@ impl MTIRGenPass._extract_type_symbol(
     return None;
 }
 
-"""Extract class structure information from a symbol."""
-impl MTIRGenPass._extract_class_info(symbol: uni.Symbol) -> ClassInfo | None {
+"""Extract class structure information from a symbol.""" impl MTIRGenPass._extract_class_info(
+    symbol: uni.Symbol
+) -> ClassInfo | None {
     if not self?._class_info_cache {
         self._class_info_cache = {};
     }
@@ -205,8 +204,9 @@ impl MTIRGenPass._extract_class_info(symbol: uni.Symbol) -> ClassInfo | None {
     return placeholder;
 }
 
-"""Extract comprehensive information from an Ability node."""
-impl MTIRGenPass._extract_function_info(node: uni.Ability) -> FunctionInfo {
+"""Extract comprehensive information from an Ability node.""" impl MTIRGenPass._extract_function_info(
+    node: uni.Ability
+) -> FunctionInfo {
     function_name = node.py_resolve_name();
     parameters: list[ParamInfo] = [];
     if node.signature and isinstance(node.signature, uni.FuncSignature) {
@@ -250,8 +250,7 @@ impl MTIRGenPass._extract_function_info(node: uni.Ability) -> FunctionInfo {
     );
 }
 
-"""Extract method information from an Ability node."""
-impl MTIRGenPass._extract_method_info(
+"""Extract method information from an Ability node.""" impl MTIRGenPass._extract_method_info(
     node: uni.Ability, by_call: bool = False
 ) -> MethodInfo {
     func_info = self._extract_function_info(node=node);
@@ -272,8 +271,9 @@ impl MTIRGenPass._extract_method_info(
     );
 }
 
-"""Get a unique scope string for a given scope node."""
-impl MTIRGenPass._get_scope_str(node: uni.UniScopeNode) -> str {
+"""Get a unique scope string for a given scope node.""" impl MTIRGenPass._get_scope_str(
+    node: uni.UniScopeNode
+) -> str {
     # For Module nodes, compute the full module path using the file path
     if isinstance(node, uni.Module) {
         mod_path = node.loc.mod_path;
@@ -322,8 +322,7 @@ impl MTIRGenPass._get_scope_str(node: uni.UniScopeNode) -> str {
     return self_name;
 }
 
-"""Extract tools from a by clause expression."""
-impl MTIRGenPass._extract_tools_from_expr(
+"""Extract tools from a by clause expression.""" impl MTIRGenPass._extract_tools_from_expr(
     expr: uni.Expr, scope: uni.UniScopeNode
 ) -> list[FunctionInfo] {
     tools: list[FunctionInfo] = [];
@@ -398,8 +397,9 @@ impl MTIRGenPass._extract_tools_from_expr(
     return tools;
 }
 
-"""Handle entering an ability node for MTIR generation."""
-impl MTIRGenPass.enter_ability(node: uni.Ability) -> None {
+"""Handle entering an ability node for MTIR generation.""" impl MTIRGenPass.enter_ability(
+    node: uni.Ability
+) -> None {
     if not node.is_genai_ability {
         return;
     }

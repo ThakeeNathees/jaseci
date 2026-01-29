@@ -36,8 +36,7 @@ impl TypeEvaluator._create_dataclass_init_method(
     );
 }
 
-"""Lookup the object member type."""
-impl TypeEvaluator._lookup_object_member(
+"""Lookup the object member type.""" impl TypeEvaluator._lookup_object_member(
     base_type: types.ClassType, member: str
 ) -> type_utils.ClassMember | None {
     assert self.prefetch.int_class is not None;
@@ -48,8 +47,7 @@ impl TypeEvaluator._lookup_object_member(
     return None;
 }
 
-"""Lookup the class member type."""
-impl TypeEvaluator._lookup_class_member(
+"""Lookup the class member type.""" impl TypeEvaluator._lookup_class_member(
     base_type: types.ClassType, member: str
 ) -> type_utils.ClassMember | None {
     # FIXME: Pyright's way: Implement class member iterator (based on mro and the multiple inheritance)
@@ -66,8 +64,9 @@ impl TypeEvaluator._lookup_class_member(
     return None;
 }
 
-"""Convert a class type to an instance type."""
-impl TypeEvaluator._convert_to_instance(jtype: TypeBase) -> TypeBase {
+"""Convert a class type to an instance type.""" impl TypeEvaluator._convert_to_instance(
+    jtype: TypeBase
+) -> TypeBase {
     # TODO: Grep pyright "Handle type[x] as a special case." They handle `type[x]` as a special case:
     #
     # foo: int = 42;       # <-- Here `int` is instantiable class and, become instance after this method.
@@ -98,8 +97,9 @@ impl TypeEvaluator._get_enclosing_class
     return node_.find_parent_of_type(uni.Archetype);
 }
 
-"""Get the enclosing method (ability) of the given node."""
-impl TypeEvaluator._get_enclosing_method(node: uni.UniNode) -> uni.Ability | None {
+"""Get the enclosing method (ability) of the given node.""" impl TypeEvaluator._get_enclosing_method(
+    node: uni.UniNode
+) -> uni.Ability | None {
     enclosing_fn = self._get_enclosing_function(node);
     while enclosing_fn and (not enclosing_fn.is_method) {
         enclosing_fn = self._get_enclosing_function(enclosing_fn);
@@ -110,8 +110,9 @@ impl TypeEvaluator._get_enclosing_method(node: uni.UniNode) -> uni.Ability | Non
     return None;
 }
 
-"""Get the enclosing function (ability) of the given node."""
-impl TypeEvaluator._get_enclosing_function(node: uni.UniNode) -> uni.Ability | None {
+"""Get the enclosing function (ability) of the given node.""" impl TypeEvaluator._get_enclosing_function(
+    node: uni.UniNode
+) -> uni.Ability | None {
     if (impl := node.find_parent_of_type(uni.ImplDef))
     and (isinstance(impl.decl_link, uni.Ability)) {
         return impl.decl_link;
@@ -119,8 +120,9 @@ impl TypeEvaluator._get_enclosing_function(node: uni.UniNode) -> uni.Ability | N
     return node.find_parent_of_type(uni.Ability);
 }
 
-"""Check if the expression is Name that is 'self' and in the method context."""
-impl TypeEvaluator._is_expr_self(expr: uni.Expr) -> bool {
+"""Check if the expression is Name that is 'self' and in the method context.""" impl TypeEvaluator._is_expr_self(
+    expr: uni.Expr
+) -> bool {
     if (
         isinstance(expr, uni.Name)
         and (expr.value == TOKEN_MAP[Tok.KW_SELF])
@@ -139,8 +141,9 @@ impl TypeEvaluator._set_symbol_to_expr(expr: uni.Expr, sym: uni.Symbol) -> TypeB
     return expr.type;
 }
 
-"""Resolve the imported symbols to the actual symbol."""
-impl TypeEvaluator.resolve_imported_symbols(sym: uni.Symbol) -> uni.Symbol {
+"""Resolve the imported symbols to the actual symbol.""" impl TypeEvaluator.resolve_imported_symbols(
+    sym: uni.Symbol
+) -> uni.Symbol {
     if (
         isinstance(sym.decl, uni.Name) and sym.decl.find_parent_of_type(uni.ModuleItem)
     ) {
@@ -155,8 +158,7 @@ impl TypeEvaluator.resolve_imported_symbols(sym: uni.Symbol) -> uni.Symbol {
     return sym;
 }
 
-"""Set symbol and type for a module item node and its alias if present."""
-impl TypeEvaluator._set_module_item_symbol_and_type(
+"""Set symbol and type for a module item node and its alias if present.""" impl TypeEvaluator._set_module_item_symbol_and_type(
     node_: uni.ModuleItem, sym: uni.Symbol
 ) -> TypeBase {
     node_.name.sym = sym;
@@ -198,8 +200,7 @@ impl TypeEvaluator._extract_type_params(
     return type_params;
 }
 
-"""Add a diagnostic message to the program."""
-impl TypeEvaluator.add_diagnostic(
+"""Add a diagnostic message to the program.""" impl TypeEvaluator.add_diagnostic(
     node: uni.UniNode, message: str, warning: bool = False
 ) -> None {
     if self.diagnostic_callback {
@@ -226,8 +227,9 @@ impl TypeEvaluator._is_ability_classmethod(node_: uni.Ability) -> bool {
     return False;
 }
 
-"""Check if a symbol represents a property."""
-impl TypeEvaluator._is_symbol_property(symbol: uni.Symbol) -> bool {
+"""Check if a symbol represents a property.""" impl TypeEvaluator._is_symbol_property(
+    symbol: uni.Symbol
+) -> bool {
     node_ = symbol.decl.name_of;
     if isinstance(node_, uni.Ability) {
         ability = node_;

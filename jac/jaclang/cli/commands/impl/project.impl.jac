@@ -9,8 +9,7 @@ import sys;
 import base64;
 import from pathlib { Path }
 
-"""Initialize a new Jac project."""
-impl create(
+"""Initialize a new Jac project.""" impl create(
     name: str = '',
     force: bool = False,
     use: str = "default",
@@ -348,8 +347,9 @@ def _create_root_gitignore(project_path: Path, entries: list[str]) -> None {
     console.print(f"  ✔ .gitignore", style="success");
 }
 
-"""Install all dependencies from jac.toml."""
-impl install(dev: bool = False, verbose: bool = False) -> int {
+"""Install all dependencies from jac.toml.""" impl install(
+    dev: bool = False, verbose: bool = False
+) -> int {
     import from jaclang.project.config { get_config }
     import from jaclang.project.dependencies { DependencyInstaller }
     import from jaclang.cli.console { console }
@@ -379,8 +379,7 @@ impl install(dev: bool = False, verbose: bool = False) -> int {
     }
 }
 
-"""Add dependencies to the project."""
-impl add(
+"""Add dependencies to the project.""" impl add(
     packages: list = [], dev: bool = False, git: str = '', verbose: bool = False
 ) -> int {
     import from jaclang.project.config { get_config }
@@ -462,8 +461,9 @@ impl add(
     return 0;
 }
 
-"""Remove dependencies from the project."""
-impl remove(packages: list = [], dev: bool = False) -> int {
+"""Remove dependencies from the project.""" impl remove(
+    packages: list = [], dev: bool = False
+) -> int {
     import from jaclang.project.config { get_config }
     import from jaclang.project.dependencies { DependencyInstaller }
     import from jaclang.cli.console { console }
@@ -498,8 +498,9 @@ impl remove(packages: list = [], dev: bool = False) -> int {
     return 0;
 }
 
-"""Run custom scripts defined in jac.toml."""
-impl script(name: str = '', list_scripts: bool = False) -> int {
+"""Run custom scripts defined in jac.toml.""" impl script(
+    name: str = '', list_scripts: bool = False
+) -> int {
     import from jaclang.project.config { get_config }
     import from jaclang.cli.console { console }
     config = get_config();
@@ -549,8 +550,7 @@ impl script(name: str = '', list_scripts: bool = False) -> int {
     }
 }
 
-"""Clean project build artifacts."""
-impl clean(
+"""Clean project build artifacts.""" impl clean(
     all: bool = False,
     data: bool = False,
     cache: bool = False,
@@ -637,8 +637,9 @@ impl clean(
     return 0;
 }
 
-"""Manage project templates (.jacpack files)."""
-impl jacpack(action: str = "", path: str = "", output: str = "") -> int {
+"""Manage project templates (.jacpack files).""" impl jacpack(
+    action: str = "", path: str = "", output: str = ""
+) -> int {
     import from jaclang.project.template_registry { get_template_registry }
     import from jaclang.project.template_loader {
         load_template_from_directory,

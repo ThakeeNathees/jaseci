@@ -7,8 +7,7 @@ import sys;
 import from pathlib { Path }
 import from jaclang.cli.console { console }
 
-"""Run type checker for specified .jac files."""
-impl check(
+"""Run type checker for specified .jac files.""" impl check(
     paths: list,
     print_errs: bool = True,
     warnonly: bool = False,
@@ -133,8 +132,9 @@ impl check(
     return 0;
 }
 
-"""Format .jac files with improved code style."""
-impl format(paths: list, to_screen: bool = False, fix: bool = False) -> int {
+"""Format .jac files with improved code style.""" impl format(
+    paths: list, to_screen: bool = False, fix: bool = False
+) -> int {
     import from jaclang.pycore.program { JacProgram }
     if isinstance(paths, str) {
         paths = [paths];
@@ -229,8 +229,7 @@ impl format(paths: list, to_screen: bool = False, fix: bool = False) -> int {
     return 0;
 }
 
-"""Run the test suite in the specified .jac file or directory."""
-impl test(
+"""Run the test suite in the specified .jac file or directory.""" impl test(
     filepath: str = "",
     test_name: str = "",
     filter: str = "",
@@ -257,8 +256,7 @@ impl test(
     return 0;
 }
 
-"""Generate static parser."""
-impl gen_parser -> int {
+"""Generate static parser.""" impl gen_parser -> int {
     import from jaclang.compiler { gen_all_parsers }
     gen_all_parsers();
     console.success('Parser generated.');

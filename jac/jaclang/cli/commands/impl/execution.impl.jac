@@ -69,8 +69,9 @@ def _proc_file(filename: str) -> tuple {
     return (base, mod, mach);
 }
 
-"""Run the specified .jac file."""
-impl run(filename: str, main: bool = True, cache: bool = True) -> int {
+"""Run the specified .jac file.""" impl run(
+    filename: str, main: bool = True, cache: bool = True
+) -> int {
     _ensure_jac_runtime();
     import from jaclang.pycore.runtime { JacRuntime as Jac }
     # Re-discover config from the file's directory (handles absolute paths)
@@ -94,8 +95,7 @@ impl run(filename: str, main: bool = True, cache: bool = True) -> int {
     return 0;
 }
 
-"""Run the specified entrypoint function in the given .jac file."""
-impl enter(
+"""Run the specified entrypoint function in the given .jac file.""" impl enter(
     filename: str,
     entrypoint: str,
     args: list = [],
@@ -143,8 +143,7 @@ impl enter(
     return 0;
 }
 
-"""Start REST API server for the specified .jac file."""
-impl start(
+"""Start REST API server for the specified .jac file.""" impl start(
     filename: str,
     port: int = 8000,
     main: bool = True,
@@ -478,8 +477,9 @@ def _start_vite_dev_server(base_path: str, vite_port: int, api_port: int) -> Any
     }
 }
 
-"""Debug the specified .jac file."""
-impl debug(filename: str, main: bool = True, cache: bool = False) -> int {
+"""Debug the specified .jac file.""" impl debug(
+    filename: str, main: bool = True, cache: bool = False
+) -> int {
     import from jaclang.pycore.program { JacProgram }
     import from jaclang.pycore.helpers { debugger as db }
     (base, mod) = os.path.split(filename);

@@ -3,8 +3,7 @@ impl JacFormatPass.init(ir_in: uni.Module, prog: Any, cancel_token: Any = None) 
     super.init(ir_in, prog, cancel_token);
 }
 
-"""Recursively print a Doc node or a list of Doc nodes."""
-impl JacFormatPass.format_doc_ir(
+"""Recursively print a Doc node or a list of Doc nodes.""" impl JacFormatPass.format_doc_ir(
     doc_node: (doc.DocType | None) = None,
     indent_level: int = 0,
     width_remaining: (int | None) = None,
@@ -104,8 +103,7 @@ impl JacFormatPass.format_doc_ir(
     }
 }
 
-"""After pass."""
-impl JacFormatPass.transform(ir_in: uni.Module) -> uni.Module {
+"""After pass.""" impl JacFormatPass.transform(ir_in: uni.Module) -> uni.Module {
     formatted = self.format_doc_ir();
     lines = [line.rstrip() for line in formatted.split('\n')];
     while (lines and (lines[-1] == '')) {
@@ -128,8 +126,7 @@ impl JacFormatPass.transform(ir_in: uni.Module) -> uni.Module {
 Returns True if `node` could be printed *flat* on the current line within
 `width_remaining` columns at `indent_level`.
 Stops early on overflow or hard/literal lines.
-"""
-impl JacFormatPass._probe_fits(
+""" impl JacFormatPass._probe_fits(
     <>node: doc.DocType,
     indent_level: int,
     width_remaining: int,
@@ -183,8 +180,7 @@ impl JacFormatPass._probe_fits(
     return True;
 }
 
-"""Initialize pass."""
-impl JacFormatPass.pre_transform -> None {
+"""Initialize pass.""" impl JacFormatPass.pre_transform -> None {
     self.indent_size = 4;
     self.MAX_LINE_LENGTH = 88;
 }

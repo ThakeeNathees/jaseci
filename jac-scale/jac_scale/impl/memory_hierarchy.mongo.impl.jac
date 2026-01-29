@@ -11,8 +11,7 @@ import from jaclang.runtimelib.utils { storage_key, to_uuid }
 
 glob logger = logging.getLogger(__name__);
 
-"""Post-initialization: connect to MongoDB."""
-impl MongoBackend.postinit -> None {
+"""Post-initialization: connect to MongoDB.""" impl MongoBackend.postinit -> None {
     if self.client is None and self.mongo_url {
         try {
             self.client = MongoClient(self.mongo_url);
@@ -25,8 +24,7 @@ impl MongoBackend.postinit -> None {
     }
 }
 
-"""Check if MongoDB is available and connected."""
-impl MongoBackend.is_available -> bool {
+"""Check if MongoDB is available and connected.""" impl MongoBackend.is_available -> bool {
     if not self.mongo_url {
         return False;
     }
@@ -49,8 +47,9 @@ impl MongoBackend.is_available -> bool {
     }
 }
 
-"""Get anchor by UUID from MongoDB."""
-impl MongoBackend.get(id: UUID) -> (Anchor | None) {
+"""Get anchor by UUID from MongoDB.""" impl MongoBackend.get(
+    id: UUID
+) -> (Anchor | None) {
     if self.client is None {
         return None;
     }
@@ -66,8 +65,7 @@ impl MongoBackend.get(id: UUID) -> (Anchor | None) {
     return None;
 }
 
-"""Store anchor in MongoDB."""
-impl MongoBackend.put(anchor: Anchor) -> None {
+"""Store anchor in MongoDB.""" impl MongoBackend.put(anchor: Anchor) -> None {
     if self.client is None or not anchor.persistent {
         return;
     }
@@ -84,8 +82,7 @@ impl MongoBackend.put(anchor: Anchor) -> None {
     }
 }
 
-"""Delete anchor from MongoDB."""
-impl MongoBackend.delete(id: UUID) -> None {
+"""Delete anchor from MongoDB.""" impl MongoBackend.delete(id: UUID) -> None {
     if self.client is None {
         return;
     }
@@ -97,8 +94,7 @@ impl MongoBackend.delete(id: UUID) -> None {
     }
 }
 
-"""Close MongoDB connection."""
-impl MongoBackend.close -> None {
+"""Close MongoDB connection.""" impl MongoBackend.close -> None {
     if self.client {
         try {
             self.client.close();
@@ -109,8 +105,7 @@ impl MongoBackend.close -> None {
     }
 }
 
-"""Check if an anchor exists in MongoDB."""
-impl MongoBackend.has(id: UUID) -> bool {
+"""Check if an anchor exists in MongoDB.""" impl MongoBackend.has(id: UUID) -> bool {
     if self.client is None {
         return False;
     }
@@ -122,8 +117,7 @@ impl MongoBackend.has(id: UUID) -> bool {
     }
 }
 
-"""Query all anchors with optional filter."""
-impl MongoBackend.query(
+"""Query all anchors with optional filter.""" impl MongoBackend.query(
     filter: (Callable[[Anchor], bool] | None) = None
 ) -> Generator[Anchor, None, None] {
     if self.client is None {
@@ -142,8 +136,7 @@ impl MongoBackend.query(
     }
 }
 
-"""Get all root anchors."""
-impl MongoBackend.get_roots -> Generator[Root, None, None] {
+"""Get all root anchors.""" impl MongoBackend.get_roots -> Generator[Root, None, None] {
     for anchor in self.query() {
         if isinstance(anchor.archetype, Root) {
             yield cast(Root, anchor.archetype);
@@ -151,8 +144,7 @@ impl MongoBackend.get_roots -> Generator[Root, None, None] {
     }
 }
 
-"""Find anchors by IDs with optional filter."""
-impl MongoBackend.find(
+"""Find anchors by IDs with optional filter.""" impl MongoBackend.find(
     ids: (UUID | Iterable[UUID]), filter: (Callable[[Anchor], Anchor] | None) = None
 ) -> Generator[Anchor, None, None] {
     id_list = [ids] if isinstance(ids, UUID) else list(ids);
@@ -165,8 +157,7 @@ impl MongoBackend.find(
     }
 }
 
-"""Find one anchor by ID(s) with optional filter."""
-impl MongoBackend.find_one(
+"""Find one anchor by ID(s) with optional filter.""" impl MongoBackend.find_one(
     ids: (UUID | Iterable[UUID]), filter: (Callable[[Anchor], Anchor] | None) = None
 ) -> (Anchor | None) {
     id_list = [ids] if isinstance(ids, UUID) else list(ids);
@@ -180,19 +171,20 @@ impl MongoBackend.find_one(
     return None;
 }
 
-"""Commit - no-op for MongoDB (writes are immediate)."""
-impl MongoBackend.commit(anchor: (Anchor | None) = None) -> None {
+"""Commit - no-op for MongoDB (writes are immediate).""" impl MongoBackend.commit(
+    anchor: (Anchor | None) = None
+) -> None {
 # No-op: MongoDB writes are immediate
 }
 
 # PersistentMemory-specific methods
-"""Sync - no-op for MongoDB (writes are immediate)."""
-impl MongoBackend.sync -> None {
+"""Sync - no-op for MongoDB (writes are immediate).""" impl MongoBackend.sync -> None {
 # No-op: MongoDB writes are immediate
 }
 
-"""Bulk store multiple anchors."""
-impl MongoBackend.bulk_put(anchors: Iterable[Anchor]) -> None {
+"""Bulk store multiple anchors.""" impl MongoBackend.bulk_put(
+    anchors: Iterable[Anchor]
+) -> None {
     if self.client is None {
         return;
     }
@@ -224,8 +216,9 @@ impl MongoBackend.bulk_put(anchors: Iterable[Anchor]) -> None {
     }
 }
 
-"""Load anchor from raw MongoDB document."""
-impl MongoBackend._load_anchor(raw: dict[(str, Any)]) -> (Anchor | None) {
+"""Load anchor from raw MongoDB document.""" impl MongoBackend._load_anchor(
+    raw: dict[(str, Any)]
+) -> (Anchor | None) {
     if 'data' not in raw {
         return None;
     }

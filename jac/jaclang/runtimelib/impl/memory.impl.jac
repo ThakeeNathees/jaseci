@@ -18,47 +18,41 @@ glob logger = logging.getLogger(__name__);
 # =============================================================================
 # VolatileMemory Implementation (L1)
 # =============================================================================
-"""Initialize mutable defaults."""
-impl VolatileMemory.postinit -> None {
+"""Initialize mutable defaults.""" impl VolatileMemory.postinit -> None {
     self.__mem__ = {};
     self.__gc__ = set();
 }
 
-"""In-memory storage is always available."""
-impl VolatileMemory.is_available -> bool {
+"""In-memory storage is always available.""" impl VolatileMemory.is_available -> bool {
     return True;
 }
 
-"""Retrieve an anchor by ID."""
-impl VolatileMemory.get(id: UUID) -> (Anchor | None) {
+"""Retrieve an anchor by ID.""" impl VolatileMemory.get(id: UUID) -> (Anchor | None) {
     return self.__mem__.get(id);
 }
 
-"""Store an anchor."""
-impl VolatileMemory.put(anchor: Anchor) -> None {
+"""Store an anchor.""" impl VolatileMemory.put(anchor: Anchor) -> None {
     self.__mem__[anchor.id] = anchor;
 }
 
-"""Remove an anchor by ID and track for garbage collection."""
-impl VolatileMemory.delete(id: UUID) -> None {
+"""Remove an anchor by ID and track for garbage collection.""" impl VolatileMemory.delete(
+    id: UUID
+) -> None {
     if (anchor := self.__mem__.pop(id, None)) {
         self.__gc__.add(anchor);
     }
 }
 
-"""Close and clear memory."""
-impl VolatileMemory.close -> None {
+"""Close and clear memory.""" impl VolatileMemory.close -> None {
     self.__mem__.clear();
     self.__gc__.clear();
 }
 
-"""Check if an anchor is in memory."""
-impl VolatileMemory.has(id: UUID) -> bool {
+"""Check if an anchor is in memory.""" impl VolatileMemory.has(id: UUID) -> bool {
     return id in self.__mem__;
 }
 
-"""Query all anchors with optional filter."""
-impl VolatileMemory.query(
+"""Query all anchors with optional filter.""" impl VolatileMemory.query(
     filter: (Callable[[Anchor], bool] | None) = None
 ) -> Generator[Anchor, None, None] {
     for anchor in self.__mem__.values() {
@@ -68,8 +62,11 @@ impl VolatileMemory.query(
     }
 }
 
-"""Get all root anchors."""
-impl VolatileMemory.get_roots -> Generator[Root, None, None] {
+"""Get all root anchors.""" impl VolatileMemory.get_roots -> Generator[
+    Root,
+    None,
+    None
+] {
     for anchor in self.__mem__.values() {
         if isinstance(anchor.archetype, Root) {
             yield cast(Root, anchor.archetype);
@@ -77,8 +74,7 @@ impl VolatileMemory.get_roots -> Generator[Root, None, None] {
     }
 }
 
-"""Find anchors by IDs with optional filter."""
-impl VolatileMemory.find(
+"""Find anchors by IDs with optional filter.""" impl VolatileMemory.find(
     ids: (UUID | Iterable[UUID]), filter: (Callable[[Anchor], Anchor] | None) = None
 ) -> Generator[Anchor, None, None] {
     id_list = [ids] if isinstance(ids, UUID) else list(ids);
@@ -91,8 +87,7 @@ impl VolatileMemory.find(
     }
 }
 
-"""Find one anchor by ID(s) with optional filter."""
-impl VolatileMemory.find_one(
+"""Find one anchor by ID(s) with optional filter.""" impl VolatileMemory.find_one(
     ids: (UUID | Iterable[UUID]), filter: (Callable[[Anchor], Anchor] | None) = None
 ) -> (Anchor | None) {
     id_list = [ids] if isinstance(ids, UUID) else list(ids);
@@ -106,23 +101,23 @@ impl VolatileMemory.find_one(
     return None;
 }
 
-"""Get garbage collection list."""
-impl VolatileMemory.get_gc -> list[Anchor] {
+"""Get garbage collection list.""" impl VolatileMemory.get_gc -> list[Anchor] {
     return list(self.__gc__);
 }
 
-"""Remove anchor from garbage collection list."""
-impl VolatileMemory.remove_from_gc(anchor: Anchor) -> None {
+"""Remove anchor from garbage collection list.""" impl VolatileMemory.remove_from_gc(
+    anchor: Anchor
+) -> None {
     self.__gc__.discard(anchor);
 }
 
-"""Get the underlying memory dict."""
-impl VolatileMemory.get_mem -> dict[UUID, Anchor] {
+"""Get the underlying memory dict.""" impl VolatileMemory.get_mem -> dict[UUID, Anchor] {
     return self.__mem__;
 }
 
-"""Commit - no-op for volatile memory."""
-impl VolatileMemory.commit(anchor: (Anchor | None) = None) -> None {
+"""Commit - no-op for volatile memory.""" impl VolatileMemory.commit(
+    anchor: (Anchor | None) = None
+) -> None {
 # No persistence, nothing to commit
 }
 
@@ -131,13 +126,15 @@ impl VolatileMemory.commit(anchor: (Anchor | None) = None) -> None {
 # Inherits all Memory interface methods from VolatileMemory.
 # Only implements CacheMemory-specific methods.
 # =============================================================================
-"""Check if a key exists in the cache without loading the value."""
-impl LocalCacheMemory.exists(id: UUID) -> bool {
+"""Check if a key exists in the cache without loading the value.""" impl LocalCacheMemory.exists(
+    id: UUID
+) -> bool {
     return id in self.__mem__;
 }
 
-"""Store an anchor only if it already exists in the cache."""
-impl LocalCacheMemory.put_if_exists(anchor: Anchor) -> bool {
+"""Store an anchor only if it already exists in the cache.""" impl LocalCacheMemory.put_if_exists(
+    anchor: Anchor
+) -> bool {
     if anchor.id in self.__mem__ {
         self.__mem__[anchor.id] = anchor;
         return True;
@@ -145,24 +142,23 @@ impl LocalCacheMemory.put_if_exists(anchor: Anchor) -> bool {
     return False;
 }
 
-"""Invalidate a cache entry by ID."""
-impl LocalCacheMemory.invalidate(id: UUID) -> None {
+"""Invalidate a cache entry by ID.""" impl LocalCacheMemory.invalidate(
+    id: UUID
+) -> None {
     self.__mem__.pop(id, None);
 }
 
 # =============================================================================
 # SqliteMemory Implementation (L3 Persistent)
 # =============================================================================
-"""Initialize SqliteMemory with a file path (lazy - no DB created yet)."""
-impl SqliteMemory.postinit -> None {
+"""Initialize SqliteMemory with a file path (lazy - no DB created yet).""" impl SqliteMemory.postinit -> None {
     self.__mem__ = {};
     self.__gc__ = set();
     # Connection is lazily initialized on first write
     self.__conn__ = None;
 }
 
-"""Lazily initialize SQLite connection when first needed."""
-impl SqliteMemory._ensure_connection -> None {
+"""Lazily initialize SQLite connection when first needed.""" impl SqliteMemory._ensure_connection -> None {
     if self.__conn__ is not None {
         return;
     }
@@ -187,13 +183,13 @@ impl SqliteMemory._ensure_connection -> None {
     self.__conn__.commit();
 }
 
-"""Check if database connection is available."""
-impl SqliteMemory.is_available -> bool {
+"""Check if database connection is available.""" impl SqliteMemory.is_available -> bool {
     return self.__conn__ is not None;
 }
 
-"""Get an anchor by ID. Check memory first, then database."""
-impl SqliteMemory.get(id: UUID) -> (Anchor | None) {
+"""Get an anchor by ID. Check memory first, then database.""" impl SqliteMemory.get(
+    id: UUID
+) -> (Anchor | None) {
     import from _pickle { UnpicklingError }
     # Check in-memory cache first
     if (anchor := self.__mem__.get(id)) {
@@ -226,13 +222,15 @@ impl SqliteMemory.get(id: UUID) -> (Anchor | None) {
     return None;
 }
 
-"""Store an anchor. Writes to memory immediately, database on sync."""
-impl SqliteMemory.put(anchor: Anchor) -> None {
+"""Store an anchor. Writes to memory immediately, database on sync.""" impl SqliteMemory.put(
+    anchor: Anchor
+) -> None {
     self.__mem__[anchor.id] = anchor;
 }
 
-"""Delete an anchor and track for garbage collection (only if persistent)."""
-impl SqliteMemory.delete(id: UUID) -> None {
+"""Delete an anchor and track for garbage collection (only if persistent).""" impl SqliteMemory.delete(
+    id: UUID
+) -> None {
     if (anchor := self.__mem__.pop(id, None)) {
         # Only track persistent anchors for DB deletion
         if anchor.persistent {
@@ -246,8 +244,7 @@ impl SqliteMemory.delete(id: UUID) -> None {
     }
 }
 
-"""Close database connection and clear memory."""
-impl SqliteMemory.close -> None {
+"""Close database connection and clear memory.""" impl SqliteMemory.close -> None {
     if self.__conn__ {
         self.__conn__.close();
         self.__conn__ = None;
@@ -256,8 +253,9 @@ impl SqliteMemory.close -> None {
     self.__gc__.clear();
 }
 
-"""Check if an anchor is in memory or database."""
-impl SqliteMemory.has(id: UUID) -> bool {
+"""Check if an anchor is in memory or database.""" impl SqliteMemory.has(
+    id: UUID
+) -> bool {
     if id in self.__mem__ {
         return True;
     }
@@ -274,8 +272,7 @@ impl SqliteMemory.has(id: UUID) -> bool {
     return False;
 }
 
-"""Query all anchors with optional filter."""
-impl SqliteMemory.query(
+"""Query all anchors with optional filter.""" impl SqliteMemory.query(
     filter: (Callable[[Anchor], bool] | None) = None
 ) -> Generator[Anchor, None, None] {
     for anchor in self.__mem__.values() {
@@ -285,8 +282,7 @@ impl SqliteMemory.query(
     }
 }
 
-"""Get all root anchors."""
-impl SqliteMemory.get_roots -> Generator[Root, None, None] {
+"""Get all root anchors.""" impl SqliteMemory.get_roots -> Generator[Root, None, None] {
     for anchor in self.__mem__.values() {
         if isinstance(anchor.archetype, Root) {
             yield cast(Root, anchor.archetype);
@@ -294,8 +290,7 @@ impl SqliteMemory.get_roots -> Generator[Root, None, None] {
     }
 }
 
-"""Find anchors by IDs with optional filter."""
-impl SqliteMemory.find(
+"""Find anchors by IDs with optional filter.""" impl SqliteMemory.find(
     ids: (UUID | Iterable[UUID]), filter: (Callable[[Anchor], Anchor] | None) = None
 ) -> Generator[Anchor, None, None] {
     id_list = [ids] if isinstance(ids, UUID) else list(ids);
@@ -308,8 +303,7 @@ impl SqliteMemory.find(
     }
 }
 
-"""Find one anchor by ID(s) with optional filter."""
-impl SqliteMemory.find_one(
+"""Find one anchor by ID(s) with optional filter.""" impl SqliteMemory.find_one(
     ids: (UUID | Iterable[UUID]), filter: (Callable[[Anchor], Anchor] | None) = None
 ) -> (Anchor | None) {
     id_list = [ids] if isinstance(ids, UUID) else list(ids);
@@ -323,8 +317,7 @@ impl SqliteMemory.find_one(
     return None;
 }
 
-"""Sync memory to database with access control checks."""
-impl SqliteMemory.sync -> None {
+"""Sync memory to database with access control checks.""" impl SqliteMemory.sync -> None {
     import from jaclang { JacRuntimeInterface as Jac }
     import from _pickle { PicklingError }
     # Check if there's anything to sync
@@ -404,30 +397,31 @@ impl SqliteMemory.sync -> None {
     self.__conn__.commit();
 }
 
-"""Bulk store multiple anchors."""
-impl SqliteMemory.bulk_put(anchors: Iterable[Anchor]) -> None {
+"""Bulk store multiple anchors.""" impl SqliteMemory.bulk_put(
+    anchors: Iterable[Anchor]
+) -> None {
     for anchor in anchors {
         self.put(anchor);
     }
 }
 
-"""Get garbage collection list."""
-impl SqliteMemory.get_gc -> list[Anchor] {
+"""Get garbage collection list.""" impl SqliteMemory.get_gc -> list[Anchor] {
     return list(self.__gc__);
 }
 
-"""Remove anchor from garbage collection list."""
-impl SqliteMemory.remove_from_gc(anchor: Anchor) -> None {
+"""Remove anchor from garbage collection list.""" impl SqliteMemory.remove_from_gc(
+    anchor: Anchor
+) -> None {
     self.__gc__.discard(anchor);
 }
 
-"""Get the underlying memory dict."""
-impl SqliteMemory.get_mem -> dict[UUID, Anchor] {
+"""Get the underlying memory dict.""" impl SqliteMemory.get_mem -> dict[UUID, Anchor] {
     return self.__mem__;
 }
 
-"""Commit - syncs pending changes to database."""
-impl SqliteMemory.commit(anchor: (Anchor | None) = None) -> None {
+"""Commit - syncs pending changes to database.""" impl SqliteMemory.commit(
+    anchor: (Anchor | None) = None
+) -> None {
     self.sync();
 }
 
@@ -436,8 +430,7 @@ impl SqliteMemory.commit(anchor: (Anchor | None) = None) -> None {
 # Inherits L1 functionality (__mem__, __gc__) from VolatileMemory.
 # Only overrides methods that need tiering logic.
 # =============================================================================
-"""Initialize TieredMemory with optional cache and persistence."""
-impl TieredMemory.postinit -> None {
+"""Initialize TieredMemory with optional cache and persistence.""" impl TieredMemory.postinit -> None {
     import from jaclang.runtimelib.memory { LocalCacheMemory, SqliteMemory }
     # Initialize L1 (inherited from VolatileMemory)
     self.__mem__ = {};
@@ -457,8 +450,9 @@ impl TieredMemory.postinit -> None {
     }
 }
 
-"""Get anchor with read-through: L1 -> L2 -> L3 with promotion."""
-impl TieredMemory.get(id: UUID) -> (Anchor | None) {
+"""Get anchor with read-through: L1 -> L2 -> L3 with promotion.""" impl TieredMemory.get(
+    id: UUID
+) -> (Anchor | None) {
     # L1 hit (self.__mem__ inherited from VolatileMemory)
     if (anchor := self.__mem__.get(id)) {
         return anchor;
@@ -479,8 +473,9 @@ impl TieredMemory.get(id: UUID) -> (Anchor | None) {
     return None;
 }
 
-"""Put anchor with write-through: L1 always, L2/L3 with access control."""
-impl TieredMemory.put(anchor: Anchor) -> None {
+"""Put anchor with write-through: L1 always, L2/L3 with access control.""" impl TieredMemory.put(
+    anchor: Anchor
+) -> None {
     import from jaclang { JacRuntimeInterface as Jac }
     # Always write to L1 (self.__mem__ inherited from VolatileMemory)
     self.__mem__[anchor.id] = anchor;
@@ -496,8 +491,7 @@ impl TieredMemory.put(anchor: Anchor) -> None {
     }
 }
 
-"""Delete anchor from all tiers."""
-impl TieredMemory.delete(id: UUID) -> None {
+"""Delete anchor from all tiers.""" impl TieredMemory.delete(id: UUID) -> None {
     # Delete from L1 (only track persistent anchors for GC)
     if (anchor := self.__mem__.pop(id, None)) {
         if anchor.persistent {
@@ -514,8 +508,7 @@ impl TieredMemory.delete(id: UUID) -> None {
     }
 }
 
-"""Close all tiers."""
-impl TieredMemory.close -> None {
+"""Close all tiers.""" impl TieredMemory.close -> None {
     # Sync L3 before closing
     if self.l3 {
         self.l3.sync();
@@ -530,8 +523,7 @@ impl TieredMemory.close -> None {
     self.__gc__.clear();
 }
 
-"""Check if anchor exists in any tier."""
-impl TieredMemory.has(id: UUID) -> bool {
+"""Check if anchor exists in any tier.""" impl TieredMemory.has(id: UUID) -> bool {
     # Check L1 first
     if id in self.__mem__ {
         return True;
@@ -547,8 +539,9 @@ impl TieredMemory.has(id: UUID) -> bool {
     return False;
 }
 
-"""Commit - syncs L3 persistence if available."""
-impl TieredMemory.commit(anchor: (Anchor | None) = None) -> None {
+"""Commit - syncs L3 persistence if available.""" impl TieredMemory.commit(
+    anchor: (Anchor | None) = None
+) -> None {
     if self.l3 {
         self.l3.sync();
     }

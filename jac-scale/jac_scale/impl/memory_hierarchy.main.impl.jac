@@ -7,8 +7,9 @@ import from jaclang.runtimelib.memory { SqliteMemory }
 
 glob logger = logging.getLogger(__name__);
 
-"""Initialize ScaleTieredMemory with distributed backends."""
-impl ScaleTieredMemory.init(use_cache: bool = True) -> None {
+"""Initialize ScaleTieredMemory with distributed backends.""" impl ScaleTieredMemory.init(
+    use_cache: bool = True
+) -> None {
     # L1: Initialize volatile memory (inherited from VolatileMemory via TieredMemory)
     self.__mem__ = {};
     self.__gc__ = set();
@@ -46,8 +47,7 @@ impl ScaleTieredMemory.init(use_cache: bool = True) -> None {
     }
 }
 
-"""Close all backends."""
-impl ScaleTieredMemory.close -> None {
+"""Close all backends.""" impl ScaleTieredMemory.close -> None {
     # Sync and close L3 persistence
     if self.l3 {
         self.l3.sync();

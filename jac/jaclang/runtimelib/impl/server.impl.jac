@@ -27,8 +27,9 @@ impl JacSerializer.serialize(<>obj: object) -> JsonValue {
     return str(<>obj);
 }
 
-"""Serialize Archetype instances."""
-impl JacSerializer._serialize_archetype(arch: Archetype) -> dict[str, JsonValue] {
+"""Serialize Archetype instances.""" impl JacSerializer._serialize_archetype(
+    arch: Archetype
+) -> dict[str, JsonValue] {
     import from jaclang.pycore.constructs { NodeArchetype, WalkerArchetype }
     result: dict[(str, JsonValue)] = {
         '_jac_type': <>type(arch).__name__,
@@ -58,8 +59,7 @@ impl UserManager.postinit -> None {
     self._conn = None;
 }
 
-"""Lazily initialize SQLite connection when first needed."""
-impl UserManager._ensure_connection -> None {
+"""Lazily initialize SQLite connection when first needed.""" impl UserManager._ensure_connection -> None {
     import sqlite3;
     if self._conn is not None {
         return;
@@ -81,8 +81,9 @@ impl UserManager._ensure_connection -> None {
     self._conn.commit();
 }
 
-"""Create a new user with their own root node. Returns dict with user data or error."""
-impl UserManager.create_user(username: str, password: str) -> dict[str, str] {
+"""Create a new user with their own root node. Returns dict with user data or error.""" impl UserManager.create_user(
+    username: str, password: str
+) -> dict[str, str] {
     import from jaclang.pycore.constructs { Root }
     self._ensure_connection();
     # Check if user already exists
@@ -107,8 +108,7 @@ impl UserManager.create_user(username: str, password: str) -> dict[str, str] {
     return {'username': username, 'token': token, 'root_id': root_id};
 }
 
-"""Authenticate a user and return their data."""
-impl UserManager.authenticate(
+"""Authenticate a user and return their data.""" impl UserManager.authenticate(
     username: str, password: str
 ) -> (dict[(str, str)] | None) {
     self._ensure_connection();
@@ -124,8 +124,9 @@ impl UserManager.authenticate(
     return None;
 }
 
-"""Validate token and return username."""
-impl UserManager.validate_token(token: str) -> (str | None) {
+"""Validate token and return username.""" impl UserManager.validate_token(
+    token: str
+) -> (str | None) {
     self._ensure_connection();
     cursor = self._conn.execute(
         "SELECT username FROM users WHERE token = ?", (token, )
@@ -134,8 +135,9 @@ impl UserManager.validate_token(token: str) -> (str | None) {
     return row[0] if row else None;
 }
 
-"""Get user's root node ID."""
-impl UserManager.get_root_id(username: str) -> (str | None) {
+"""Get user's root node ID.""" impl UserManager.get_root_id(
+    username: str
+) -> (str | None) {
     self._ensure_connection();
     cursor = self._conn.execute(
         "SELECT root_id FROM users WHERE username = ?", (username, )
@@ -144,8 +146,9 @@ impl UserManager.get_root_id(username: str) -> (str | None) {
     return row[0] if row else None;
 }
 
-"""Get user data by username."""
-impl UserManager.get_user(username: str) -> (dict[(str, str)] | None) {
+"""Get user data by username.""" impl UserManager.get_user(
+    username: str
+) -> (dict[(str, str)] | None) {
     self._ensure_connection();
     cursor = self._conn.execute(
         "SELECT token, root_id FROM users WHERE username = ?", (username, )
@@ -157,15 +160,13 @@ impl UserManager.get_user(username: str) -> (dict[(str, str)] | None) {
     return {'email': username, 'token': row[0], 'root_id': row[1]};
 }
 
-"""Check if a user exists."""
-impl UserManager.user_exists(username: str) -> bool {
+"""Check if a user exists.""" impl UserManager.user_exists(username: str) -> bool {
     self._ensure_connection();
     cursor = self._conn.execute("SELECT 1 FROM users WHERE username = ?", (username, ));
     return cursor.fetchone() is not None;
 }
 
-"""Update user's username."""
-impl UserManager.update_username(
+"""Update user's username.""" impl UserManager.update_username(
     current_username: str, new_username: str
 ) -> dict[str, str] {
     import hashlib;
@@ -194,8 +195,7 @@ impl UserManager.update_username(
     return {'username': new_username, 'token': row[0], 'root_id': row[1]};
 }
 
-"""Update user's password."""
-impl UserManager.update_password(
+"""Update user's password.""" impl UserManager.update_password(
     username: str, current_password: str, new_password: str
 ) -> dict[str, str] {
     import hashlib;
@@ -219,16 +219,16 @@ impl UserManager.update_password(
     return {'username': username, 'message': 'Password updated successfully'};
 }
 
-"""Close SQLite connection."""
-impl UserManager.close -> None {
+"""Close SQLite connection.""" impl UserManager.close -> None {
     if self._conn {
         self._conn.close();
         self._conn = None;
     }
 }
 
-"""Collect reports from function, spawn execution asynchronously."""
-impl ExecutionManager.report_collector(call_state: CallState) -> dict[str, JsonValue] {
+"""Collect reports from function, spawn execution asynchronously.""" impl ExecutionManager.report_collector(
+    call_state: CallState
+) -> dict[str, JsonValue] {
     final_reports = [];
     while True {
         report_item = await call_state.reports.get();
@@ -243,8 +243,7 @@ impl ExecutionManager.report_collector(call_state: CallState) -> dict[str, JsonV
     }
 }
 
-"""Execute a function in user's context."""
-impl ExecutionManager.execute_function(
+"""Execute a function in user's context.""" impl ExecutionManager.execute_function(
     func: Callable[(..., Any)], args: dict[(str, Any)], username: str
 ) -> dict[str, JsonValue] {
     root_id = self.user_manager.get_root_id(username);
@@ -281,8 +280,7 @@ impl ExecutionManager.execute_function(
     }
 }
 
-"""Spawn a walker in user's context."""
-impl ExecutionManager.spawn_walker(
+"""Spawn a walker in user's context.""" impl ExecutionManager.spawn_walker(
     walker_cls: type[WalkerArchetype], fields: dict[(str, Any)], username: str
 ) -> dict[str, JsonValue] {
     import from jaclang.pycore.constructs { NodeArchetype }
@@ -336,8 +334,9 @@ impl ModuleIntrospector.postinit -> None {
     self._bundle_builder = Jac.get_client_bundle_builder();
 }
 
-"""Load module and refresh caches."""
-impl ModuleIntrospector.load(force_reload: bool = False) -> None {
+"""Load module and refresh caches.""" impl ModuleIntrospector.load(
+    force_reload: bool = False
+) -> None {
     needs_import = force_reload or (self.module_name not in Jac.loaded_modules);
     if (needs_import and self.base_path) {
         Jac.jac_import(
@@ -360,8 +359,7 @@ impl ModuleIntrospector.load(force_reload: bool = False) -> None {
     self._bundle_error = None;
 }
 
-"""Load client manifest from module."""
-impl ModuleIntrospector._load_manifest -> None {
+"""Load client manifest from module.""" impl ModuleIntrospector._load_manifest -> None {
     if not self._module {
         return;
     }
@@ -397,8 +395,7 @@ Access level logic:
 This method handles both directly defined and imported walkers/functions by:
 1. Processing the main module's AST for direct definitions
 2. Looking up the source module AST for imported walker classes
-"""
-impl ModuleIntrospector._extract_access_levels -> None {
+""" impl ModuleIntrospector._extract_access_levels -> None {
     if not self._module {
         return;
     }
@@ -490,8 +487,10 @@ impl ModuleIntrospector._extract_access_levels -> None {
     }
 }
 
-"""Collect callable functions from module."""
-impl ModuleIntrospector._collect_functions -> dict[str, Callable[(..., Any)]] {
+"""Collect callable functions from module.""" impl ModuleIntrospector._collect_functions -> dict[
+    str,
+    Callable[(..., Any)]
+] {
     if not self._module {
         return {};
     }
@@ -516,8 +515,10 @@ impl ModuleIntrospector._collect_functions -> dict[str, Callable[(..., Any)]] {
     return functions;
 }
 
-"""Collect walker classes from module."""
-impl ModuleIntrospector._collect_walkers -> dict[str, type[WalkerArchetype]] {
+"""Collect walker classes from module.""" impl ModuleIntrospector._collect_walkers -> dict[
+    str,
+    type[WalkerArchetype]
+] {
     import from jaclang.pycore.constructs { WalkerArchetype }
     if not self._module {
         return {};
@@ -535,8 +536,7 @@ impl ModuleIntrospector._collect_walkers -> dict[str, type[WalkerArchetype]] {
     return walkers;
 }
 
-"""Check if the module has been reloaded (e.g., by HMR) and refresh if needed."""
-impl ModuleIntrospector._check_module_freshness -> None {
+"""Check if the module has been reloaded (e.g., by HMR) and refresh if needed.""" impl ModuleIntrospector._check_module_freshness -> None {
     import from jaclang.pycore.runtime { JacRuntime as Jac }
     if not self._module {
         return;
@@ -575,8 +575,10 @@ impl ModuleIntrospector._check_module_freshness -> None {
     }
 }
 
-"""Get all functions."""
-impl ModuleIntrospector.get_functions -> dict[str, Callable[(..., Any)]] {
+"""Get all functions.""" impl ModuleIntrospector.get_functions -> dict[
+    str,
+    Callable[(..., Any)]
+] {
     if not self._functions {
         self.load();
     } else {
@@ -585,8 +587,10 @@ impl ModuleIntrospector.get_functions -> dict[str, Callable[(..., Any)]] {
     return <>dict(self._functions);
 }
 
-"""Get all walkers."""
-impl ModuleIntrospector.get_walkers -> dict[str, type[WalkerArchetype]] {
+"""Get all walkers.""" impl ModuleIntrospector.get_walkers -> dict[
+    str,
+    type[WalkerArchetype]
+] {
     if not self._walkers {
         self.load();
     } else {
@@ -595,16 +599,17 @@ impl ModuleIntrospector.get_walkers -> dict[str, type[WalkerArchetype]] {
     return <>dict(self._walkers);
 }
 
-"""Get client-exportable functions."""
-impl ModuleIntrospector.get_client_functions -> dict[str, Callable[(..., Any)]] {
+"""Get client-exportable functions.""" impl ModuleIntrospector.get_client_functions -> dict[
+    str,
+    Callable[(..., Any)]
+] {
     if not self._client_functions {
         self.load();
     }
     return <>dict(self._client_functions);
 }
 
-"""Get callable signature information."""
-impl ModuleIntrospector.introspect_callable(
+"""Get callable signature information.""" impl ModuleIntrospector.introspect_callable(
     func: Callable[(..., Any)]
 ) -> dict[str, Any] {
     try {
@@ -631,8 +636,7 @@ impl ModuleIntrospector.introspect_callable(
     };
 }
 
-"""Get walker field information."""
-impl ModuleIntrospector.introspect_walker(
+"""Get walker field information.""" impl ModuleIntrospector.introspect_walker(
     walker_cls: type[WalkerArchetype]
 ) -> dict[str, Any] {
     try {
@@ -679,8 +683,7 @@ impl ModuleIntrospector.introspect_walker(
     return {'fields': fields};
 }
 
-"""Ensure client bundle is available and return hash."""
-impl ModuleIntrospector.ensure_bundle -> str {
+"""Ensure client bundle is available and return hash.""" impl ModuleIntrospector.ensure_bundle -> str {
     if not self._module {
         raise RuntimeError('Module not loaded') ;
     }
@@ -702,8 +705,7 @@ impl ModuleIntrospector.ensure_bundle -> str {
     }
 }
 
-"""Render HTML page for client function."""
-impl ModuleIntrospector.render_page(
+"""Render HTML page for client function.""" impl ModuleIntrospector.render_page(
     function_name: str, args: dict[(str, Any)], username: str
 ) -> dict[str, Any] {
     return Jac.render_page(self, function_name, args, username);
@@ -713,8 +715,7 @@ impl ModuleIntrospector.render_page(
 
 Explicitly `pub` functions: no authentication required
 No modifier / Protected / Private functions: authentication required (secure by default)
-"""
-impl ModuleIntrospector.is_auth_required_for_function(func_name: str) -> bool {
+""" impl ModuleIntrospector.is_auth_required_for_function(func_name: str) -> bool {
     return self._function_access.get(func_name, True);
 }
 
@@ -722,13 +723,14 @@ impl ModuleIntrospector.is_auth_required_for_function(func_name: str) -> bool {
 
 Explicitly `pub` walkers: no authentication required
 No modifier / Protected / Private walkers: authentication required (secure by default)
-"""
-impl ModuleIntrospector.is_auth_required_for_walker(walker_name: str) -> bool {
+""" impl ModuleIntrospector.is_auth_required_for_walker(walker_name: str) -> bool {
     return self._walker_access.get(walker_name, True);
 }
 
-"""Collect client-exposed global values."""
-impl ModuleIntrospector._collect_client_globals -> dict[str, Any] {
+"""Collect client-exposed global values.""" impl ModuleIntrospector._collect_client_globals -> dict[
+    str,
+    Any
+] {
     if not self._module {
         return {};
     }
@@ -747,8 +749,7 @@ impl ModuleIntrospector._collect_client_globals -> dict[str, Any] {
     return result;
 }
 
-"""Send JSON response with CORS headers."""
-impl ResponseBuilder.send_json(
+"""Send JSON response with CORS headers.""" impl ResponseBuilder.send_json(
     handler: BaseHTTPRequestHandler, status: StatusCode, data: dict[(str, JsonValue)]
 ) -> None {
     handler.send_response(status);
@@ -759,8 +760,7 @@ impl ResponseBuilder.send_json(
     handler.wfile.write(json.dumps(data).encode());
 }
 
-"""Send HTML response with CORS headers."""
-impl ResponseBuilder.send_html(
+"""Send HTML response with CORS headers.""" impl ResponseBuilder.send_html(
     handler: BaseHTTPRequestHandler, status: StatusCode, body: str
 ) -> None {
     payload = body.encode('utf-8');
@@ -773,8 +773,7 @@ impl ResponseBuilder.send_html(
     handler.wfile.write(payload);
 }
 
-"""Send JavaScript response."""
-impl ResponseBuilder.send_javascript(
+"""Send JavaScript response.""" impl ResponseBuilder.send_javascript(
     handler: BaseHTTPRequestHandler, code: str
 ) -> None {
     payload = code.encode('utf-8');
@@ -788,8 +787,9 @@ impl ResponseBuilder.send_javascript(
     handler.wfile.write(payload);
 }
 
-"""Send CSS response."""
-impl ResponseBuilder.send_css(handler: BaseHTTPRequestHandler, css: str) -> None {
+"""Send CSS response.""" impl ResponseBuilder.send_css(
+    handler: BaseHTTPRequestHandler, css: str
+) -> None {
     payload = css.encode('utf-8');
     handler.send_response(200);
     handler.send_header('Content-Type', 'text/css; charset=utf-8');
@@ -801,15 +801,17 @@ impl ResponseBuilder.send_css(handler: BaseHTTPRequestHandler, css: str) -> None
     handler.wfile.write(payload);
 }
 
-"""Add CORS headers to response."""
-impl ResponseBuilder._add_cors_headers(handler: BaseHTTPRequestHandler) -> None {
+"""Add CORS headers to response.""" impl ResponseBuilder._add_cors_headers(
+    handler: BaseHTTPRequestHandler
+) -> None {
     handler.send_header('Access-Control-Allow-Origin', '*');
     handler.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
     handler.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-"""Add security headers to response."""
-impl ResponseBuilder._add_custom_headers(handler: BaseHTTPRequestHandler) -> None {
+"""Add security headers to response.""" impl ResponseBuilder._add_custom_headers(
+    handler: BaseHTTPRequestHandler
+) -> None {
     config = get_config();
     if config
     and config.environments
@@ -821,8 +823,9 @@ impl ResponseBuilder._add_custom_headers(handler: BaseHTTPRequestHandler) -> Non
     }
 }
 
-"""Create new user."""
-impl AuthHandler.create_user(username: str, password: str) -> TransportResponse {
+"""Create new user.""" impl AuthHandler.create_user(
+    username: str, password: str
+) -> TransportResponse {
     if (not username or not password) {
         return TransportResponse.fail(
             code='VALIDATION_ERROR',
@@ -843,8 +846,9 @@ impl AuthHandler.create_user(username: str, password: str) -> TransportResponse 
     );
 }
 
-"""Authenticate user."""
-impl AuthHandler.login(username: str, password: str) -> TransportResponse {
+"""Authenticate user.""" impl AuthHandler.login(
+    username: str, password: str
+) -> TransportResponse {
     if (not username or not password) {
         return TransportResponse.fail(
             code='VALIDATION_ERROR',
@@ -865,8 +869,7 @@ impl AuthHandler.login(username: str, password: str) -> TransportResponse {
     );
 }
 
-"""Update user's username."""
-impl AuthHandler.update_username(
+"""Update user's username.""" impl AuthHandler.update_username(
     current_username: str, new_username: str, token: str
 ) -> TransportResponse {
     import from jaclang.runtimelib.transport { TransportResponse, Meta }
@@ -907,8 +910,7 @@ impl AuthHandler.update_username(
     );
 }
 
-"""Update user's password."""
-impl AuthHandler.update_password(
+"""Update user's password.""" impl AuthHandler.update_password(
     username: str, current_password: str, new_password: str, token: str
 ) -> TransportResponse {
     import from jaclang.runtimelib.transport { TransportResponse, Meta }
@@ -951,8 +953,9 @@ impl AuthHandler.update_password(
     );
 }
 
-"""Get authenticated user's information."""
-impl AuthHandler.get_user_info(token: str) -> TransportResponse {
+"""Get authenticated user's information.""" impl AuthHandler.get_user_info(
+    token: str
+) -> TransportResponse {
     import from jaclang.runtimelib.transport { TransportResponse, Meta }
     # Validate token
     username = self.user_manager.validate_token(token);
@@ -983,8 +986,7 @@ impl AuthHandler.get_user_info(token: str) -> TransportResponse {
     );
 }
 
-"""List all functions."""
-impl IntrospectionHandler.list_functions -> TransportResponse {
+"""List all functions.""" impl IntrospectionHandler.list_functions -> TransportResponse {
     self.introspector.load();
     return TransportResponse.success(
         data={'functions': <>list(self.introspector.get_functions().keys())},
@@ -992,8 +994,7 @@ impl IntrospectionHandler.list_functions -> TransportResponse {
     );
 }
 
-"""List all walkers."""
-impl IntrospectionHandler.list_walkers -> TransportResponse {
+"""List all walkers.""" impl IntrospectionHandler.list_walkers -> TransportResponse {
     self.introspector.load();
     return TransportResponse.success(
         data={'walkers': <>list(self.introspector.get_walkers().keys())},
@@ -1001,8 +1002,9 @@ impl IntrospectionHandler.list_walkers -> TransportResponse {
     );
 }
 
-"""Get function signature."""
-impl IntrospectionHandler.get_function_info(name: str) -> TransportResponse {
+"""Get function signature.""" impl IntrospectionHandler.get_function_info(
+    name: str
+) -> TransportResponse {
     self.introspector.load();
     functions = self.introspector.get_functions();
     if (name not in functions) {
@@ -1019,8 +1021,9 @@ impl IntrospectionHandler.get_function_info(name: str) -> TransportResponse {
     );
 }
 
-"""Get walker info."""
-impl IntrospectionHandler.get_walker_info(name: str) -> TransportResponse {
+"""Get walker info.""" impl IntrospectionHandler.get_walker_info(
+    name: str
+) -> TransportResponse {
     self.introspector.load();
     walkers = self.introspector.get_walkers();
     if (name not in walkers) {
@@ -1036,8 +1039,7 @@ impl IntrospectionHandler.get_walker_info(name: str) -> TransportResponse {
     );
 }
 
-"""Call a function."""
-impl ExecutionHandler.call_function(
+"""Call a function.""" impl ExecutionHandler.call_function(
     name: str, args: dict[(str, Any)], username: str
 ) -> TransportResponse {
     self.introspector.load();
@@ -1057,8 +1059,7 @@ impl ExecutionHandler.call_function(
     );
 }
 
-"""Spawn a walker."""
-impl ExecutionHandler.spawn_walker(
+"""Spawn a walker.""" impl ExecutionHandler.spawn_walker(
     name: str, fields: dict[(str, Any)], username: str
 ) -> TransportResponse {
     self.introspector.load();
@@ -1076,8 +1077,7 @@ impl ExecutionHandler.spawn_walker(
     );
 }
 
-"""Initialize the API server."""
-impl JacAPIServer.postinit -> None {
+"""Initialize the API server.""" impl JacAPIServer.postinit -> None {
     self.user_manager = Jac.get_user_manager(base_path=self.base_path);
     self.introspector = ModuleIntrospector(self.module_name, self.base_path);
     self.execution_manager = ExecutionManager(
@@ -1106,8 +1106,9 @@ impl JacAPIServer.postinit -> None {
     }
 }
 
-"""Create HTTP request handler."""
-impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
+"""Create HTTP request handler.""" impl JacAPIServer.create_handler -> type[
+    BaseHTTPRequestHandler
+] {
     server = self;
     """Handle HTTP requests.""";
     class JacRequestHandler(BaseHTTPRequestHandler) {
@@ -1548,59 +1549,59 @@ impl JacAPIServer.create_handler -> type[BaseHTTPRequestHandler] {
     return JacRequestHandler;
 }
 
-"""Load the target module (backward compatibility)."""
-impl JacAPIServer.load_module(force_reload: bool = False) -> None {
+"""Load the target module (backward compatibility).""" impl JacAPIServer.load_module(
+    force_reload: bool = False
+) -> None {
     self.introspector.load(force_reload);
 }
 
-"""Get loaded module (backward compatibility)."""
-impl JacAPIServer.module -> object {
+"""Get loaded module (backward compatibility).""" impl JacAPIServer.module -> object {
     return self.introspector._module;
 }
 
-"""Get all functions (backward compatibility)."""
-impl JacAPIServer.get_functions -> dict[str, Callable[(..., Any)]] {
+"""Get all functions (backward compatibility).""" impl JacAPIServer.get_functions -> dict[
+    str,
+    Callable[(..., Any)]
+] {
     return self.introspector.get_functions();
 }
 
-"""Get all walkers (backward compatibility)."""
-impl JacAPIServer.get_walkers -> dict[str, type[WalkerArchetype]] {
+"""Get all walkers (backward compatibility).""" impl JacAPIServer.get_walkers -> dict[
+    str,
+    type[WalkerArchetype]
+] {
     return self.introspector.get_walkers();
 }
 
-"""Introspect callable (backward compatibility)."""
-impl JacAPIServer.introspect_callable(func: Callable[(..., Any)]) -> dict[str, Any] {
+"""Introspect callable (backward compatibility).""" impl JacAPIServer.introspect_callable(
+    func: Callable[(..., Any)]
+) -> dict[str, Any] {
     return self.introspector.introspect_callable(func);
 }
 
-"""Introspect walker (backward compatibility)."""
-impl JacAPIServer.introspect_walker(
+"""Introspect walker (backward compatibility).""" impl JacAPIServer.introspect_walker(
     walker_cls: type[WalkerArchetype]
 ) -> dict[str, Any] {
     return self.introspector.introspect_walker(walker_cls);
 }
 
-"""Render client page (backward compatibility)."""
-impl JacAPIServer.render_client_page(
+"""Render client page (backward compatibility).""" impl JacAPIServer.render_client_page(
     function_name: str, args: dict[(str, Any)], username: str
 ) -> dict[str, Any] {
     return self.introspector.render_page(function_name, args, username);
 }
 
-"""Get client bundle code (backward compatibility)."""
-impl JacAPIServer.get_client_bundle_code -> str {
+"""Get client bundle code (backward compatibility).""" impl JacAPIServer.get_client_bundle_code -> str {
     self.introspector.load();
     self.introspector.ensure_bundle();
     return self.introspector._bundle.code;
 }
 
-"""Print comprehensive documentation for all endpoints that would be generated."""
-impl JacAPIServer.print_endpoint_docs -> None {
+"""Print comprehensive documentation for all endpoints that would be generated.""" impl JacAPIServer.print_endpoint_docs -> None {
     print_endpoint_docs(self);
 }
 
-"""Start the HTTP server."""
-impl JacAPIServer.start(dev: bool = False) -> None {
+"""Start the HTTP server.""" impl JacAPIServer.start(dev: bool = False) -> None {
     self.introspector.load();
     # Eagerly build client bundle if there are client exports (skip in dev mode)
     bundle_error = None;
@@ -1667,8 +1668,9 @@ impl JacAPIServer.start(dev: bool = False) -> None {
     }
 }
 
-"""Print comprehensive documentation for all endpoints that would be generated."""
-impl print_endpoint_docs(server: JacAPIServer) -> None {
+"""Print comprehensive documentation for all endpoints that would be generated.""" impl print_endpoint_docs(
+    server: JacAPIServer
+) -> None {
     server.introspector.load();
     functions = server.introspector.get_functions();
     walkers = server.introspector.get_walkers();

@@ -1,7 +1,6 @@
 """Transport abstraction layer implementations."""
 
-"""Create a success response with envelope pattern."""
-impl TransportResponse.success(
+"""Create a success response with envelope pattern.""" impl TransportResponse.success(
     data: Any = None,
     msg_type: MessageType = MessageType.RESPONSE,
     meta: (Meta | None) = None
@@ -16,8 +15,7 @@ impl TransportResponse.success(
     return response;
 }
 
-"""Create an error response with envelope pattern."""
-impl TransportResponse.fail(
+"""Create an error response with envelope pattern.""" impl TransportResponse.fail(
     code: str,
     message: str,
     details: Any = None,
@@ -34,11 +32,11 @@ impl TransportResponse.fail(
     return response;
 }
 
-"""HTTP is stateless - nothing to connect."""
-impl HTTPTransport.connect -> None { }
+"""HTTP is stateless - nothing to connect.""" impl HTTPTransport.connect -> None { }
 
-"""Serialize and send HTTP response. Converts TransportResponse to HTTP format."""
-impl HTTPTransport.send(data: Any) -> None {
+"""Serialize and send HTTP response. Converts TransportResponse to HTTP format.""" impl HTTPTransport.send(
+    data: Any
+) -> None {
     if isinstance(data, TransportResponse) {
         # Extract HTTP status from meta.extra or use defaults
         status = data.meta.extra.get('http_status', 200 if data.ok else 500)
@@ -109,14 +107,13 @@ impl HTTPTransport.send(data: Any) -> None {
     }
 }
 
-"""HTTP is stateless - nothing to close."""
-impl HTTPTransport.close -> None { }
+"""HTTP is stateless - nothing to close.""" impl HTTPTransport.close -> None { }
 
-"""SSE is stateless - nothing to connect."""
-impl StreamTransport.connect -> None { }
+"""SSE is stateless - nothing to connect.""" impl StreamTransport.connect -> None { }
 
-"""Push data to the queue for SSE streaming."""
-impl StreamTransport.send(data: Any) -> None {
+"""Push data to the queue for SSE streaming.""" impl StreamTransport.send(
+    data: Any
+) -> None {
     import asyncio;
     # Queue.put is async, so we need to handle it properly
     # In real usage, this would be: await self.queue.put(data)
@@ -129,8 +126,7 @@ impl StreamTransport.send(data: Any) -> None {
     }
 }
 
-"""Signal stream end by pushing None to queue."""
-impl StreamTransport.close -> None {
+"""Signal stream end by pushing None to queue.""" impl StreamTransport.close -> None {
     try {
         self.queue.put_nowait(None);
     } except Exception as e {
@@ -143,14 +139,12 @@ impl StreamTransport.close -> None {
     }
 }
 
-"""Accept the WebSocket connection."""
-impl WebSocketTransport.connect -> None {
+"""Accept the WebSocket connection.""" impl WebSocketTransport.connect -> None {
 # In real async usage: await self.websocket.accept()
 # For now, assume websocket is already accepted
 }
 
-"""Send JSON data through WebSocket."""
-impl WebSocketTransport.send(data: Any) -> None {
+"""Send JSON data through WebSocket.""" impl WebSocketTransport.send(data: Any) -> None {
     # In real async usage: await self.websocket.send_json(data)
     try {
         json_data = json.dumps(data);
@@ -165,8 +159,7 @@ impl WebSocketTransport.send(data: Any) -> None {
     }
 }
 
-"""Close the WebSocket connection."""
-impl WebSocketTransport.close -> None {
+"""Close the WebSocket connection.""" impl WebSocketTransport.close -> None {
     # In real async usage: await self.websocket.close()
     if self.on_close {
         self.on_close();

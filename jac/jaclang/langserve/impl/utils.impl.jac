@@ -17,8 +17,7 @@ impl add_unique_text_edit(
     }
 }
 
-"""Get the line of code, and the first non-space character index."""
-impl get_line_of_code(
+"""Get the line of code, and the first non-space character index.""" impl get_line_of_code(
     line_number: int, lines: list[str]
 ) -> Optional[tuple[(str, int)]] {
     if 0 <= line_number < len(lines) {
@@ -34,8 +33,7 @@ impl get_line_of_code(
     return None;
 }
 
-"""Find the indices of the previous and next tokens surrounding the change."""
-impl find_surrounding_tokens(
+"""Find the indices of the previous and next tokens surrounding the change.""" impl find_surrounding_tokens(
     change_start_line: int,
     change_start_char: int,
     change_end_line: int,
@@ -75,8 +73,7 @@ impl find_surrounding_tokens(
     return (prev_token_index, next_token_index, inside_tok);
 }
 
-"""Return the starting position of a token."""
-impl get_token_start(
+"""Return the starting position of a token.""" impl get_token_start(
     token_index: (int | None), sem_tokens: list[int]
 ) -> tuple[int, int, int] {
     if token_index is None or token_index >= len(sem_tokens) {
@@ -120,8 +117,9 @@ impl get_token_start(
     );
 }
 
-"""Parse text and return a list of symbols."""
-impl parse_symbol_path(text: str, dot_position: int) -> list[str] {
+"""Parse text and return a list of symbols.""" impl parse_symbol_path(
+    text: str, dot_position: int
+) -> list[str] {
     text = text[:dot_position][:-1].strip();
     valid_character_pattern = re.compile('[a-zA-Z0-9_]');
     reversed_text = text[::-1];
@@ -146,8 +144,9 @@ impl parse_symbol_path(text: str, dot_position: int) -> list[str] {
     return all_words;
 }
 
-"""Return all child tab's as completion items."""
-impl collect_child_tabs(sym_tab: UniScopeNode) -> list[lspt.CompletionItem] {
+"""Return all child tab's as completion items.""" impl collect_child_tabs(
+    sym_tab: UniScopeNode
+) -> list[lspt.CompletionItem] {
     symbols: list[lspt.CompletionItem] = [];
     for tab in sym_tab.kid_scope {
         if tab.scope_name not in [i.label for i in symbols] {
@@ -161,8 +160,7 @@ impl collect_child_tabs(sym_tab: UniScopeNode) -> list[lspt.CompletionItem] {
     return symbols;
 }
 
-"""Return all symbols in scope."""
-impl collect_all_symbols_in_scope(
+"""Return all symbols in scope.""" impl collect_all_symbols_in_scope(
     sym_tab: UniScopeNode, up_tree: bool = True
 ) -> list[lspt.CompletionItem] {
     symbols = [];
@@ -187,8 +185,9 @@ impl collect_all_symbols_in_scope(
     return symbols;
 }
 
-"""Map the symbol node to an lspt.CompletionItemKind."""
-impl label_map(sub_tab: SymbolType) -> lspt.CompletionItemKind {
+"""Map the symbol node to an lspt.CompletionItemKind.""" impl label_map(
+    sub_tab: SymbolType
+) -> lspt.CompletionItemKind {
     return (
         lspt.CompletionItemKind.Function
         if sub_tab in [SymbolType.ABILITY, SymbolType.TEST]
@@ -215,8 +214,9 @@ impl label_map(sub_tab: SymbolType) -> lspt.CompletionItemKind {
     );
 }
 
-"""Map the symbol node to an lspt.SymbolKind."""
-impl kind_map(sub_tab: uni.UniNode) -> lspt.SymbolKind {
+"""Map the symbol node to an lspt.SymbolKind.""" impl kind_map(
+    sub_tab: uni.UniNode
+) -> lspt.SymbolKind {
     return lspt.SymbolKind.Function
     if isinstance(sub_tab, (uni.Ability, uni.ImplDef))
     else lspt.SymbolKind.Class
@@ -228,8 +228,9 @@ impl kind_map(sub_tab: uni.UniNode) -> lspt.SymbolKind {
     else lspt.SymbolKind.Variable;
 }
 
-"""Create an lspt.Range from a location object."""
-impl create_range(loc: CodeLocInfo) -> lspt.Range {
+"""Create an lspt.Range from a location object.""" impl create_range(
+    loc: CodeLocInfo
+) -> lspt.Range {
     return lspt.Range(
         start=lspt.Position(
             line=(loc.first_line - 1) if loc.first_line > 0 else 0,
@@ -242,16 +243,16 @@ impl create_range(loc: CodeLocInfo) -> lspt.Range {
     );
 }
 
-"""Get owner sym."""
-impl owner_sym(table: UniScopeNode) -> Optional[Symbol] {
+"""Get owner sym.""" impl owner_sym(table: UniScopeNode) -> Optional[Symbol] {
     if table.parent_scope and isinstance(table, uni.AstSymbolNode) {
         return table.parent_scope.lookup(table.sym_name);
     }
     return None;
 }
 
-"""Recursively collect symbols from the AST."""
-impl get_symbols_for_outline(<>node: UniScopeNode) -> list[lspt.DocumentSymbol] {
+"""Recursively collect symbols from the AST.""" impl get_symbols_for_outline(
+    <>node: UniScopeNode
+) -> list[lspt.DocumentSymbol] {
     symbols = [];
     for (key, item) in <>node.names_in_scope.items() {
         if key in dir(builtins)
@@ -295,8 +296,9 @@ impl get_symbols_for_outline(<>node: UniScopeNode) -> list[lspt.DocumentSymbol] 
     return symbols;
 }
 
-"""Find index."""
-impl find_index(sem_tokens: list[int], line: int, char: int) -> Optional[int] {
+"""Find index.""" impl find_index(
+    sem_tokens: list[int], line: int, char: int
+) -> Optional[int] {
     index = None;
     token_start_list = [
         get_token_start(i, sem_tokens) for i in range(0, len(sem_tokens), 5)
@@ -309,8 +311,9 @@ impl find_index(sem_tokens: list[int], line: int, char: int) -> Optional[int] {
     return index;
 }
 
-"""Check if the position falls within the node's location."""
-impl position_within_node(n: uni.UniNode, line: int, character: int) -> bool {
+"""Check if the position falls within the node's location.""" impl position_within_node(
+    n: uni.UniNode, line: int, character: int
+) -> bool {
     if n.loc.first_line < line < n.loc.last_line {
         return True;
     }
@@ -328,8 +331,7 @@ impl position_within_node(n: uni.UniNode, line: int, character: int) -> bool {
     True;
 }
 
-"""Return the deepest symbol node that contains the given position."""
-impl find_deepest_symbol_node_at_pos(
+"""Return the deepest symbol node that contains the given position.""" impl find_deepest_symbol_node_at_pos(
     <>node: uni.UniNode, line: int, character: int
 ) -> Optional[uni.AstSymbolNode] {
     last_symbol_node = None;
@@ -353,8 +355,9 @@ impl find_deepest_symbol_node_at_pos(
     return last_symbol_node;
 }
 
-"""Iterate through symbol table."""
-impl sym_tab_list(sym_tab: UniScopeNode, file_path: str) -> list[UniScopeNode] {
+"""Iterate through symbol table.""" impl sym_tab_list(
+    sym_tab: UniScopeNode, file_path: str
+) -> list[UniScopeNode] {
     sym_tabs = [sym_tab]
     if not (isinstance(sym_tab, uni.Module) and sym_tab.loc.mod_path != file_path)
     else [];
@@ -364,8 +367,9 @@ impl sym_tab_list(sym_tab: UniScopeNode, file_path: str) -> list[UniScopeNode] {
     return sym_tabs;
 }
 
-"""Debounce decorator for async functions."""
-impl debounce(<>wait: float) -> Callable[[T], Callable[(..., Awaitable[None])]] {
+"""Debounce decorator for async functions.""" impl debounce(
+    <>wait: float
+) -> Callable[[T], Callable[(..., Awaitable[None])]] {
     def decorator(fn: T) -> Callable[P, Awaitable[None]] {
         @wraps(fn)
         async def debounced(*args: P.args, **kwargs: P.kwargs) -> None {
@@ -390,8 +394,7 @@ impl debounce(<>wait: float) -> Callable[[T], Callable[(..., Awaitable[None])]] 
     return decorator;
 }
 
-"""Return diagnostics."""
-impl gen_diagnostics(
+"""Return diagnostics.""" impl gen_diagnostics(
     from_path: str, errors: list[Alert], warnings: list[Alert]
 ) -> list[lspt.Diagnostic] {
     return [

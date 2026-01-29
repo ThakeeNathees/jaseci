@@ -13,8 +13,7 @@ impl ViteClientBundleBuilder.cleanup_temp_dir(self: ViteClientBundleBuilder) -> 
     }
 }
 
-"""Override to use Vite bundling instead of simple concatenation."""
-impl ViteClientBundleBuilder._compile_bundle(
+"""Override to use Vite bundling instead of simple concatenation.""" impl ViteClientBundleBuilder._compile_bundle(
     self: ViteClientBundleBuilder, module: ModuleType, module_path: Path
 ) -> ClientBundle {
     compiler = self._get_compiler();
@@ -30,8 +29,7 @@ impl ViteClientBundleBuilder._compile_bundle(
     );
 }
 
-"""Get or create the Vite compiler instance."""
-impl ViteClientBundleBuilder._get_compiler(
+"""Get or create the Vite compiler instance.""" impl ViteClientBundleBuilder._get_compiler(
     self: ViteClientBundleBuilder
 ) -> ViteCompiler {
     if (self._compiler is None) {
@@ -56,8 +54,7 @@ impl ViteClientBundleBuilder._get_compiler(
     return self._compiler;
 }
 
-"""Initialize the Vite-enhanced bundle builder."""
-impl ViteClientBundleBuilder.init(
+"""Initialize the Vite-enhanced bundle builder.""" impl ViteClientBundleBuilder.init(
     self: ViteClientBundleBuilder,
     runtime_path: (Path | None) = None,
     vite_output_dir: (Path | None) = None,

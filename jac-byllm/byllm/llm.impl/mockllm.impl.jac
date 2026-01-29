@@ -11,8 +11,7 @@ impl MockLLM.postinit -> None {
 
 Pops the next output from the configured 'outputs' list and returns it.
 Supports both regular outputs and MockToolCall objects.
-"""
-impl MockLLM.dispatch_no_streaming(mt_run: MTRuntime) -> CompletionResult {
+""" impl MockLLM.dispatch_no_streaming(mt_run: MTRuntime) -> CompletionResult {
     params = self.make_model_params(mt_run);
     message = "{'role': 'assistant', 'content': {'text': 'Mock response'}}";
     mt_run.add_message(message);
@@ -37,8 +36,7 @@ impl MockLLM.dispatch_no_streaming(mt_run: MTRuntime) -> CompletionResult {
 """Dispatch the mock LLM call with streaming.
 
 Simulates streaming by yielding random-sized chunks with artificial delays.
-"""
-impl MockLLM.dispatch_streaming(mt_run: MTRuntime) -> Generator[str, None, None] {
+""" impl MockLLM.dispatch_streaming(mt_run: MTRuntime) -> Generator[str, None, None] {
     output = self.config["outputs"].pop(0);  # type: ignore
     if mt_run.stream {
         while output {

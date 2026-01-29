@@ -10,13 +10,15 @@ import from pathlib { Path }
 import from typing { Any }
 import os;
 
-"""Get the plugin section name for scale."""
-impl JacScaleConfig.get_plugin_name(self: JacScaleConfig) -> str {
+"""Get the plugin section name for scale.""" impl JacScaleConfig.get_plugin_name(
+    self: JacScaleConfig
+) -> str {
     return "scale";
 }
 
-"""Get default configuration structure for scale."""
-impl JacScaleConfig.get_default_config(self: JacScaleConfig) -> dict[str, Any] {
+"""Get default configuration structure for scale.""" impl JacScaleConfig.get_default_config(
+    self: JacScaleConfig
+) -> dict[str, Any] {
     return {
         'jwt': {'secret': 'supersecretkey', 'algorithm': 'HS256', 'exp_delta_days': 7},
         'sso': {
@@ -60,8 +62,9 @@ impl JacScaleConfig.get_default_config(self: JacScaleConfig) -> dict[str, Any] {
     };
 }
 
-"""Get JWT configuration from jac.toml."""
-impl JacScaleConfig.get_jwt_config(self: JacScaleConfig) -> dict[str, Any] {
+"""Get JWT configuration from jac.toml.""" impl JacScaleConfig.get_jwt_config(
+    self: JacScaleConfig
+) -> dict[str, Any] {
     config = self.load();
     jwt_config = config.get('jwt', {});
     return {
@@ -71,8 +74,9 @@ impl JacScaleConfig.get_jwt_config(self: JacScaleConfig) -> dict[str, Any] {
     };
 }
 
-"""Get SSO configuration from jac.toml."""
-impl JacScaleConfig.get_sso_config(self: JacScaleConfig) -> dict[str, Any] {
+"""Get SSO configuration from jac.toml.""" impl JacScaleConfig.get_sso_config(
+    self: JacScaleConfig
+) -> dict[str, Any] {
     config = self.load();
     sso_config = config.get('sso', {});
     google_config = sso_config.get('google', {});
@@ -85,8 +89,9 @@ impl JacScaleConfig.get_sso_config(self: JacScaleConfig) -> dict[str, Any] {
     };
 }
 
-"""Get database configuration from jac.toml."""
-impl JacScaleConfig.get_database_config(self: JacScaleConfig) -> dict[str, Any] {
+"""Get database configuration from jac.toml.""" impl JacScaleConfig.get_database_config(
+    self: JacScaleConfig
+) -> dict[str, Any] {
     config = self.load();
     db_config = config.get('database', {});
     return {
@@ -96,8 +101,9 @@ impl JacScaleConfig.get_database_config(self: JacScaleConfig) -> dict[str, Any] 
     };
 }
 
-"""Get Kubernetes configuration from jac.toml."""
-impl JacScaleConfig.get_kubernetes_config(self: JacScaleConfig) -> dict[str, Any] {
+"""Get Kubernetes configuration from jac.toml.""" impl JacScaleConfig.get_kubernetes_config(
+    self: JacScaleConfig
+) -> dict[str, Any] {
     config = self.load();
     k8s_config = config.get('kubernetes', {});
     # Handle docker_image_name default (needs app_name)
@@ -111,8 +117,9 @@ impl JacScaleConfig.get_kubernetes_config(self: JacScaleConfig) -> dict[str, Any
     return k8s_config_obj.to_dict();
 }
 
-"""Get server configuration from jac.toml."""
-impl JacScaleConfig.get_server_config(self: JacScaleConfig) -> dict[str, Any] {
+"""Get server configuration from jac.toml.""" impl JacScaleConfig.get_server_config(
+    self: JacScaleConfig
+) -> dict[str, Any] {
     config = self.load();
     server_config = config.get('server', {});
     return {
@@ -121,8 +128,9 @@ impl JacScaleConfig.get_server_config(self: JacScaleConfig) -> dict[str, Any] {
     };
 }
 
-"""Get webhook configuration from jac.toml."""
-impl JacScaleConfig.get_webhook_config(self: JacScaleConfig) -> dict[str, Any] {
+"""Get webhook configuration from jac.toml.""" impl JacScaleConfig.get_webhook_config(
+    self: JacScaleConfig
+) -> dict[str, Any] {
     config = self.load();
     webhook_config = config.get('webhook', {});
     return {
@@ -136,8 +144,9 @@ impl JacScaleConfig.get_webhook_config(self: JacScaleConfig) -> dict[str, Any] {
     };
 }
 
-"""Get or create the global JacScaleConfig instance."""
-impl get_scale_config(project_dir: Path | None = None) -> JacScaleConfig {
+"""Get or create the global JacScaleConfig instance.""" impl get_scale_config(
+    project_dir: Path | None = None
+) -> JacScaleConfig {
     global _scale_config_instance;
     if _scale_config_instance is None {
         _scale_config_instance = JacScaleConfig(project_dir);
@@ -145,8 +154,7 @@ impl get_scale_config(project_dir: Path | None = None) -> JacScaleConfig {
     return _scale_config_instance;
 }
 
-"""Reset the global config instance (useful for testing)."""
-impl reset_scale_config -> None {
+"""Reset the global config instance (useful for testing).""" impl reset_scale_config -> None {
     global _scale_config_instance;
     _scale_config_instance = None;
 }

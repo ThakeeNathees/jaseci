@@ -64,8 +64,7 @@ class ConsoleLogHandler(logging.Handler) {
     }
 }
 
-"""Run the FastAPI server using Uvicorn."""
-impl JFastApiServer.run_server(
+"""Run the FastAPI server using Uvicorn.""" impl JFastApiServer.run_server(
     self: JFastApiServer, host: str = '0.0.0.0', port: int = 8000
 ) -> None {
     app = self.create_server();
@@ -109,13 +108,13 @@ impl JFastApiServer.run_server(
     uvicorn.run(app, host=host, port=port, log_config=log_config);
 }
 
-"""Get the underlying FastAPI application instance."""
-impl JFastApiServer.get_app(self: JFastApiServer) -> FastAPI {
+"""Get the underlying FastAPI application instance.""" impl JFastApiServer.get_app(
+    self: JFastApiServer
+) -> FastAPI {
     return self.app;
 }
 
-"""Create a Pydantic response model from configuration."""
-impl JFastApiServer._create_response_model(
+"""Create a Pydantic response model from configuration.""" impl JFastApiServer._create_response_model(
     self: JFastApiServer, response_config: (dict[(str, Any)] | None) = None
 ) -> (type[BaseModel] | None) {
     if not response_config {
@@ -149,8 +148,7 @@ impl JFastApiServer._create_response_model(
     return model;
 }
 
-"""Convert string type to Python type."""
-impl JFastApiServer._get_python_type(
+"""Convert string type to Python type.""" impl JFastApiServer._get_python_type(
     self: JFastApiServer, type_string: str
 ) -> type[Any] {
     if (type_string.startswith("<class '") and type_string.endswith("'>")) {
@@ -172,15 +170,17 @@ impl JFastApiServer._get_python_type(
     return type_mapping.get(type_string.lower(), str);
 }
 
-"""Implementation of PATH parameter handler."""
-impl PathParameterHandler.generate_param_string(param: APIParameter) -> str {
+"""Implementation of PATH parameter handler.""" impl PathParameterHandler.generate_param_string(
+    param: APIParameter
+) -> str {
     type_name = self.get_type_name(param);
     description = param.description or '';
     return f"{param.name}: {type_name} = Path(..., description='{description}')";
 }
 
-"""Implementation of QUERY parameter handler."""
-impl QueryParameterHandler.generate_param_string(param: APIParameter) -> str {
+"""Implementation of QUERY parameter handler.""" impl QueryParameterHandler.generate_param_string(
+    param: APIParameter
+) -> str {
     type_name = self.get_type_name(param);
     description = param.description or '';
     if param.required {
@@ -192,8 +192,9 @@ impl QueryParameterHandler.generate_param_string(param: APIParameter) -> str {
     }
 }
 
-"""Implementation of HEADER parameter handler."""
-impl HeaderParameterHandler.generate_param_string(param: APIParameter) -> str {
+"""Implementation of HEADER parameter handler.""" impl HeaderParameterHandler.generate_param_string(
+    param: APIParameter
+) -> str {
     type_name = self.get_type_name(param);
     description = param.description or '';
     if param.required {
@@ -205,8 +206,9 @@ impl HeaderParameterHandler.generate_param_string(param: APIParameter) -> str {
     }
 }
 
-"""Implementation of FILE parameter handler."""
-impl FileParameterHandler.generate_param_string(param: APIParameter) -> str {
+"""Implementation of FILE parameter handler.""" impl FileParameterHandler.generate_param_string(
+    param: APIParameter
+) -> str {
     description = param.description or '';
     is_multiple = 'list' in param.data_type.lower();
     if is_multiple {
@@ -224,8 +226,9 @@ impl FileParameterHandler.generate_param_string(param: APIParameter) -> str {
     }
 }
 
-"""Implementation of Form BODY parameter handler."""
-impl FormBodyParameterHandler.generate_param_string(param: APIParameter) -> str {
+"""Implementation of Form BODY parameter handler.""" impl FormBodyParameterHandler.generate_param_string(
+    param: APIParameter
+) -> str {
     type_name = self.get_type_name(param);
     description = param.description or '';
     if param.required {
@@ -239,8 +242,9 @@ impl FormBodyParameterHandler.generate_param_string(param: APIParameter) -> str 
     }
 }
 
-"""Implementation of JSON BODY parameter handler - generate Pydantic model."""
-impl JSONBodyParameterHandler.generate_body_model -> (type[BaseModel] | None) {
+"""Implementation of JSON BODY parameter handler - generate Pydantic model.""" impl JSONBodyParameterHandler.generate_body_model -> (
+    type[BaseModel] | None
+) {
     model_fields: dict[(str, Any)] = {};
     for param in self.body_params {
         if not param.name {
@@ -273,8 +277,7 @@ impl JSONBodyParameterHandler.generate_body_model -> (type[BaseModel] | None) {
     return None;
 }
 
-"""Create the actual endpoint function with parameter injection."""
-impl JFastApiServer._create_endpoint_function(
+"""Create the actual endpoint function with parameter injection.""" impl JFastApiServer._create_endpoint_function(
     self: JFastApiServer,
     callback: Callable[(..., Any)],
     parameters: list[APIParameter],
@@ -541,8 +544,7 @@ def endpoint_wrapper({params}):
     return exec_globals['endpoint_wrapper'];
 }
 
-"""Get the default status code for an HTTP method."""
-impl JFastApiServer._get_default_status_code(
+"""Get the default status code for an HTTP method.""" impl JFastApiServer._get_default_status_code(
     self: JFastApiServer, method: HTTPMethod
 ) -> int {
     status_codes = {
@@ -560,8 +562,7 @@ Create and register a FastAPI route for the given endpoint.
 Args:method (HTTPMethod): The HTTP method for the route
 method (HTTPMethod): The HTTP method for the route
 endpoint (JEndPoint): The endpoint configuration
-"""
-impl JFastApiServer._create_fastapi_route(
+""" impl JFastApiServer._create_fastapi_route(
     self: JFastApiServer, method: HTTPMethod, endpoint: JEndPoint
 ) -> None {
     endpoint_func = self._create_endpoint_function(
@@ -611,8 +612,7 @@ and returns the configured FastAPI application.
 
 Returns:
 FastAPI: The configured FastAPI application instance
-"""
-impl JFastApiServer.create_server(self: JFastApiServer) -> FastAPI {
+""" impl JFastApiServer.create_server(self: JFastApiServer) -> FastAPI {
     if not self.__server_created {
         self.execute();
         self.__server_created = True;
@@ -624,8 +624,7 @@ impl JFastApiServer.create_server(self: JFastApiServer) -> FastAPI {
 Execute all endpoints by processing them through their respective HTTP method handlers.
 Routes are sorted to ensure more specific paths are registered before generic ones
 to avoid path matching conflicts.
-"""
-impl JFastApiServer.execute(self: JFastApiServer) -> None {
+""" impl JFastApiServer.execute(self: JFastApiServer) -> None {
     self._endpoints = sorted(self._endpoints, key=self._route_priority);
     super.execute();
 }
@@ -637,8 +636,7 @@ Priority rules:
 2. Paths with fewer parameters come before paths with more parameters
 3. Longer paths come before shorter paths
 4. Alphabetical order for tie-breaking
-"""
-impl JFastApiServer._route_priority(
+""" impl JFastApiServer._route_priority(
     self: JFastApiServer, endpoint: JEndPoint
 ) -> tuple[int, int, int, str] {
     path = endpoint.path;
@@ -662,8 +660,7 @@ Args:
 endpoint (JEndPoint): The DELETE endpoint to execute
 Returns:
 JFastApiServer: Self for method chaining
-"""
-impl JFastApiServer._delete(
+""" impl JFastApiServer._delete(
     self: JFastApiServer, endpoint: JEndPoint
 ) -> 'JFastApiServer' {
     self._create_fastapi_route(HTTPMethod.DELETE, endpoint);
@@ -676,8 +673,7 @@ Args:
 endpoint (JEndPoint): The PATCH endpoint to execute
 Returns:
 JFastApiServer: Self for method chaining
-"""
-impl JFastApiServer._patch(
+""" impl JFastApiServer._patch(
     self: JFastApiServer, endpoint: JEndPoint
 ) -> 'JFastApiServer' {
     self._create_fastapi_route(HTTPMethod.PATCH, endpoint);
@@ -690,8 +686,9 @@ Args:
 endpoint (JEndPoint): The PUT endpoint to execute
 Returns:
 JFastApiServer: Self for method chaining
-"""
-impl JFastApiServer._put(self: JFastApiServer, endpoint: JEndPoint) -> 'JFastApiServer' {
+""" impl JFastApiServer._put(
+    self: JFastApiServer, endpoint: JEndPoint
+) -> 'JFastApiServer' {
     self._create_fastapi_route(HTTPMethod.PUT, endpoint);
     return self;
 }
@@ -702,8 +699,7 @@ Args:
 endpoint (JEndPoint): The POST endpoint to execute
 Returns:
 JFastApiServer: Self for method chaining
-"""
-impl JFastApiServer._post(
+""" impl JFastApiServer._post(
     self: JFastApiServer, endpoint: JEndPoint
 ) -> 'JFastApiServer' {
     self._create_fastapi_route(HTTPMethod.POST, endpoint);
@@ -716,8 +712,9 @@ Args:
 endpoint (JEndPoint): The GET endpoint to execute
 Returns:
 JFastApiServer: Self for method chaining
-"""
-impl JFastApiServer._get(self: JFastApiServer, endpoint: JEndPoint) -> 'JFastApiServer' {
+""" impl JFastApiServer._get(
+    self: JFastApiServer, endpoint: JEndPoint
+) -> 'JFastApiServer' {
     self._create_fastapi_route(HTTPMethod.GET, endpoint);
     return self;
 }

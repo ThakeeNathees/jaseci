@@ -10,8 +10,9 @@ import os;
 import platform;
 import stat;
 
-"""Setup desktop target - scaffold Tauri project structure."""
-impl DesktopTarget.setup(self: DesktopTarget, project_dir: Path) -> None {
+"""Setup desktop target - scaffold Tauri project structure.""" impl DesktopTarget.setup(
+    self: DesktopTarget, project_dir: Path
+) -> None {
     # Define tauri_dir early so we can use it in error handling
     tauri_dir = project_dir / "src-tauri";
     # Create src-tauri directory structure FIRST (before ANY other operations)
@@ -1408,8 +1409,7 @@ def _check_and_install_tauri_cli -> None {
     }
 }
 
-"""Build desktop app - build web bundle first, then wrap with Tauri."""
-impl DesktopTarget.build(
+"""Build desktop app - build web bundle first, then wrap with Tauri.""" impl DesktopTarget.build(
     self: DesktopTarget,
     entry_file: Path,
     project_dir: Path,
@@ -2015,8 +2015,7 @@ exec python -m jac_client.plugin.src.targets.desktop.sidecar.main "$@"
     return output_path;
 }
 
-"""Start desktop dev server - start web dev server and launch tauri dev."""
-impl DesktopTarget.dev(
+"""Start desktop dev server - start web dev server and launch tauri dev.""" impl DesktopTarget.dev(
     self: DesktopTarget, entry_file: Path, project_dir: Path
 ) -> None {
     import from jac_client.plugin.src.vite_bundler { ViteBundler }
@@ -2273,8 +2272,7 @@ def _run_tauri_dev(tauri_dir: Path) -> subprocess.Popen {
     }
 }
 
-"""Start desktop app - build web bundle and launch Tauri with built bundle."""
-impl DesktopTarget.start(
+"""Start desktop app - build web bundle and launch Tauri with built bundle.""" impl DesktopTarget.start(
     self: DesktopTarget, entry_file: Path, project_dir: Path
 ) -> None {
     import from jac_client.plugin.src.targets.web_target { WebTarget }

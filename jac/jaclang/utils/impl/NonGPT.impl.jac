@@ -16,8 +16,9 @@ impl returns_fake(func: Any) -> Any {
     return wrapper;
 }
 
-"""Generate a random value that (best-effort) conforms to the type 'tp'."""
-impl random_value_for_type(tp: Any, *, _depth: int = 0, _max_depth: int = 10) -> Any {
+"""Generate a random value that (best-effort) conforms to the type 'tp'.""" impl random_value_for_type(
+    tp: Any, *, _depth: int = 0, _max_depth: int = 10
+) -> Any {
     random.seed(42);  # for reproducibility in tests
     if _depth > _max_depth {
         # Depth cap to avoid infinite recursion on self-referential types
@@ -269,8 +270,9 @@ impl random_value_for_type(tp: Any, *, _depth: int = 0, _max_depth: int = 10) ->
     return None;
 }
 
-"""Generate a random value for primitive types."""
-impl _random_primitive(tp: Any) -> Any {
+"""Generate a random value for primitive types.""" impl _random_primitive(
+    tp: Any
+) -> Any {
     if tp is int {
         return random.randint(-(10 ** 6), 10 ** 6);
     }
@@ -310,29 +312,27 @@ impl _random_primitive(tp: Any) -> Any {
     return None;
 }
 
-"""Choose a random element from a sequence."""
-impl _choose_from(seq: Any) -> Any {
+"""Choose a random element from a sequence.""" impl _choose_from(seq: Any) -> Any {
     return random.choice(list(seq));
 }
 
-"""Unwrap NewType to get the underlying type."""
-impl _unwrap_newtype(tp: Any) -> Any {
+"""Unwrap NewType to get the underlying type.""" impl _unwrap_newtype(tp: Any) -> Any {
     if tp?.__supertype__ {
         return tp.__supertype__;
     }
     return tp;
 }
 
-"""Unwrap Annotated type to get the underlying type."""
-impl _unwrap_annotated(tp: Any) -> Any {
+"""Unwrap Annotated type to get the underlying type.""" impl _unwrap_annotated(
+    tp: Any
+) -> Any {
     if get_origin(tp) is Annotated {
         return get_args(tp)[0];
     }
     return tp;
 }
 
-"""Safely get subclasses of a type."""
-impl _safe_subclasses(tp: Any) -> list[type] {
+"""Safely get subclasses of a type.""" impl _safe_subclasses(tp: Any) -> list[type] {
     try {
         return list(tp.__subclasses__());
     } except Exception {
@@ -340,8 +340,7 @@ impl _safe_subclasses(tp: Any) -> list[type] {
     }
 }
 
-"""Check if type is an Enum."""
-impl _is_enum(tp: Any) -> bool {
+"""Check if type is an Enum.""" impl _is_enum(tp: Any) -> bool {
     try {
         import enum;
         return isinstance(tp, type) and issubclass(tp, enum.Enum);
@@ -350,8 +349,7 @@ impl _is_enum(tp: Any) -> bool {
     }
 }
 
-"""Check if type is a NamedTuple."""
-impl _is_namedtuple(tp: Any) -> bool {
+"""Check if type is a NamedTuple.""" impl _is_namedtuple(tp: Any) -> bool {
     return (
         isinstance(tp, type)
         and issubclass(tp, tuple)
@@ -360,12 +358,10 @@ impl _is_namedtuple(tp: Any) -> bool {
     );
 }
 
-"""Check if type is a TypedDict."""
-impl _is_typed_dict(tp: Any) -> bool {
+"""Check if type is a TypedDict.""" impl _is_typed_dict(tp: Any) -> bool {
     return (isinstance(tp, type) and tp?.__annotations__ and tp?.__required_keys__);
 }
 
-"""Generate a random string of given length."""
-impl _rand_str(n: int = 12) -> str {
+"""Generate a random string of given length.""" impl _rand_str(n: int = 12) -> str {
     return ''.join(random.choice(_RAND_STR_ALPH) for _ in range(n));
 }

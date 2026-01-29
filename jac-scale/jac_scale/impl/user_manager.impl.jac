@@ -244,8 +244,7 @@ impl JacScaleUserManager.sso_callback(
 """Link an SSO account to a user.
 
 This allows users to have multiple SSO providers linked to their account.
-"""
-impl JacScaleUserManager.link_sso_account(
+""" impl JacScaleUserManager.link_sso_account(
     user_id: str, platform: str, external_id: str, email: str
 ) -> dict[str, str] {
     self._ensure_connection();
@@ -277,8 +276,7 @@ impl JacScaleUserManager.link_sso_account(
     };
 }
 
-"""Unlink an SSO account from a user."""
-impl JacScaleUserManager.unlink_sso_account(
+"""Unlink an SSO account from a user.""" impl JacScaleUserManager.unlink_sso_account(
     user_id: str, platform: str
 ) -> dict[str, str] {
     self._ensure_connection();
@@ -297,8 +295,9 @@ impl JacScaleUserManager.unlink_sso_account(
     };
 }
 
-"""Get all SSO accounts linked to a user."""
-impl JacScaleUserManager.get_sso_accounts(user_id: str) -> list[dict[str, str]] {
+"""Get all SSO accounts linked to a user.""" impl JacScaleUserManager.get_sso_accounts(
+    user_id: str
+) -> list[dict[str, str]] {
     self._ensure_connection();
     cursor = self._conn.execute(
         """
@@ -327,8 +326,7 @@ impl JacScaleUserManager.get_sso_accounts(user_id: str) -> list[dict[str, str]] 
 
 This is used during SSO login to find the user associated with
 an external SSO identity.
-"""
-impl JacScaleUserManager.get_user_by_sso(
+""" impl JacScaleUserManager.get_user_by_sso(
     platform: str, external_id: str
 ) -> (dict[str, str] | None) {
     self._ensure_connection();

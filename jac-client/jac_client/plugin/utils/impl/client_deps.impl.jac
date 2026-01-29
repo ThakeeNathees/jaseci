@@ -1,7 +1,8 @@
 """Implementation of client dependency checker utility."""
 
-"""Check if client npm dependencies are configured, prompt to install if missing."""
-impl ensure_client_deps(config_loader: object) -> bool {
+"""Check if client npm dependencies are configured, prompt to install if missing.""" impl ensure_client_deps(
+    config_loader: object
+) -> bool {
     package_config = config_loader.get_package_config();
     dependencies = package_config.get('dependencies', {});
     dev_dependencies = package_config.get('devDependencies', {});

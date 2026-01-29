@@ -477,7 +477,10 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
 
     def resolve_stmt_block(
         self,
-        node: Sequence[uni.ArchBlockStmt] | Sequence[uni.CodeBlockStmt] | Sequence[uni.EnumBlockStmt] | None,
+        node: Sequence[uni.ArchBlockStmt]
+        | Sequence[uni.CodeBlockStmt]
+        | Sequence[uni.EnumBlockStmt]
+        | None,
         doc: uni.String | None = None,
     ) -> list[ast3.AST]:
         """Unwind codeblock."""
@@ -861,7 +864,12 @@ class PyastGenPass(BaseAstGenPass[ast3.AST]):
             self.traverse(node.body)
 
     def exit_archetype(self, node: uni.Archetype) -> None:
-        inner: Sequence[uni.ArchBlockStmt] | Sequence[uni.CodeBlockStmt] | Sequence[uni.EnumBlockStmt] | None = None
+        inner: (
+            Sequence[uni.ArchBlockStmt]
+            | Sequence[uni.CodeBlockStmt]
+            | Sequence[uni.EnumBlockStmt]
+            | None
+        ) = None
         if isinstance(node.body, uni.ImplDef):
             inner = node.body.body if not isinstance(node.body.body, uni.Expr) else None
         elif not isinstance(node.body, uni.Expr):

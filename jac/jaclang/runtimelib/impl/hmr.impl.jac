@@ -14,8 +14,7 @@ import from jaclang.pycore.constant { CodeContext }
 
 glob logger = logging.getLogger(__name__);
 
-"""Start the hot reloader and begin watching for changes."""
-impl HotReloader.start -> None {
+"""Start the hot reloader and begin watching for changes.""" impl HotReloader.start -> None {
     if self._running {
         return;
     }
@@ -27,8 +26,7 @@ impl HotReloader.start -> None {
     logger.debug(f"Hot reloader started for module: {self.module_name}");
 }
 
-"""Stop the hot reloader and file watcher."""
-impl HotReloader.stop -> None {
+"""Stop the hot reloader and file watcher.""" impl HotReloader.stop -> None {
     if not self._running {
         return;
     }
@@ -38,8 +36,9 @@ impl HotReloader.stop -> None {
     logger.debug("Hot reloader stopped");
 }
 
-"""Callback for file change events from the watcher."""
-impl HotReloader.on_file_change(event: Any) -> None {
+"""Callback for file change events from the watcher.""" impl HotReloader.on_file_change(
+    event: Any
+) -> None {
     if not self._running {
         return;
     }
@@ -48,8 +47,9 @@ impl HotReloader.on_file_change(event: Any) -> None {
     self._process_change(event.path);
 }
 
-"""Process a file change by classifying declarations and taking action."""
-impl HotReloader._process_change(file_path: str) -> None {
+"""Process a file change by classifying declarations and taking action.""" impl HotReloader._process_change(
+    file_path: str
+) -> None {
     # Check if this is a frontend file
     if file_path.endswith(
         tuple(
@@ -71,8 +71,9 @@ impl HotReloader._process_change(file_path: str) -> None {
     }
 }
 
-"""Reload server-side module in sys.modules."""
-impl HotReloader._reload_server_module(file_path: str) -> None {
+"""Reload server-side module in sys.modules.""" impl HotReloader._reload_server_module(
+    file_path: str
+) -> None {
     import from jaclang.pycore.runtime { JacRuntime as Jac }
     # Get module name from file path
     module_name = self._path_to_module(file_path);
@@ -124,8 +125,9 @@ impl HotReloader._reload_server_module(file_path: str) -> None {
     }
 }
 
-"""Recompile client declarations to JavaScript."""
-impl HotReloader._recompile_client_code(file_path: str) -> None {
+"""Recompile client declarations to JavaScript.""" impl HotReloader._recompile_client_code(
+    file_path: str
+) -> None {
     import from jaclang.pycore.runtime { JacRuntime as Jac }
     try {
         source_path = Path(file_path).resolve();
@@ -206,8 +208,9 @@ impl HotReloader._recompile_client_code(file_path: str) -> None {
     }
 }
 
-"""Convert a .jac file path to a .js filename."""
-impl HotReloader._get_js_filename(file_path: str) -> str {
+"""Convert a .jac file path to a .js filename.""" impl HotReloader._get_js_filename(
+    file_path: str
+) -> str {
     path = Path(file_path);
     name = path.name;
     # Handle different Jac file extensions
@@ -225,8 +228,7 @@ impl HotReloader._get_js_filename(file_path: str) -> str {
 """Get client and server declarations from a file.
 
 Returns (has_client_decls, has_server_decls).
-"""
-impl HotReloader._classify_declarations(file_path: str) -> tuple[bool, bool] {
+""" impl HotReloader._classify_declarations(file_path: str) -> tuple[bool, bool] {
     import from jaclang.pycore.program { JacProgram }
     has_client = False;
     has_server = False;
@@ -268,8 +270,9 @@ impl HotReloader._classify_declarations(file_path: str) -> tuple[bool, bool] {
     return (has_client, has_server);
 }
 
-"""Convert file path to module name."""
-impl HotReloader._path_to_module(file_path: str) -> str {
+"""Convert file path to module name.""" impl HotReloader._path_to_module(
+    file_path: str
+) -> str {
     # Get relative path from base_path
     path = Path(file_path);
     base = Path(self.base_path);
@@ -295,8 +298,9 @@ impl HotReloader._path_to_module(file_path: str) -> str {
     return ".".join(module_parts);
 }
 
-"""Emit a client-side error overlay for compilation errors."""
-impl HotReloader._emit_client_error_overlay(file_path: str, errors: str) -> None {
+"""Emit a client-side error overlay for compilation errors.""" impl HotReloader._emit_client_error_overlay(
+    file_path: str, errors: str
+) -> None {
     output_base = Path(self.base_path) / self._client_output_dir;
     output_dir = output_base;
     output_dir.mkdir(parents=True, exist_ok=True);
@@ -311,8 +315,9 @@ impl HotReloader._emit_client_error_overlay(file_path: str, errors: str) -> None
     return;
 }
 
-"""Copy frontend files to compiled directory."""
-impl HotReloader._copy_frontend_files(file_path: str) -> None {
+"""Copy frontend files to compiled directory.""" impl HotReloader._copy_frontend_files(
+    file_path: str
+) -> None {
     try {
         source_path = Path(file_path).resolve();
         base_dir = Path(self.base_path).resolve();
@@ -348,8 +353,9 @@ impl HotReloader._copy_frontend_files(file_path: str) -> None {
     }
 }
 
-"""Create export statement for recompiled JS code."""
-impl HotReloader._create_export_statement(js_code: str, client_manifest: Any) -> str {
+"""Create export statement for recompiled JS code.""" impl HotReloader._create_export_statement(
+    js_code: str, client_manifest: Any
+) -> str {
     exports_list = list(client_manifest.exports) if client_manifest.exports else [];
     globals_list = list(client_manifest.globals) if client_manifest.globals else [];
     module_export_names = sorted(set(exports_list + globals_list));
@@ -367,8 +373,7 @@ impl HotReloader._create_export_statement(js_code: str, client_manifest: Any) ->
     return js_code;
 }
 
-"""Update the entry point to reflect changes in modules."""
-impl HotReloader._update_entry_point -> None {
+"""Update the entry point to reflect changes in modules.""" impl HotReloader._update_entry_point -> None {
     output_base = Path(self.base_path) / self._client_output_dir;
     output_base.mkdir(parents=True, exist_ok=True);
     output_path = output_base / "_entry.js";

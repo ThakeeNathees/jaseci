@@ -11,8 +11,7 @@ impl BaseLLM.__call__(**kwargs: object) -> BaseLLM {
 
 Handles both streaming and non-streaming modes. For tool-enabled requests,
 implements a ReAct loop that continues until finish_tool is called.
-"""
-impl BaseLLM.invoke(mt_run: MTRuntime) -> object {
+""" impl BaseLLM.invoke(mt_run: MTRuntime) -> object {
     # If streaming without tools, stream immediately
     if mt_run.stream and len(mt_run.tools) == 0 {
         return self.dispatch_streaming(mt_run);
@@ -73,8 +72,7 @@ impl BaseLLM.invoke(mt_run: MTRuntime) -> object {
 
 Builds the parameter dict including model name, messages, tools,
 response format, and call parameters like temperature and max_tokens.
-"""
-impl BaseLLM.make_model_params(mt_run: MTRuntime) -> dict {
+""" impl BaseLLM.make_model_params(mt_run: MTRuntime) -> dict {
     # Use call_params from config as defaults, then override with instance call_params
     default_temp = _call_params_config.get("temperature", 0.7);
     default_max_tokens = _call_params_config.get("max_tokens");
@@ -96,8 +94,9 @@ impl BaseLLM.make_model_params(mt_run: MTRuntime) -> dict {
     return params;
 }
 
-"""Log a message to the console if verbose mode is enabled."""
-impl BaseLLM.log_info(message: str) -> None {
+"""Log a message to the console if verbose mode is enabled.""" impl BaseLLM.log_info(
+    message: str
+) -> None {
     # FIXME: The logger.info will not always log so for now I'm printing to stdout
     # remove and log properly.
     # Check instance config first, then fall back to global config
@@ -107,8 +106,9 @@ impl BaseLLM.log_info(message: str) -> None {
     }
 }
 
-"""Format model parameters for logging, masking sensitive information."""
-impl BaseLLM.format_prompt(params: dict) -> str {
+"""Format model parameters for logging, masking sensitive information.""" impl BaseLLM.format_prompt(
+    params: dict
+) -> str {
     MAGENTA = "\033[95m";
     RESET = "\033[0m";
     log_params = params.copy();
@@ -142,8 +142,7 @@ impl BaseLLM.format_prompt(params: dict) -> str {
 
 Makes a synchronous API call and processes the response, including
 parsing any tool calls returned by the model.
-"""
-impl BaseLLM.dispatch_no_streaming(mt_run: MTRuntime) -> CompletionResult {
+""" impl BaseLLM.dispatch_no_streaming(mt_run: MTRuntime) -> CompletionResult {
     # Construct the parameters for the LLM call
     params = self.make_model_params(mt_run);
     # Call the LiteLLM API
@@ -180,8 +179,7 @@ impl BaseLLM.dispatch_no_streaming(mt_run: MTRuntime) -> CompletionResult {
 """Dispatch the LLM call with streaming.
 
 Makes a streaming API call and yields content chunks as they arrive.
-"""
-impl BaseLLM.dispatch_streaming(mt_run: MTRuntime) -> Generator[str, None, None] {
+""" impl BaseLLM.dispatch_streaming(mt_run: MTRuntime) -> Generator[str, None, None] {
     # Construct the parameters for the LLM call
     params = self.make_model_params(mt_run);
     # Call the LiteLLM API
@@ -202,8 +200,7 @@ impl BaseLLM.dispatch_streaming(mt_run: MTRuntime) -> Generator[str, None, None]
 
 Subclasses must implement this to define how the actual LLM API is called.
 Should return the raw API response object.
-"""
-impl BaseLLM.model_call_no_stream(params: dict) -> dict {
+""" impl BaseLLM.model_call_no_stream(params: dict) -> dict {
     raise NotImplementedError(
         "Subclasses must implement this method for LLM call without streaming."
     ) ;
@@ -213,8 +210,7 @@ impl BaseLLM.model_call_no_stream(params: dict) -> dict {
 
 Subclasses must implement this to define how the actual LLM API is called.
 Should return a generator that yields response chunks.
-"""
-impl BaseLLM.model_call_with_stream(params: dict) -> Generator[str, None, None] {
+""" impl BaseLLM.model_call_with_stream(params: dict) -> Generator[str, None, None] {
     raise NotImplementedError(
         "Subclasses must implement this method for LLM call with streaming."
     ) ;
@@ -226,8 +222,7 @@ Creates a new streaming LLM call with all context from tool calls
 to generate the final answer in real-time streaming mode.
 Unlike _stream_finish_output which splits an already-complete string,
 this makes a REAL streaming API call to the LLM.
-"""
-impl BaseLLM._stream_final_answer(mt_run: MTRuntime) -> Generator[str, None, None] {
+""" impl BaseLLM._stream_final_answer(mt_run: MTRuntime) -> Generator[str, None, None] {
     # Add a message instructing the LLM to provide the final answer
     # based on all the tool call results gathered so far
     final_instruction = Message(

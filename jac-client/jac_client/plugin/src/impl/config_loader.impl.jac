@@ -11,13 +11,15 @@ import from pathlib { Path }
 import from typing { Any }
 import from jaclang.project.plugin_config { deep_merge }
 
-"""Get the plugin section name for client."""
-impl JacClientConfig.get_plugin_name(self: JacClientConfig) -> str {
+"""Get the plugin section name for client.""" impl JacClientConfig.get_plugin_name(
+    self: JacClientConfig
+) -> str {
     return "client";
 }
 
-"""Get default configuration structure for client."""
-impl JacClientConfig.get_default_config(self: JacClientConfig) -> dict[str, Any] {
+"""Get default configuration structure for client.""" impl JacClientConfig.get_default_config(
+    self: JacClientConfig
+) -> dict[str, Any] {
     return {
         'api': {'base_url': ''},
         'vite': {
@@ -42,8 +44,7 @@ impl JacClientConfig.get_default_config(self: JacClientConfig) -> dict[str, Any]
 """Load configuration from jac.toml, merging with defaults.
 
 Overrides base class to also include npm dependencies from [dependencies.npm].
-"""
-impl JacClientConfig.load(self: JacClientConfig) -> dict[str, Any] {
+""" impl JacClientConfig.load(self: JacClientConfig) -> dict[str, Any] {
     if self._config is not None {
         return self._config;
     }
@@ -77,44 +78,49 @@ impl JacClientConfig.load(self: JacClientConfig) -> dict[str, Any] {
     return self._config;
 }
 
-"""Get package configuration (npm dependencies)."""
-impl JacClientConfig.get_package_config(self: JacClientConfig) -> dict[str, Any] {
+"""Get package configuration (npm dependencies).""" impl JacClientConfig.get_package_config(
+    self: JacClientConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('package', {});
 }
 
-"""Get API configuration (base_url for backend)."""
-impl JacClientConfig.get_api_config(self: JacClientConfig) -> dict[str, Any] {
+"""Get API configuration (base_url for backend).""" impl JacClientConfig.get_api_config(
+    self: JacClientConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('api', {});
 }
 
-"""Get Vite-specific configuration."""
-impl JacClientConfig.get_vite_config(self: JacClientConfig) -> dict[str, Any] {
+"""Get Vite-specific configuration.""" impl JacClientConfig.get_vite_config(
+    self: JacClientConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('vite', {});
 }
 
-"""Get TypeScript-specific configuration for tsconfig.json customization."""
-impl JacClientConfig.get_ts_config(self: JacClientConfig) -> dict[str, Any] {
+"""Get TypeScript-specific configuration for tsconfig.json customization.""" impl JacClientConfig.get_ts_config(
+    self: JacClientConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('ts', {});
 }
 
-"""Get generic config files to generate (postcss, tailwind, etc.)."""
-impl JacClientConfig.get_configs(self: JacClientConfig) -> dict[str, Any] {
+"""Get generic config files to generate (postcss, tailwind, etc.).""" impl JacClientConfig.get_configs(
+    self: JacClientConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('configs', {});
 }
 
-"""Save configuration back to jac.toml using core JacConfig."""
-impl JacClientConfig.save(self: JacClientConfig) -> None {
+"""Save configuration back to jac.toml using core JacConfig.""" impl JacClientConfig.save(
+    self: JacClientConfig
+) -> None {
     jac_config = self.get_jac_config();
     jac_config.save();
 }
 
-"""Add an npm dependency."""
-impl JacClientConfig.add_dependency(
+"""Add an npm dependency.""" impl JacClientConfig.add_dependency(
     self: JacClientConfig, name: str, version: str, is_dev: bool = False
 ) -> None {
     jac_config = self.get_jac_config();
@@ -123,8 +129,7 @@ impl JacClientConfig.add_dependency(
     self.invalidate();
 }
 
-"""Remove an npm dependency."""
-impl JacClientConfig.remove_dependency(
+"""Remove an npm dependency.""" impl JacClientConfig.remove_dependency(
     self: JacClientConfig, name: str, is_dev: bool = False
 ) -> bool {
     jac_config = self.get_jac_config();

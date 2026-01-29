@@ -78,8 +78,9 @@ impl TypeEvaluator.get_type_of_module_item(node_: uni.ModuleItem) -> types.TypeB
     return types.UnknownType();
 }
 
-"""Return the effective type of the module."""
-impl TypeEvaluator.get_type_of_module(node_: uni.ModulePath) -> types.TypeBase {
+"""Return the effective type of the module.""" impl TypeEvaluator.get_type_of_module(
+    node_: uni.ModulePath
+) -> types.TypeBase {
     if node_.path {
         # If the type is already computed, return it.
         if node_.path[-1].type {
@@ -126,8 +127,9 @@ impl TypeEvaluator.get_type_of_module(node_: uni.ModulePath) -> types.TypeBase {
     return types.UnknownType();
 }
 
-"""Import a module from the given path."""
-impl TypeEvaluator._import_module_from_path(path: str) -> uni.Module {
+"""Import a module from the given path.""" impl TypeEvaluator._import_module_from_path(
+    path: str
+) -> uni.Module {
     # -----------------------------------------------------------------------
     # TODO: Implement stub file resolution properly, this is a ad-hoc mess.
     # FIXME: This is ad-hoc way to override the typeing.py with typeing.pyi file
@@ -167,8 +169,9 @@ impl TypeEvaluator._import_module_from_path(path: str) -> uni.Module {
     return mod;
 }
 
-"""Return the effective type of the symbol."""
-impl TypeEvaluator.get_type_of_symbol(symbol: uni.Symbol) -> TypeBase {
+"""Return the effective type of the symbol.""" impl TypeEvaluator.get_type_of_symbol(
+    symbol: uni.Symbol
+) -> TypeBase {
     if self.push_symbol_resolution(symbol) {
         try {
             return self._get_type_of_symbol(symbol);

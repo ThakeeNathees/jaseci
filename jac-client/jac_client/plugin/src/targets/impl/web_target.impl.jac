@@ -4,8 +4,7 @@ import from pathlib { Path }
 import from typing { Optional }
 import from jac_client.plugin.src.vite_bundler { ViteBundler }
 
-"""Build web bundle using existing Vite pipeline."""
-impl WebTarget.build(
+"""Build web bundle using existing Vite pipeline.""" impl WebTarget.build(
     self: WebTarget,
     entry_file: Path,
     project_dir: Path,

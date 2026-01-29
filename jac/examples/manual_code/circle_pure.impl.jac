@@ -5,8 +5,9 @@ impl ShapeType{
     UNKNOWN = "Unknown"
 }
 
-"""Function to calculate the area of a circle."""
-impl calculate_area(radius: float) -> float {
+"""Function to calculate the area of a circle.""" impl calculate_area(
+    radius: float
+) -> float {
     return math.pi * radius * radius;
 }
 
@@ -15,8 +16,7 @@ impl Circle.init(radius: float) {
     super.init(ShapeType.CIRCLE);
 }
 
-"""Overridden method to calculate the area of the circle."""
-impl Circle.area -> float {
+"""Overridden method to calculate the area of the circle.""" impl Circle.area -> float {
     return math.pi * self.radius * self.radius;
 }
 

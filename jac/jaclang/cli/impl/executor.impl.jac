@@ -7,8 +7,7 @@ import from jaclang.cli.console { console }
 # ===============================================================================
 # CommandExecutor Implementation
 # ===============================================================================
-"""Execute a command with its hooks."""
-impl CommandExecutor.execute(
+"""Execute a command with its hooks.""" impl CommandExecutor.execute(
     spec: CommandSpec, args: dict[str, Any]
 ) -> ExecutionResult {
     import from jaclang.cli.command { CommandSpec, HookContext }
@@ -43,8 +42,9 @@ impl CommandExecutor.execute(
     return ExecutionResult(return_code=final_code, error=error, context=context);
 }
 
-"""Run all pre-execution hooks for a command."""
-impl CommandExecutor.run_pre_hooks(spec: CommandSpec, context: HookContext) -> bool {
+"""Run all pre-execution hooks for a command.""" impl CommandExecutor.run_pre_hooks(
+    spec: CommandSpec, context: HookContext
+) -> bool {
     import from jaclang.cli.command { CommandSpec, HookContext }
     for (hook, source) in spec.pre_hooks {
         try {
@@ -64,8 +64,7 @@ impl CommandExecutor.run_pre_hooks(spec: CommandSpec, context: HookContext) -> b
     return True;
 }
 
-"""Run all post-execution hooks for a command."""
-impl CommandExecutor.run_post_hooks(
+"""Run all post-execution hooks for a command.""" impl CommandExecutor.run_post_hooks(
     spec: CommandSpec, context: HookContext, return_code: int
 ) -> int {
     import from jaclang.cli.command { CommandSpec, HookContext }
@@ -85,8 +84,9 @@ impl CommandExecutor.run_post_hooks(
     return current_code;
 }
 
-"""Execute the command handler."""
-impl CommandExecutor.run_handler(spec: CommandSpec, args: dict[str, Any]) -> int {
+"""Execute the command handler.""" impl CommandExecutor.run_handler(
+    spec: CommandSpec, args: dict[str, Any]
+) -> int {
     import inspect;
     import from jaclang.cli.command { CommandSpec }
     if spec.handler is None {
@@ -126,8 +126,7 @@ impl CommandExecutor.run_handler(spec: CommandSpec, args: dict[str, Any]) -> int
 # ===============================================================================
 # Module-level Functions Implementation
 # ===============================================================================
-"""Get the global command executor."""
-impl get_executor -> CommandExecutor {
+"""Get the global command executor.""" impl get_executor -> CommandExecutor {
     import from jaclang.cli.executor { CommandExecutor }
     global _executor;
     if _executor is None {

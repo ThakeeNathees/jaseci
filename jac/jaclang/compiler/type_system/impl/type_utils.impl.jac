@@ -13,8 +13,7 @@ impl class_implements_protocol(cls: types.ClassType, proto: types.ClassType) -> 
     return proto_method_names.issubset(cls_method_names);
 }
 
-"""Lookup a symbol in the symbol table."""
-impl lookup_symtab(
+"""Lookup a symbol in the symbol table.""" impl lookup_symtab(
     symtable: uni.UniScopeNode, name: str, builtins_to_inject: uni.Module
 ) -> (Symbol | None) {
     mod: (uni.Module | None) = None;
@@ -29,8 +28,7 @@ impl lookup_symtab(
     return symtable.lookup(name, deep=True, incl_inner_scope=True);
 }
 
-"""Return a list of completion items for the type."""
-impl get_completion_items(
+"""Return a list of completion items for the type.""" impl get_completion_items(
     ty: (types.TypeBase | uni.UniScopeNode)
 ) -> list[CompletionItem] {
     ret = [];
@@ -62,8 +60,9 @@ impl get_completion_items(
     return ret;
 }
 
-"""Get the completion item kind from a symbol."""
-impl completion_kind_from_sym(sym: Symbol) -> int {
+"""Get the completion item kind from a symbol.""" impl completion_kind_from_sym(
+    sym: Symbol
+) -> int {
     match sym.decl.name_of {
         case uni.ModulePath():
             return CompletionItemKind.Module;
@@ -84,8 +83,9 @@ impl completion_kind_from_sym(sym: Symbol) -> int {
     return CompletionItemKind.Text;
 }
 
-"""Check if there are any unmatched required parameters."""
-impl ParamAssignmentTracker.get_unmatched_required_params -> list[types.Parameter] {
+"""Check if there are any unmatched required parameters.""" impl ParamAssignmentTracker.get_unmatched_required_params -> list[
+    types.Parameter
+] {
     ret: list[types.Parameter] = [];
     for param in self.params {
         if (
@@ -101,8 +101,7 @@ impl ParamAssignmentTracker.get_unmatched_required_params -> list[types.Paramete
     return ret;
 }
 
-"""Match a positional argument to a parameter."""
-impl ParamAssignmentTracker.match_positional_argument(
+"""Match a positional argument to a parameter.""" impl ParamAssignmentTracker.match_positional_argument(
     arg: uni.Expr
 ) -> (types.Parameter | None) {
     if (self.curr_param_idx == -1) {
@@ -128,8 +127,7 @@ impl ParamAssignmentTracker.match_positional_argument(
     }
 }
 
-"""Match a named argument to a parameter."""
-impl ParamAssignmentTracker.match_named_argument(
+"""Match a named argument to a parameter.""" impl ParamAssignmentTracker.match_named_argument(
     arg: uni.KWPair
 ) -> (types.Parameter | None) {
     if (arg.key is None) {
@@ -145,8 +143,7 @@ impl ParamAssignmentTracker.match_named_argument(
     }
 }
 
-"""Mark all positional parameters as matched."""
-impl ParamAssignmentTracker._mark_all_positional_params_as_matched -> None {
+"""Mark all positional parameters as matched.""" impl ParamAssignmentTracker._mark_all_positional_params_as_matched -> None {
     for param in self.params {
         if (
             param.param_kind in (
@@ -161,8 +158,7 @@ impl ParamAssignmentTracker._mark_all_positional_params_as_matched -> None {
     self.curr_param_idx = -1;
 }
 
-"""Mark all named parameters as matched."""
-impl ParamAssignmentTracker._mark_all_named_params_as_matched -> None {
+"""Mark all named parameters as matched.""" impl ParamAssignmentTracker._mark_all_named_params_as_matched -> None {
     for param in self.params {
         if (
             param.param_kind in (
@@ -176,8 +172,7 @@ impl ParamAssignmentTracker._mark_all_named_params_as_matched -> None {
     }
 }
 
-"""Lookup a named parameter by name and if any match is found we mark it as such."""
-impl ParamAssignmentTracker.lookup_named_parameter(
+"""Lookup a named parameter by name and if any match is found we mark it as such.""" impl ParamAssignmentTracker.lookup_named_parameter(
     param_name: str
 ) -> (types.Parameter | None) {
     for param in self.params {
@@ -204,8 +199,7 @@ impl ParamAssignmentTracker.lookup_named_parameter(
     return self.kwargs;
 }
 
-"""Initialize varargs and kwargs from params."""
-impl ParamAssignmentTracker.postinit -> None {
+"""Initialize varargs and kwargs from params.""" impl ParamAssignmentTracker.postinit -> None {
     for param in self.params {
         if (param.param_kind == types.ParamKind.VARARG) {
             self.varargs = param;
@@ -220,8 +214,7 @@ Compute the method resolution order (MRO) for a class type.
 
     This uses the C3 linearization algorithm to compute the MRO.
     See https://www.python.org/download/releases/2.3/mro/
-"""
-impl compute_mro_linearization(cls: types.ClassType) -> None {
+""" impl compute_mro_linearization(cls: types.ClassType) -> None {
     if cls.shared.mro {
         return;
     }

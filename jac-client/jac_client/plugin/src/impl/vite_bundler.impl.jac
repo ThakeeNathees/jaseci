@@ -12,8 +12,7 @@ impl ViteBundler._get_client_dir(self: ViteBundler) -> Path {
     return self.project_dir / '.jac' / 'client';
 }
 
-"""Create package.json from config.json during bundling."""
-impl ViteBundler.create_package_json(
+"""Create package.json from config.json during bundling.""" impl ViteBundler.create_package_json(
     self: ViteBundler, project_name: Optional[str] = None
 ) -> Path {
     build_dir = self._get_client_dir();
@@ -79,8 +78,9 @@ impl ViteBundler.create_package_json(
     return package_json_path;
 }
 
-"""Create tsconfig.json during build time, merging user config from jac.toml."""
-impl ViteBundler.create_tsconfig(self: ViteBundler) -> Path {
+"""Create tsconfig.json during build time, merging user config from jac.toml.""" impl ViteBundler.create_tsconfig(
+    self: ViteBundler
+) -> Path {
     build_dir = self._get_client_dir();
     build_dir.mkdir(parents=True, exist_ok=True);
     configs_dir = build_dir / 'configs';
@@ -130,8 +130,7 @@ impl ViteBundler.create_tsconfig(self: ViteBundler) -> Path {
 Clean up root package.json and move bun.lockb to configs/.
 
         Remove root package.json and move bun.lockb to configs/.
-"""
-impl ViteBundler._cleanup_root_package_files(self: ViteBundler) -> None {
+""" impl ViteBundler._cleanup_root_package_files(self: ViteBundler) -> None {
     root_package_json = self.project_dir / 'package.json';
     root_bun_lockb = self.project_dir / 'bun.lockb';
     build_dir = self._get_client_dir();
@@ -153,8 +152,7 @@ impl ViteBundler._cleanup_root_package_files(self: ViteBundler) -> None {
 Ensure root package.json exists temporarily for bun commands.
 
         Create root package.json temporarily if it doesn't exist.
-"""
-impl ViteBundler._ensure_root_package_json(self: ViteBundler) -> None {
+""" impl ViteBundler._ensure_root_package_json(self: ViteBundler) -> None {
     generated_package_json = self._get_client_dir() / 'configs' / 'package.json';
     root_package_json = self.project_dir / 'package.json';
     if not generated_package_json.exists() {
@@ -165,8 +163,7 @@ impl ViteBundler._ensure_root_package_json(self: ViteBundler) -> None {
     }
 }
 
-"""Format config object as JavaScript object string."""
-impl ViteBundler._format_config_object(
+"""Format config object as JavaScript object string.""" impl ViteBundler._format_config_object(
     self: ViteBundler, config: dict, indent: int = 0
 ) -> str {
     if not config {
@@ -194,8 +191,9 @@ impl ViteBundler._format_config_object(
     return '\n'.join(items);
 }
 
-"""Format plugin options as JavaScript object string."""
-impl ViteBundler._format_plugin_options(self: ViteBundler, options: dict) -> str {
+"""Format plugin options as JavaScript object string.""" impl ViteBundler._format_plugin_options(
+    self: ViteBundler, options: dict
+) -> str {
     if not options {
         return '';
     }
@@ -216,16 +214,18 @@ impl ViteBundler._format_plugin_options(self: ViteBundler, options: dict) -> str
     return '{ ' + ', '.join(items) + ' }';
 }
 
-"""Get a valid JavaScript variable name from plugin module name."""
-impl ViteBundler._get_plugin_var_name(self: ViteBundler, plugin_name: str) -> str {
+"""Get a valid JavaScript variable name from plugin module name.""" impl ViteBundler._get_plugin_var_name(
+    self: ViteBundler, plugin_name: str
+) -> str {
     name = plugin_name.split('/')[-1];
     name = name.replace('-', '_').replace('.', '_');
     name = name.lstrip('@');
     return name;
 }
 
-"""Create vite.config.js from config.json during bundling."""
-impl ViteBundler.create_vite_config(self: ViteBundler, entry_file: Path) -> Path {
+"""Create vite.config.js from config.json during bundling.""" impl ViteBundler.create_vite_config(
+    self: ViteBundler, entry_file: Path
+) -> Path {
     build_dir = self._get_client_dir();
     build_dir.mkdir(parents=True, exist_ok=True);
     configs_dir = build_dir / 'configs';
@@ -395,14 +395,16 @@ export default defineConfig({{
     return config_path;
 }
 
-"""Check if the project has TypeScript support. TypeScript is now enabled by default."""
-impl ViteBundler._has_typescript_support(self: ViteBundler) -> bool {
+"""Check if the project has TypeScript support. TypeScript is now enabled by default.""" impl ViteBundler._has_typescript_support(
+    self: ViteBundler
+) -> bool {
     # TypeScript is always enabled by default
     return True;
 }
 
-"""Read the bundled code and compute its hash."""
-impl ViteBundler.read_bundle(self: ViteBundler) -> tuple[str, str] {
+"""Read the bundled code and compute its hash.""" impl ViteBundler.read_bundle(
+    self: ViteBundler
+) -> tuple[str, str] {
     bundle_file = self.find_bundle();
     if not bundle_file {
         raise ClientBundleError('Vite build completed but no bundle file found') ;
@@ -412,22 +414,25 @@ impl ViteBundler.read_bundle(self: ViteBundler) -> tuple[str, str] {
     return (bundle_code, bundle_hash);
 }
 
-"""Find the generated Vite CSS file."""
-impl ViteBundler.find_css(self: ViteBundler) -> Optional[Path] {
+"""Find the generated Vite CSS file.""" impl ViteBundler.find_css(
+    self: ViteBundler
+) -> Optional[Path] {
     css_file = self.output_dir / 'styles.css';
     return css_file if css_file.exists() else None;
 }
 
-"""Find the generated Vite bundle file."""
-impl ViteBundler.find_bundle(self: ViteBundler) -> Optional[Path] {
+"""Find the generated Vite bundle file.""" impl ViteBundler.find_bundle(
+    self: ViteBundler
+) -> Optional[Path] {
     for file in self.output_dir.glob('client.*.js') {
         return file;
     }
     return None;
 }
 
-"""Run Vite build with generated config in .jac/client/configs/."""
-impl ViteBundler.build(self: ViteBundler, entry_file: Optional[Path] = None) -> None {
+"""Run Vite build with generated config in .jac/client/configs/.""" impl ViteBundler.build(
+    self: ViteBundler, entry_file: Optional[Path] = None
+) -> None {
     import sys;
     import time;
     import shutil;
@@ -544,8 +549,7 @@ impl ViteBundler.build(self: ViteBundler, entry_file: Optional[Path] = None) -> 
     }
 }
 
-"""Initialize the Vite bundler."""
-impl ViteBundler.init(
+"""Initialize the Vite bundler.""" impl ViteBundler.init(
     self: ViteBundler,
     project_dir: Path,
     output_dir: Optional[Path] = None,
@@ -560,8 +564,7 @@ impl ViteBundler.init(
     self.output_dir = output_dir or (self._get_client_dir() / 'dist');
 }
 
-"""Create a dev-mode vite config with API proxy for HMR."""
-impl ViteBundler.create_dev_vite_config(
+"""Create a dev-mode vite config with API proxy for HMR.""" impl ViteBundler.create_dev_vite_config(
     self: ViteBundler, entry_file: Path, api_port: int = 8000
 ) -> Path {
     build_dir = self._get_client_dir();
@@ -672,8 +675,7 @@ Example jac.toml:
 This generates:
     - .jac/client/configs/postcss.config.js
     - .jac/client/configs/tailwind.config.js
-"""
-impl ViteBundler.create_config_files(self: ViteBundler) -> list[Path] {
+""" impl ViteBundler.create_config_files(self: ViteBundler) -> list[Path] {
     configs = self.config_loader.get_configs();
     if not configs {
         return [];
@@ -701,8 +703,9 @@ def _toml_config_to_js(config_name: str, config_data: dict) -> str {
     return f"module.exports = {json.dumps(config_data, indent=2)};\n";
 }
 
-"""Start Vite dev server as a subprocess."""
-impl ViteBundler.start_dev_server(self: ViteBundler, port: int = 3000) -> Any {
+"""Start Vite dev server as a subprocess.""" impl ViteBundler.start_dev_server(
+    self: ViteBundler, port: int = 3000
+) -> Any {
     import sys;
     import time;
     import from jac_client.plugin.utils { ensure_bun_available }

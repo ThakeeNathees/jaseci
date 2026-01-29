@@ -42,8 +42,7 @@ def _read_file_content(file_path: Path) -> str {
 # ===============================================================================
 # Load Template from Directory
 # ===============================================================================
-"""Load a template from a directory containing jac.toml with [jacpackk] section."""
-impl load_template_from_directory(
+"""Load a template from a directory containing jac.toml with [jacpackk] section.""" impl load_template_from_directory(
     template_dir: Path, post_create_hook: Callable | None = None
 ) -> ProjectTemplate {
     template_dir = Path(template_dir);
@@ -149,8 +148,9 @@ impl load_template_from_directory(
 # ===============================================================================
 # Bundle Template to JSON
 # ===============================================================================
-"""Bundle a template directory into a single JSON file."""
-impl bundle_template(template_dir: Path, output_path: Path) -> None {
+"""Bundle a template directory into a single JSON file.""" impl bundle_template(
+    template_dir: Path, output_path: Path
+) -> None {
     template_dir = Path(template_dir);
     output_path = Path(output_path);
     if not template_dir.is_dir() {
@@ -194,8 +194,7 @@ impl bundle_template(template_dir: Path, output_path: Path) -> None {
 # ===============================================================================
 # Load Template from JSON
 # ===============================================================================
-"""Load a template from a bundled JSON file."""
-impl load_template_from_json(
+"""Load a template from a bundled JSON file.""" impl load_template_from_json(
     json_path: Path, post_create_hook: Callable | None = None
 ) -> ProjectTemplate {
     json_path = Path(json_path);
@@ -224,8 +223,9 @@ impl load_template_from_json(
 # ===============================================================================
 # Hook Resolution
 # ===============================================================================
-"""Resolve a post_create hook from a string path."""
-impl resolve_post_create_hook(hook_path: str) -> Callable | None {
+"""Resolve a post_create hook from a string path.""" impl resolve_post_create_hook(
+    hook_path: str
+) -> Callable | None {
     if not hook_path {
         return None;
     }

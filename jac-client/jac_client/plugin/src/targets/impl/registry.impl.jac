@@ -1,20 +1,21 @@
 """Implementation of target registry."""
 
-"""Register a new build target."""
-impl TargetRegistry.register(target: ClientTarget) -> None {
+"""Register a new build target.""" impl TargetRegistry.register(
+    target: ClientTarget
+) -> None {
     self._targets[target.name] = target;
     if target.default {
         self._default_target = target.name;
     }
 }
 
-"""Get a target by name."""
-impl TargetRegistry.get(name: str) -> Optional[ClientTarget] {
+"""Get a target by name.""" impl TargetRegistry.get(
+    name: str
+) -> Optional[ClientTarget] {
     return self._targets.get(name);
 }
 
-"""Get the default target."""
-impl TargetRegistry.get_default -> Optional[ClientTarget] {
+"""Get the default target.""" impl TargetRegistry.get_default -> Optional[ClientTarget] {
     if self._default_target {
         return self._targets.get(self._default_target);
     }
@@ -27,18 +28,15 @@ impl TargetRegistry.get_default -> Optional[ClientTarget] {
     return None;
 }
 
-"""Get all registered targets."""
-impl TargetRegistry.get_all -> list[ClientTarget] {
+"""Get all registered targets.""" impl TargetRegistry.get_all -> list[ClientTarget] {
     return list(self._targets.values());
 }
 
-"""Check if a target is registered."""
-impl TargetRegistry.has(name: str) -> bool {
+"""Check if a target is registered.""" impl TargetRegistry.has(name: str) -> bool {
     return name in self._targets;
 }
 
-"""Set the default target."""
-impl TargetRegistry.set_default(name: str) -> None {
+"""Set the default target.""" impl TargetRegistry.set_default(name: str) -> None {
     if name not in self._targets {
         raise ValueError(f"ClientTarget '{name}' is not registered") ;
     }
@@ -57,8 +55,7 @@ impl TargetRegistry.set_default(name: str) -> None {
     }
 }
 
-"""Clear all registered targets (for testing)."""
-impl TargetRegistry.clear -> None {
+"""Clear all registered targets (for testing).""" impl TargetRegistry.clear -> None {
     self._targets.clear();
     self._default_target = None;
 }

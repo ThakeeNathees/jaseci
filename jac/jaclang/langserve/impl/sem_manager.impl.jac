@@ -52,8 +52,7 @@ impl SemTokManager.handle_insert_inside_token(
     return (sem_tokens, is_token_boundary_edit, nxt_tok_pos, next_token_index);
 }
 
-"""Handle multi line insertion."""
-impl SemTokManager.handle_multi_line_insertion(
+"""Handle multi line insertion.""" impl SemTokManager.handle_multi_line_insertion(
     self: SemTokManager,
     sem_tokens: list[int],
     next_token_index: int,
@@ -87,8 +86,7 @@ impl SemTokManager.handle_multi_line_insertion(
     return sem_tokens;
 }
 
-"""Handle single line insertion."""
-impl SemTokManager.handle_single_line_insertion(
+"""Handle single line insertion.""" impl SemTokManager.handle_single_line_insertion(
     self: SemTokManager,
     sem_tokens: list[int],
     next_token_index: int,
@@ -114,8 +112,7 @@ impl SemTokManager.handle_single_line_insertion(
     return sem_tokens;
 }
 
-"""Handle single line deletion."""
-impl SemTokManager.handle_single_line_delete(
+"""Handle single line deletion.""" impl SemTokManager.handle_single_line_delete(
     self: SemTokManager,
     sem_tokens: list[int],
     next_token_index: int,
@@ -131,8 +128,7 @@ impl SemTokManager.handle_single_line_delete(
     return sem_tokens;
 }
 
-"""Handle single line deletion between tokens."""
-impl SemTokManager.handle_single_line_delete_between_tokens(
+"""Handle single line deletion between tokens.""" impl SemTokManager.handle_single_line_delete_between_tokens(
     self: SemTokManager,
     sem_tokens: list[int],
     next_token_index: int,
@@ -149,8 +145,7 @@ impl SemTokManager.handle_single_line_delete_between_tokens(
     return sem_tokens;
 }
 
-"""Handle multi line deletion."""
-impl SemTokManager.handle_multi_line_delete(
+"""Handle multi line deletion.""" impl SemTokManager.handle_multi_line_delete(
     self: SemTokManager,
     sem_tokens: list[int],
     next_token_index: int,
@@ -173,8 +168,7 @@ impl SemTokManager.handle_multi_line_delete(
     return sem_tokens;
 }
 
-"""Update semantic tokens on change."""
-impl SemTokManager.update_sem_tokens(
+"""Update semantic tokens on change.""" impl SemTokManager.update_sem_tokens(
     content_changes: lspt.DidChangeTextDocumentParams,
     sem_tokens: list[int],
     document_lines: List[str]
@@ -323,8 +317,7 @@ impl SemTokManager.update_sem_tokens(
     return sem_tokens;
 }
 
-"""Return semantic tokens."""
-impl SemTokManager.gen_sem_tok_node(
+"""Return semantic tokens.""" impl SemTokManager.gen_sem_tok_node(
     ir: uni.Module
 ) -> List[Tuple[(lspt.Position, int, int, uni.AstSymbolNode)]] {
     import from jaclang.pycore.constant { JacSemTokenType }
@@ -462,8 +455,9 @@ impl SemTokManager.gen_sem_tok_node(
     return tokens;
 }
 
-"""Return semantic tokens."""
-impl SemTokManager.gen_sem_tokens(ir: uni.Module) -> list[int] {
+"""Return semantic tokens.""" impl SemTokManager.gen_sem_tokens(
+    ir: uni.Module
+) -> list[int] {
     import from jaclang.pycore.constant { JacSemTokenType }
     tokens = [];
     (prev_line, prev_col) = (0, 0);
@@ -612,8 +606,7 @@ impl SemTokManager.gen_sem_tokens(ir: uni.Module) -> list[int] {
     return result;
 }
 
-"""Initialize semantic token manager."""
-impl SemTokManager.postinit -> None {
+"""Initialize semantic token manager.""" impl SemTokManager.postinit -> None {
     self.sem_tokens = self.gen_sem_tokens(self.ir);
     self.static_sem_tokens = self.gen_sem_tok_node(self.ir);
 }

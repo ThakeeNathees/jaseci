@@ -21,8 +21,9 @@ impl Model.postinit -> None {
     }
 }
 
-"""Invoke the LLM, delegating to MockLLM if applicable."""
-impl Model.invoke(mt_run: MTRuntime) -> object {
+"""Invoke the LLM, delegating to MockLLM if applicable.""" impl Model.invoke(
+    mt_run: MTRuntime
+) -> object {
     if self._mock_delegate {
         return self._mock_delegate.invoke(mt_run);
     }
@@ -33,8 +34,7 @@ impl Model.invoke(mt_run: MTRuntime) -> object {
 
 Uses OpenAI client if proxy mode is enabled, otherwise uses LiteLLM.
 If _http_client is provided in config, uses direct HTTP requests.
-"""
-impl Model.model_call_no_stream(params: dict) -> dict {
+""" impl Model.model_call_no_stream(params: dict) -> dict {
     if self.http_client {
         response = self.model_call_http(
             url=self.api_base,
@@ -55,8 +55,7 @@ impl Model.model_call_no_stream(params: dict) -> dict {
 
 Uses OpenAI client if proxy mode is enabled, otherwise uses LiteLLM.
 Returns a generator that yields response chunks.
-"""
-impl Model.model_call_with_stream(params: dict) {
+""" impl Model.model_call_with_stream(params: dict) {
     if self.proxy {
         client = OpenAI(base_url=self.api_base, api_key=self.api_key,);
         response = client.chat.completions.create(stream=True, **params);
@@ -69,8 +68,7 @@ impl Model.model_call_with_stream(params: dict) {
 """Make a direct HTTP request to LLM endpoint.
 
 Useful for custom endpoints with specific SSL/mTLS requirements.
-"""
-impl Model.model_call_http(
+""" impl Model.model_call_http(
     url: str, token: str, payload: dict, ca_bundle: str
 ) -> object {
     import requests;

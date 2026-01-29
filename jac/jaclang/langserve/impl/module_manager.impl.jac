@@ -13,8 +13,7 @@ impl ModuleManager.clear_alerts_for_file(file_path_fs: str) -> None {
     ];
 }
 
-"""Update modules in JacProgram's hub and semantic managers."""
-impl ModuleManager.update(
+"""Update modules in JacProgram's hub and semantic managers.""" impl ModuleManager.update(
     file_path: str, build: uni.Module, update_annexed: bool = True
 ) -> None {
     self.program.mod.hub[file_path] = build;

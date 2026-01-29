@@ -38,8 +38,9 @@ impl AstTool.autodoc_uninode -> str {
     return output;
 }
 
-"""Generate a AST, SymbolTable tree for .jac file, or Python AST for .py file."""
-impl AstTool.ir(args: list[str]) -> str {
+"""Generate a AST, SymbolTable tree for .jac file, or Python AST for .py file.""" impl AstTool.ir(
+    args: list[str]
+) -> str {
     error = 'Usage: ir <choose one of (sym / sym. / ast / ast. / docir / pyast / py / unparse / esast / es)> <.py or .jac file_path>';
     if (len(args) != 2) {
         return error;
@@ -151,8 +152,7 @@ impl AstTool.ir(args: list[str]) -> str {
     }
 }
 
-"""List python ast nodes."""
-impl AstTool.py_uni_nodes -> str {
+"""List python ast nodes.""" impl AstTool.py_uni_nodes -> str {
     import from jaclang.compiler.passes.main { PyastBuildPass }
     visit_methods = [
         method
@@ -184,8 +184,7 @@ impl AstTool.py_uni_nodes -> str {
     return output;
 }
 
-"""Generate pass template."""
-impl AstTool.pass_template -> str {
+"""Generate pass template.""" impl AstTool.pass_template -> str {
     output = 'import jaclang.pycore.unitree as ast\nfrom jaclang.pycore.passes import Pass\n\nclass SomePass(Pass):\n';
     """Emit to output.""";
     def emit(to_append: str) -> None {
@@ -218,8 +217,7 @@ impl AstTool.pass_template -> str {
     return output;
 }
 
-"""Initialize."""
-impl AstTool.init -> None {
+"""Initialize.""" impl AstTool.init -> None {
     module = sys.modules[uni.__name__];
     source_code = inspect.getsource(module);
     classes = inspect.getmembers(module, inspect.isclass);
@@ -269,8 +267,7 @@ impl AstTool.init -> None {
     );
 }
 
-"""Process UniNode class."""
-impl UniNodeInfo.process(cls: type[uni.UniNode]) -> None {
+"""Process UniNode class.""" impl UniNodeInfo.process(cls: type[uni.UniNode]) -> None {
     self.name = cls.__name__;
     self.doc = cls.__doc__;
     UniNodeInfo.type_map[self.name] = cls;
@@ -290,7 +287,6 @@ impl UniNodeInfo.process(cls: type[uni.UniNode]) -> None {
     }
 }
 
-"""Initialize."""
-impl UniNodeInfo.postinit -> None {
+"""Initialize.""" impl UniNodeInfo.postinit -> None {
     self.process(self.cls);
 }

@@ -12,8 +12,7 @@ impl ViteCompiler._get_client_dir(self: ViteCompiler) -> Path {
     return self.project_dir / '.jac' / 'client';
 }
 
-"""Compile module and dependencies, then bundle with Vite."""
-impl ViteCompiler.compile_and_bundle(
+"""Compile module and dependencies, then bundle with Vite.""" impl ViteCompiler.compile_and_bundle(
     self: ViteCompiler, module: ModuleType, module_path: Path
 ) -> tuple[str, str, list[str], list[str]] {
     (module_js, mod, module_manifest) = self.jac_compiler.compile_module(module_path);
@@ -42,8 +41,9 @@ impl ViteCompiler.compile_and_bundle(
     return (bundle_code, bundle_hash, client_exports, client_globals);
 }
 
-"""Create the main entry file for Vite bundling."""
-impl ViteCompiler.create_entry_file(self: ViteCompiler, module_path: Path) -> None {
+"""Create the main entry file for Vite bundling.""" impl ViteCompiler.create_entry_file(
+    self: ViteCompiler, module_path: Path
+) -> None {
     # Use _entry.js to avoid conflict with compiled modules that may be named main.js
     entry_file = self.compiled_dir / '_entry.js';
     # Derive the app module filename from the entry point (e.g., main.jac -> main.js, app.jac -> app.js)
@@ -52,8 +52,9 @@ impl ViteCompiler.create_entry_file(self: ViteCompiler, module_path: Path) -> No
     entry_file.write_text(entry_content, encoding='utf-8');
 }
 
-"""Copy assets from root assets/ folder to compiled/assets/ for @jac-client/assets alias."""
-impl ViteCompiler.copy_root_assets(self: ViteCompiler) -> None {
+"""Copy assets from root assets/ folder to compiled/assets/ for @jac-client/assets alias.""" impl ViteCompiler.copy_root_assets(
+    self: ViteCompiler
+) -> None {
     root_assets_dir = self.project_dir / 'assets';
     compiled_assets_dir = self.compiled_dir / 'assets';
     if (root_assets_dir.exists() and root_assets_dir.is_dir()) {
@@ -65,8 +66,7 @@ impl ViteCompiler.copy_root_assets(self: ViteCompiler) -> None {
     }
 }
 
-"""Copy an asset file to the compiled directory."""
-impl ViteCompiler._copy_asset_file(
+"""Copy an asset file to the compiled directory.""" impl ViteCompiler._copy_asset_file(
     self: ViteCompiler, asset_path: Path, source_root: Path
 ) -> None {
     if not asset_path.exists() {
@@ -86,8 +86,7 @@ impl ViteCompiler._copy_asset_file(
     }
 }
 
-"""Copy a TypeScript file to the compiled directory."""
-impl ViteCompiler._copy_ts_file(
+"""Copy a TypeScript file to the compiled directory.""" impl ViteCompiler._copy_ts_file(
     self: ViteCompiler, ts_path: Path, source_root: Path
 ) -> None {
     if not ts_path.exists() {
@@ -106,8 +105,7 @@ impl ViteCompiler._copy_ts_file(
     } except (FileNotFoundError, OSError) { }
 }
 
-"""Copy a JavaScript file to the compiled directory."""
-impl ViteCompiler._copy_js_file(
+"""Copy a JavaScript file to the compiled directory.""" impl ViteCompiler._copy_js_file(
     self: ViteCompiler, js_path: Path, source_root: Path
 ) -> None {
     try {
@@ -123,8 +121,7 @@ impl ViteCompiler._copy_js_file(
     } except FileNotFoundError { }
 }
 
-"""Recursively compile/copy .jac/.js imports to temp, skipping bundling."""
-impl ViteCompiler.compile_dependencies_recursively(
+"""Recursively compile/copy .jac/.js imports to temp, skipping bundling.""" impl ViteCompiler.compile_dependencies_recursively(
     self: ViteCompiler,
     module_path: Path,
     visited: (set[Path] | None) = None,
@@ -228,8 +225,9 @@ impl ViteCompiler.compile_dependencies_recursively(
     }
 }
 
-"""Compile client runtime utilities."""
-impl ViteCompiler.compile_runtime_utils(self: ViteCompiler) -> tuple[str, list[str]] {
+"""Compile client runtime utilities.""" impl ViteCompiler.compile_runtime_utils(
+    self: ViteCompiler
+) -> tuple[str, list[str]] {
     if not self.runtime_path {
         raise ClientBundleError('Runtime path not set') ;
     }
@@ -270,8 +268,7 @@ impl ViteCompiler.compile_runtime_utils(self: ViteCompiler) -> tuple[str, list[s
     return (combined_runtime_utils_js, all_exports);
 }
 
-"""Initialize the Vite compiler."""
-impl ViteCompiler.init(
+"""Initialize the Vite compiler.""" impl ViteCompiler.init(
     self: ViteCompiler,
     vite_package_json: Path,
     vite_output_dir: (Path | None) = None,

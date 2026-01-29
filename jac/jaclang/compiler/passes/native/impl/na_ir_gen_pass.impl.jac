@@ -19,8 +19,9 @@ impl NaIRGenPass.init(
 }
 
 # ─── Pass Entry / Context Pruning ────────────────────────────
-"""Enter node — prune non-native contexts, manually codegen abilities."""
-impl NaIRGenPass.enter_node(<>node: uni.UniNode) -> None {
+"""Enter node — prune non-native contexts, manually codegen abilities.""" impl NaIRGenPass.enter_node(
+    <>node: uni.UniNode
+) -> None {
     # Prune client and server blocks entirely
     if isinstance(<>node, (uni.ClientBlock, uni.ServerBlock)) {
         self.prune();
@@ -51,8 +52,7 @@ impl NaIRGenPass.enter_node(<>node: uni.UniNode) -> None {
     super.enter_node(<>node);
 }
 
-"""Exit node."""
-impl NaIRGenPass.exit_node(<>node: uni.UniNode) -> None {
+"""Exit node.""" impl NaIRGenPass.exit_node(<>node: uni.UniNode) -> None {
     if isinstance(<>node, (uni.ClientBlock, uni.ServerBlock)) {
         return;
     }
@@ -70,26 +70,28 @@ impl NaIRGenPass.exit_node(<>node: uni.UniNode) -> None {
 }
 
 # ─── Module ──────────────────────────────────────────────────
-"""Store the LLVM module on the AST node's gen attribute."""
-impl NaIRGenPass.exit_module(<>node: uni.Module) -> None {
+"""Store the LLVM module on the AST node's gen attribute.""" impl NaIRGenPass.exit_module(
+    <>node: uni.Module
+) -> None {
     if self.has_native_code {
         (<>node).gen.llvm_ir = self.llvm_module;
     }
 }
 
-"""Handle NativeBlock — children already processed via visitor."""
-impl NaIRGenPass.exit_native_block(<>node: uni.NativeBlock) -> None {
+"""Handle NativeBlock — children already processed via visitor.""" impl NaIRGenPass.exit_native_block(
+    <>node: uni.NativeBlock
+) -> None {
     ;
 }
 
 # ─── Forward Declaration ─────────────────────────────────────
-"""Forward-declare all native functions before generating bodies."""
-impl NaIRGenPass.before_pass -> None {
+"""Forward-declare all native functions before generating bodies.""" impl NaIRGenPass.before_pass -> None {
     self._forward_declare_functions(self.ir_in);
 }
 
-"""Walk the module and declare all native functions."""
-impl NaIRGenPass._forward_declare_functions(module: uni.Module) -> None {
+"""Walk the module and declare all native functions.""" impl NaIRGenPass._forward_declare_functions(
+    module: uni.Module
+) -> None {
     for stmt in module.body {
         if isinstance(stmt, uni.NativeBlock) {
             for inner in stmt.body {
@@ -106,8 +108,9 @@ impl NaIRGenPass._forward_declare_functions(module: uni.Module) -> None {
     }
 }
 
-"""Forward-declare a single ability if it's a function."""
-impl NaIRGenPass._maybe_declare_ability(node: uni.ElementStmt) -> None {
+"""Forward-declare a single ability if it's a function.""" impl NaIRGenPass._maybe_declare_ability(
+    node: uni.ElementStmt
+) -> None {
     if not isinstance(node, uni.Ability) {
         return;
     }
@@ -139,8 +142,9 @@ impl NaIRGenPass._maybe_declare_ability(node: uni.ElementStmt) -> None {
 }
 
 # ─── Ability (Function Definition) — Manual Codegen ──────────
-"""Generate LLVM IR for a complete function definition."""
-impl NaIRGenPass._codegen_ability(<>node: uni.Ability) -> None {
+"""Generate LLVM IR for a complete function definition.""" impl NaIRGenPass._codegen_ability(
+    <>node: uni.Ability
+) -> None {
     name = (<>node).name_ref.sym_name if (<>node).name_ref else "unnamed";
     func = self.func_symtab.get(name);
     if func is None {
@@ -176,8 +180,9 @@ impl NaIRGenPass._codegen_ability(<>node: uni.Ability) -> None {
 }
 
 # ─── Body / Statement Codegen ─────────────────────────────────
-"""Generate IR for a sequence of statements."""
-impl NaIRGenPass._codegen_body(stmts: (list | tuple)) -> None {
+"""Generate IR for a sequence of statements.""" impl NaIRGenPass._codegen_body(
+    stmts: (list | tuple)
+) -> None {
     for stmt in stmts {
         if self.builder.block.is_terminated {
             break;
@@ -186,8 +191,9 @@ impl NaIRGenPass._codegen_body(stmts: (list | tuple)) -> None {
     }
 }
 
-"""Generate IR for a single statement."""
-impl NaIRGenPass._codegen_stmt(node: uni.UniNode) -> None {
+"""Generate IR for a single statement.""" impl NaIRGenPass._codegen_stmt(
+    node: uni.UniNode
+) -> None {
     if self.builder is None or self.builder.block.is_terminated {
         return;
     }
@@ -204,8 +210,9 @@ impl NaIRGenPass._codegen_stmt(node: uni.UniNode) -> None {
     }
 }
 
-"""Generate return statement."""
-impl NaIRGenPass._codegen_return(node: uni.ReturnStmt) -> None {
+"""Generate return statement.""" impl NaIRGenPass._codegen_return(
+    node: uni.ReturnStmt
+) -> None {
     if node.expr is not None {
         val = self._codegen_expr(node.expr);
         if val is not None {
@@ -220,8 +227,9 @@ impl NaIRGenPass._codegen_return(node: uni.ReturnStmt) -> None {
     }
 }
 
-"""Generate if/else/elif statement with proper basic blocks."""
-impl NaIRGenPass._codegen_if(node: uni.IfStmt) -> None {
+"""Generate if/else/elif statement with proper basic blocks.""" impl NaIRGenPass._codegen_if(
+    node: uni.IfStmt
+) -> None {
     cond = self._codegen_expr(node.condition);
     if cond is None {
         return;
@@ -258,8 +266,9 @@ impl NaIRGenPass._codegen_if(node: uni.IfStmt) -> None {
     self.builder.position_at_end(merge_bb);
 }
 
-"""Generate while loop with proper basic blocks."""
-impl NaIRGenPass._codegen_while(node: uni.WhileStmt) -> None {
+"""Generate while loop with proper basic blocks.""" impl NaIRGenPass._codegen_while(
+    node: uni.WhileStmt
+) -> None {
     func = self.builder.function;
     cond_bb = func.append_basic_block(name="while.cond");
     body_bb = func.append_basic_block(name="while.body");
@@ -287,8 +296,9 @@ impl NaIRGenPass._codegen_while(node: uni.WhileStmt) -> None {
     self.builder.position_at_end(end_bb);
 }
 
-"""Generate assignment statement."""
-impl NaIRGenPass._codegen_assignment(node: uni.Assignment) -> None {
+"""Generate assignment statement.""" impl NaIRGenPass._codegen_assignment(
+    node: uni.Assignment
+) -> None {
     value = self._codegen_expr(node.value) if node.value else None;
     if value is None {
         return;
@@ -322,8 +332,9 @@ impl NaIRGenPass._codegen_assignment(node: uni.Assignment) -> None {
 }
 
 # ─── Expression Codegen ──────────────────────────────────────
-"""Generate IR for an expression, returning the resulting value."""
-impl NaIRGenPass._codegen_expr(node: (uni.UniNode | None)) -> (ir.Value | None) {
+"""Generate IR for an expression, returning the resulting value.""" impl NaIRGenPass._codegen_expr(
+    node: (uni.UniNode | None)
+) -> (ir.Value | None) {
     if node is None {
         return None;
     }
@@ -355,8 +366,9 @@ impl NaIRGenPass._codegen_expr(node: (uni.UniNode | None)) -> (ir.Value | None) 
     return None;
 }
 
-"""Load a variable or return a function reference."""
-impl NaIRGenPass._codegen_name(node: uni.Name) -> (ir.Value | None) {
+"""Load a variable or return a function reference.""" impl NaIRGenPass._codegen_name(
+    node: uni.Name
+) -> (ir.Value | None) {
     var_name = node.value;
     if var_name in self.local_vars {
         alloca = self.local_vars[var_name];
@@ -368,8 +380,9 @@ impl NaIRGenPass._codegen_name(node: uni.Name) -> (ir.Value | None) {
     return None;
 }
 
-"""Generate binary expression."""
-impl NaIRGenPass._codegen_binary(node: uni.BinaryExpr) -> (ir.Value | None) {
+"""Generate binary expression.""" impl NaIRGenPass._codegen_binary(
+    node: uni.BinaryExpr
+) -> (ir.Value | None) {
     left = self._codegen_expr(node.left);
     right = self._codegen_expr(node.right);
     if left is None or right is None {
@@ -379,8 +392,9 @@ impl NaIRGenPass._codegen_binary(node: uni.BinaryExpr) -> (ir.Value | None) {
     return self._emit_binary_op(op, left, right);
 }
 
-"""Generate comparison expression."""
-impl NaIRGenPass._codegen_compare(node: uni.CompareExpr) -> (ir.Value | None) {
+"""Generate comparison expression.""" impl NaIRGenPass._codegen_compare(
+    node: uni.CompareExpr
+) -> (ir.Value | None) {
     left = self._codegen_expr(node.left);
     if left is None or not node.rights or not node.ops {
         return None;
@@ -398,8 +412,9 @@ impl NaIRGenPass._codegen_compare(node: uni.CompareExpr) -> (ir.Value | None) {
     return self._emit_comparison(op, left, right, is_float);
 }
 
-"""Generate unary expression."""
-impl NaIRGenPass._codegen_unary(node: uni.UnaryExpr) -> (ir.Value | None) {
+"""Generate unary expression.""" impl NaIRGenPass._codegen_unary(
+    node: uni.UnaryExpr
+) -> (ir.Value | None) {
     operand = self._codegen_expr(node.operand);
     if operand is None {
         return None;
@@ -422,8 +437,9 @@ impl NaIRGenPass._codegen_unary(node: uni.UnaryExpr) -> (ir.Value | None) {
     return None;
 }
 
-"""Generate function call."""
-impl NaIRGenPass._codegen_call(node: uni.FuncCall) -> (ir.Value | None) {
+"""Generate function call.""" impl NaIRGenPass._codegen_call(
+    node: uni.FuncCall
+) -> (ir.Value | None) {
     func_name = self._get_name(node.target);
     if func_name is None {
         return None;
@@ -458,8 +474,7 @@ impl NaIRGenPass._codegen_call(node: uni.FuncCall) -> (ir.Value | None) {
 }
 
 # ─── Print Support ───────────────────────────────────────────
-"""Get or create the printf external function declaration."""
-impl NaIRGenPass._get_printf -> ir.Function {
+"""Get or create the printf external function declaration.""" impl NaIRGenPass._get_printf -> ir.Function {
     if self._printf_func is None {
         printf_ty = ir.FunctionType(
             ir.IntType(32), [ir.IntType(8).as_pointer()], var_arg=True
@@ -469,8 +484,9 @@ impl NaIRGenPass._get_printf -> ir.Function {
     return self._printf_func;
 }
 
-"""Emit printf call for print()."""
-impl NaIRGenPass._emit_print(node: uni.FuncCall) -> (ir.Value | None) {
+"""Emit printf call for print().""" impl NaIRGenPass._emit_print(
+    node: uni.FuncCall
+) -> (ir.Value | None) {
     printf = self._get_printf();
     params = node.params or [];
     if not params {
@@ -498,8 +514,9 @@ impl NaIRGenPass._emit_print(node: uni.FuncCall) -> (ir.Value | None) {
     return ir.Constant(ir.IntType(64), 0);
 }
 
-"""Get or create a global format string for printf."""
-impl NaIRGenPass._get_fmt_string(fmt: str) -> ir.GlobalVariable {
+"""Get or create a global format string for printf.""" impl NaIRGenPass._get_fmt_string(
+    fmt: str
+) -> ir.GlobalVariable {
     if fmt in self._fmt_strings {
         return self._fmt_strings[fmt];
     }
@@ -516,8 +533,9 @@ impl NaIRGenPass._get_fmt_string(fmt: str) -> ir.GlobalVariable {
 }
 
 # ─── Helper Methods ──────────────────────────────────────────
-"""Resolve a Jac type expression to an LLVM type."""
-impl NaIRGenPass._resolve_jac_type(type_expr: (uni.UniNode | None)) -> ir.Type {
+"""Resolve a Jac type expression to an LLVM type.""" impl NaIRGenPass._resolve_jac_type(
+    type_expr: (uni.UniNode | None)
+) -> ir.Type {
     if type_expr is None {
         return ir.IntType(64);
     }
@@ -542,8 +560,9 @@ impl NaIRGenPass._resolve_jac_type(type_expr: (uni.UniNode | None)) -> ir.Type {
     return ir.IntType(64);
 }
 
-"""Extract name string from a Name or similar node."""
-impl NaIRGenPass._get_name(node: (uni.UniNode | None)) -> (str | None) {
+"""Extract name string from a Name or similar node.""" impl NaIRGenPass._get_name(
+    node: (uni.UniNode | None)
+) -> (str | None) {
     if node is None {
         return None;
     }
@@ -559,8 +578,9 @@ impl NaIRGenPass._get_name(node: (uni.UniNode | None)) -> (str | None) {
     return None;
 }
 
-"""Convert a value to i1 (boolean)."""
-impl NaIRGenPass._to_bool(val: ir.Value) -> ir.Value {
+"""Convert a value to i1 (boolean).""" impl NaIRGenPass._to_bool(
+    val: ir.Value
+) -> ir.Value {
     if isinstance(val.type, ir.IntType) and val.type.width == 1 {
         return val;
     }
@@ -577,8 +597,9 @@ impl NaIRGenPass._to_bool(val: ir.Value) -> ir.Value {
     return val;
 }
 
-"""Coerce a value to the target type if needed."""
-impl NaIRGenPass._coerce_type(val: ir.Value, target_type: ir.Type) -> ir.Value {
+"""Coerce a value to the target type if needed.""" impl NaIRGenPass._coerce_type(
+    val: ir.Value, target_type: ir.Type
+) -> ir.Value {
     if val.type == target_type {
         return val;
     }
@@ -591,8 +612,7 @@ impl NaIRGenPass._coerce_type(val: ir.Value, target_type: ir.Type) -> ir.Value {
     return val;
 }
 
-"""Promote both operands to float if either is float."""
-impl NaIRGenPass._promote_to_float(
+"""Promote both operands to float if either is float.""" impl NaIRGenPass._promote_to_float(
     left: ir.Value, right: ir.Value
 ) -> tuple[(ir.Value, ir.Value)] {
     if isinstance(left.type, ir.IntType) {
@@ -604,8 +624,7 @@ impl NaIRGenPass._promote_to_float(
     return (left, right);
 }
 
-"""Emit a binary operation."""
-impl NaIRGenPass._emit_binary_op(
+"""Emit a binary operation.""" impl NaIRGenPass._emit_binary_op(
     op: str, left: ir.Value, right: ir.Value
 ) -> (ir.Value | None) {
     is_float = isinstance(left.type, ir.DoubleType)
@@ -650,8 +669,7 @@ impl NaIRGenPass._emit_binary_op(
     return None;
 }
 
-"""Emit a comparison operation."""
-impl NaIRGenPass._emit_comparison(
+"""Emit a comparison operation.""" impl NaIRGenPass._emit_comparison(
     op: str, left: ir.Value, right: ir.Value, is_float: bool
 ) -> (ir.Value | None) {
     if is_float {

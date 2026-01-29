@@ -24,8 +24,7 @@ impl SemDefMatchPass.connect_sems(
 Example:
 "Foo.bar.baz" will do the following lookups:
 target_sym_tab.lookup("Foo").lookup("bar").lookup("baz")
-"""
-impl SemDefMatchPass.find_symbol_from_dotted_name(
+""" impl SemDefMatchPass.find_symbol_from_dotted_name(
     dotted_name: str, target_sym_tab: UniScopeNode
 ) -> (Symbol | None) {
     parts = dotted_name.lstrip('sem.').split('.');
@@ -44,8 +43,9 @@ impl SemDefMatchPass.find_symbol_from_dotted_name(
     return sym;
 }
 
-"""Connect Decls and Defs."""
-impl SemDefMatchPass.transform(ir_in: uni.Module) -> uni.Module {
+"""Connect Decls and Defs.""" impl SemDefMatchPass.transform(
+    ir_in: uni.Module
+) -> uni.Module {
     self.cur_node = ir_in;
     self.connect_sems(ir_in.sym_tab, ir_in.sym_tab);
     for impl_module in ir_in.impl_mod {
@@ -54,8 +54,7 @@ impl SemDefMatchPass.transform(ir_in: uni.Module) -> uni.Module {
     return ir_in;
 }
 
-"""Initialize SemDefMatchPass."""
-impl SemDefMatchPass.init(
+"""Initialize SemDefMatchPass.""" impl SemDefMatchPass.init(
     ir_in: uni.Module, prog: Any, cancel_token: Any = None
 ) -> None {
     super.init(ir_in, prog, cancel_token);

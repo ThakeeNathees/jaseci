@@ -5,8 +5,9 @@ impl TypeEvaluator._get_type_of_root(node_: uni.SpecialVarRef) -> TypeBase {
     return node_.type;
 }
 
-"""Return the effective type of self."""
-impl TypeEvaluator._get_type_of_self(node_: uni.SpecialVarRef) -> TypeBase {
+"""Return the effective type of self.""" impl TypeEvaluator._get_type_of_self(
+    node_: uni.SpecialVarRef
+) -> TypeBase {
     if method := self._get_enclosing_method(node_) {
         cls = method.method_owner;
         if isinstance(cls, uni.Archetype) {
@@ -23,20 +24,23 @@ impl TypeEvaluator._get_type_of_self(node_: uni.SpecialVarRef) -> TypeBase {
     return types.UnknownType();
 }
 
-"""Return the effective type of the float."""
-impl TypeEvaluator.get_type_of_float(node: uni.Float) -> TypeBase {
+"""Return the effective type of the float.""" impl TypeEvaluator.get_type_of_float(
+    node: uni.Float
+) -> TypeBase {
     assert self.prefetch.float_class is not None;
     return self.prefetch.float_class;
 }
 
-"""Return the effective type of the int."""
-impl TypeEvaluator.get_type_of_int(node: uni.Int) -> TypeBase {
+"""Return the effective type of the int.""" impl TypeEvaluator.get_type_of_int(
+    node: uni.Int
+) -> TypeBase {
     assert self.prefetch.int_class is not None;
     return self.prefetch.int_class;
 }
 
-"""Return the effective type of the string."""
-impl TypeEvaluator.get_type_of_string(node: uni.String | uni.MultiString) -> TypeBase {
+"""Return the effective type of the string.""" impl TypeEvaluator.get_type_of_string(
+    node: uni.String | uni.MultiString
+) -> TypeBase {
     # FIXME: Strings are a type of LiteralString type:
     # "foo" is not `str` but Literal["foo"], however for now we'll
     # not considering that and make it work and will implement that
@@ -48,8 +52,9 @@ impl TypeEvaluator.get_type_of_string(node: uni.String | uni.MultiString) -> Typ
     return self.prefetch.str_class;
 }
 
-"""Return the effective type of an ability."""
-impl TypeEvaluator.get_type_of_ability(node_: uni.Ability) -> TypeBase {
+"""Return the effective type of an ability.""" impl TypeEvaluator.get_type_of_ability(
+    node_: uni.Ability
+) -> TypeBase {
     if node_.name_spec.type is not None {
         return node_.name_spec.type;
     }
@@ -160,8 +165,9 @@ impl TypeEvaluator.get_type_of_ability(node_: uni.Ability) -> TypeBase {
     return func_type;
 }
 
-"""Return the effective type of the class."""
-impl TypeEvaluator.get_type_of_class(node_: uni.Archetype) -> types.ClassType {
+"""Return the effective type of the class.""" impl TypeEvaluator.get_type_of_class(
+    node_: uni.Archetype
+) -> types.ClassType {
     # Is this type already cached?
     if node_.name_spec.type is not None {
         return cast(types.ClassType, node_.name_spec.type);
@@ -200,8 +206,9 @@ impl TypeEvaluator.get_type_of_class(node_: uni.Archetype) -> types.ClassType {
     return cls_type;
 }
 
-"""Return the built-in type with the given name."""
-impl TypeEvaluator._get_type_from_module(module: uni.Module, name: str) -> TypeBase {
+"""Return the built-in type with the given name.""" impl TypeEvaluator._get_type_from_module(
+    module: uni.Module, name: str
+) -> TypeBase {
     if (symbol := type_utils.lookup_symtab(module, name, self.builtins_module)) is not None {
         return self.get_type_of_symbol(symbol);
     }

@@ -361,8 +361,9 @@ impl TypeEvaluator._get_type_of_expression_core(expr: uni.Expr) -> TypeBase {
     return types.UnknownType();
 }
 
-"""Return the declared type of the symbol."""
-impl TypeEvaluator._get_type_of_symbol(symbol: uni.Symbol) -> TypeBase {
+"""Return the declared type of the symbol.""" impl TypeEvaluator._get_type_of_symbol(
+    symbol: uni.Symbol
+) -> TypeBase {
     node_ = symbol.decl.name_of;
     match node_ {
         case uni.Archetype() | uni.Enum():
@@ -499,8 +500,7 @@ impl TypeEvaluator._get_type_of_symbol(symbol: uni.Symbol) -> TypeBase {
     return types.UnknownType();
 }
 
-"""Assign the source class type to the destination class type."""
-impl TypeEvaluator._assign_class(
+"""Assign the source class type to the destination class type.""" impl TypeEvaluator._assign_class(
     src_type: types.ClassType, dest_type: types.ClassType
 ) -> bool {
     # If the type is Final[T], unwrap it to T.
@@ -548,8 +548,7 @@ impl TypeEvaluator.is_sub_class(
     return False;
 }
 
-"""Return the effective return type of a magic method call."""
-impl TypeEvaluator.get_type_of_magic_method_call(
+"""Return the effective return type of a magic method call.""" impl TypeEvaluator.get_type_of_magic_method_call(
     obj_type: TypeBase,
     method_name: str,
     arg_nodes: list[uni.Expr],
@@ -603,8 +602,9 @@ impl TypeEvaluator.get_type_of_magic_method_call(
     return None;
 }
 
-"""Check if a type is Any, object, Unknown, or TypeVar."""
-impl TypeEvaluator.is_any_type(ty: TypeBase) -> bool {
+"""Check if a type is Any, object, Unknown, or TypeVar.""" impl TypeEvaluator.is_any_type(
+    ty: TypeBase
+) -> bool {
     # Check for UnknownType
     if isinstance(ty, types.UnknownType) {
         return True;
@@ -631,8 +631,9 @@ impl TypeEvaluator.is_any_type(ty: TypeBase) -> bool {
     return False;
 }
 
-"""Assign the source type to the destination type."""
-impl TypeEvaluator.assign_type(src_type: TypeBase, dest_type: TypeBase) -> bool {
+"""Assign the source type to the destination type.""" impl TypeEvaluator.assign_type(
+    src_type: TypeBase, dest_type: TypeBase
+) -> bool {
     if src_type == dest_type {
         return True;
     }
@@ -679,8 +680,9 @@ impl TypeEvaluator.assign_type(src_type: TypeBase, dest_type: TypeBase) -> bool 
     return False;
 }
 
-"""Return the effective type of the expression."""
-impl TypeEvaluator.get_type_of_expression(node_: uni.Expr) -> TypeBase {
+"""Return the effective type of the expression.""" impl TypeEvaluator.get_type_of_expression(
+    node_: uni.Expr
+) -> TypeBase {
     # To support JS style IIFE, abilities should be treated as expressions.
     if isinstance(node_, uni.Ability) {
         return self.get_type_of_ability(node_);
@@ -696,8 +698,9 @@ impl TypeEvaluator.get_type_of_expression(node_: uni.Expr) -> TypeBase {
     return result;
 }
 
-"""Pop a symbol from the resolution stack."""
-impl TypeEvaluator.pop_symbol_resolution(symbol: uni.Symbol) -> bool {
+"""Pop a symbol from the resolution stack.""" impl TypeEvaluator.pop_symbol_resolution(
+    symbol: uni.Symbol
+) -> bool {
     popped_entry = self.symbol_resolution_stack.pop();
     assert popped_entry.symbol == symbol;
     return popped_entry.is_result_valid;
@@ -707,8 +710,7 @@ impl TypeEvaluator.pop_symbol_resolution(symbol: uni.Symbol) -> bool {
 Push a symbol onto the resolution stack.
 
 Return False if recursion detected and in that case it won't push the symbol.
-"""
-impl TypeEvaluator.push_symbol_resolution(symbol: uni.Symbol) -> bool {
+""" impl TypeEvaluator.push_symbol_resolution(symbol: uni.Symbol) -> bool {
     idx = self.get_index_of_symbol_resolution(symbol);
     if idx is not None {
         # Mark all of the entries between these two as invalid.
@@ -722,8 +724,9 @@ impl TypeEvaluator.push_symbol_resolution(symbol: uni.Symbol) -> bool {
     return True;
 }
 
-"""Get the index of a symbol in the resolution stack."""
-impl TypeEvaluator.get_index_of_symbol_resolution(symbol: uni.Symbol) -> int | None {
+"""Get the index of a symbol in the resolution stack.""" impl TypeEvaluator.get_index_of_symbol_resolution(
+    symbol: uni.Symbol
+) -> int | None {
     for (i, entry_) in enumerate(self.symbol_resolution_stack) {
         if entry_.symbol == symbol {
             return i;
@@ -732,8 +735,7 @@ impl TypeEvaluator.get_index_of_symbol_resolution(symbol: uni.Symbol) -> int | N
     return None;
 }
 
-"""Return the prefetched types for the type evaluator."""
-impl TypeEvaluator._prefetch_types{
+"""Return the prefetched types for the type evaluator.""" impl TypeEvaluator._prefetch_types{
     get_types_type = lambda type_name: str  -> types.TypeBase :
         self._get_type_from_module(self.types_module, type_name);
     get_typing_type = lambda type_name: str  -> types.TypeBase :
@@ -775,8 +777,9 @@ impl TypeEvaluator._prefetch_types{
     self.prefetch.walker_class = get_jac_builtin_type("Walker");
 }
 
-"""Load and return builtins stub module."""
-impl TypeEvaluator._load_stub_module(path: str) -> uni.Module {
+"""Load and return builtins stub module.""" impl TypeEvaluator._load_stub_module(
+    path: str
+) -> uni.Module {
     if not os.path.exists(path) {
         raise FileNotFoundError(f"Stub file not found at {path}") ;
     }
@@ -800,8 +803,7 @@ on a node and from that node it does lookup for the builtins scope
 and does the prefetch once, however if we forgot to call prefetch
 in some place then it will not be available in the evaluator, So we
 are prefetching the builtins at the constructor level once.
-"""
-impl TypeEvaluator.init(program: "JacProgram") -> None {
+""" impl TypeEvaluator.init(program: "JacProgram") -> None {
     # Initialize constants that have defaults in the class definition
     self._BUILTINS_STUB_FILE_PATH: str = os.path.join(
         os.path.dirname(__file__), "../../vendor/typeshed/stdlib/builtins.pyi"

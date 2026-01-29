@@ -1,7 +1,6 @@
 import from jaclang.project.config { get_config }
 
-"""Send static file response (images, fonts, etc.)."""
-impl JacClient.send_static_file(
+"""Send static file response (images, fonts, etc.).""" impl JacClient.send_static_file(
     handler: BaseHTTPRequestHandler, file_path: Path, content_type: (str | None) = None
 ) -> None {
     import from jaclang.runtimelib.server { ResponseBuilder }
@@ -30,16 +29,14 @@ impl JacClient.send_static_file(
     }
 }
 
-"""Build a client bundle for the supplied module."""
-impl JacClient.build_client_bundle(
+"""Build a client bundle for the supplied module.""" impl JacClient.build_client_bundle(
     module: types.ModuleType, force: bool = False
 ) -> ClientBundle {
     builder = JacClient.get_client_bundle_builder();
     return builder.build(module, force=force);
 }
 
-"""Get the client bundle builder instance."""
-impl JacClient.get_client_bundle_builder -> ViteClientBundleBuilder {
+"""Get the client bundle builder instance.""" impl JacClient.get_client_bundle_builder -> ViteClientBundleBuilder {
     import from jaclang.project.config { find_project_root }
     # Find project root by looking for jac.toml (base_path_dir might be src/ for entry files)
     base_path_dir = Path(Jac.base_path_dir);
@@ -84,8 +81,7 @@ impl JacClient.get_client_bundle_builder -> ViteClientBundleBuilder {
     );
 }
 
-"""Render HTML page for client function using the Vite bundle."""
-impl JacClient.render_page(
+"""Render HTML page for client function using the Vite bundle.""" impl JacClient.render_page(
     introspector: ModuleIntrospector,
     function_name: str,
     args: dict[(str, Any)],
@@ -139,8 +135,7 @@ impl JacClient.render_page(
     };
 }
 
-"""Build complete HTML head."""
-impl HeaderBuilder.build_head -> str {
+"""Build complete HTML head.""" impl HeaderBuilder.build_head -> str {
     lines: list = [];
     lines.extend(self._build_special_tags());  # charset, viewport, title
     lines.extend(self._build_meta_tags());  # description, robots, etc
@@ -150,8 +145,9 @@ impl HeaderBuilder.build_head -> str {
     return "\n            ".join(lines);
 }
 
-"""Build generic meta tags (meta_* prefix for any custom metadata)."""
-impl HeaderBuilder._build_generic_meta_tags -> list[str] {
+"""Build generic meta tags (meta_* prefix for any custom metadata).""" impl HeaderBuilder._build_generic_meta_tags -> list[
+    str
+] {
     lines: list = [];
     for (key, val) in self.meta_data.items() {
         if key.startswith("meta_") and val {
@@ -163,8 +159,9 @@ impl HeaderBuilder._build_generic_meta_tags -> list[str] {
     return lines;
 }
 
-"""Build link tags (link_* prefix or special cases)."""
-impl HeaderBuilder._build_link_tags -> list[str] {
+"""Build link tags (link_* prefix or special cases).""" impl HeaderBuilder._build_link_tags -> list[
+    str
+] {
     lines: list = [];
     special_links = {
         "canonical": "canonical",
@@ -187,8 +184,9 @@ impl HeaderBuilder._build_link_tags -> list[str] {
     return lines;
 }
 
-"""Build Open Graph tags (og_* prefix)."""
-impl HeaderBuilder._build_og_tags -> list[str] {
+"""Build Open Graph tags (og_* prefix).""" impl HeaderBuilder._build_og_tags -> list[
+    str
+] {
     lines: list = [];
     for (key, val) in self.meta_data.items() {
         if key.startswith("og_") and val {
@@ -201,8 +199,9 @@ impl HeaderBuilder._build_og_tags -> list[str] {
     return lines;
 }
 
-"""Build standard meta tags (description, robots, keywords, author, etc)."""
-impl HeaderBuilder._build_meta_tags -> list[str] {
+"""Build standard meta tags (description, robots, keywords, author, etc).""" impl HeaderBuilder._build_meta_tags -> list[
+    str
+] {
     lines: list = [];
     for key in self.standard_tags {
         if val := self._get_value(key) {
@@ -214,8 +213,9 @@ impl HeaderBuilder._build_meta_tags -> list[str] {
     return lines;
 }
 
-"""Build special tags (charset, viewport, title)."""
-impl HeaderBuilder._build_special_tags -> list[str] {
+"""Build special tags (charset, viewport, title).""" impl HeaderBuilder._build_special_tags -> list[
+    str
+] {
     lines: list = [];
     if charset := self._get_value("charset") {
         lines.append(f'<meta charset={html.escape(charset)} />');
@@ -228,7 +228,8 @@ impl HeaderBuilder._build_special_tags -> list[str] {
     return lines;
 }
 
-"""Get value with fallback to defaults."""
-impl HeaderBuilder._get_value(key: str) -> str {
+"""Get value with fallback to defaults.""" impl HeaderBuilder._get_value(
+    key: str
+) -> str {
     return self.meta_data.get(key) or self.DEFAULTS.get(key);
 }

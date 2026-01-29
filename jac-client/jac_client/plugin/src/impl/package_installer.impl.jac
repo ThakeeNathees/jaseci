@@ -16,8 +16,7 @@ impl PackageInstaller.list_packages(
     };
 }
 
-"""Uninstall a package by removing it from jac.toml."""
-impl PackageInstaller.uninstall_package(
+"""Uninstall a package by removing it from jac.toml.""" impl PackageInstaller.uninstall_package(
     self: PackageInstaller, package_name: str, is_dev: bool = False
 ) -> None {
     if not self.config_file.exists() {
@@ -37,8 +36,9 @@ impl PackageInstaller.uninstall_package(
     self._regenerate_and_install();
 }
 
-"""Regenerate package.json from jac.toml and run bun install."""
-impl PackageInstaller._regenerate_and_install(self: PackageInstaller) -> None {
+"""Regenerate package.json from jac.toml and run bun install.""" impl PackageInstaller._regenerate_and_install(
+    self: PackageInstaller
+) -> None {
     import from jac_client.plugin.utils { ensure_bun_available }
     # Ensure bun is available before proceeding
     if not ensure_bun_available() {
@@ -65,8 +65,9 @@ impl PackageInstaller._regenerate_and_install(self: PackageInstaller) -> None {
     }
 }
 
-"""Install all packages from jac.toml (regenerate package.json and run bun install)."""
-impl PackageInstaller.install_all(self: PackageInstaller) -> None {
+"""Install all packages from jac.toml (regenerate package.json and run bun install).""" impl PackageInstaller.install_all(
+    self: PackageInstaller
+) -> None {
     if not self.config_file.exists() {
         raise ClientBundleError(
             f'jac.toml not found at {self.config_file}. Run "jac init" first.'
@@ -75,8 +76,7 @@ impl PackageInstaller.install_all(self: PackageInstaller) -> None {
     self._regenerate_and_install();
 }
 
-"""Install a package by adding it to jac.toml."""
-impl PackageInstaller.install_package(
+"""Install a package by adding it to jac.toml.""" impl PackageInstaller.install_package(
     self: PackageInstaller,
     package_name: str,
     version: (str | None) = None,
@@ -97,8 +97,9 @@ impl PackageInstaller.install_package(
     self._regenerate_and_install();
 }
 
-"""Handles installing packages by updating jac.toml."""
-impl PackageInstaller.init(self: PackageInstaller, project_dir: Path) {
+"""Handles installing packages by updating jac.toml.""" impl PackageInstaller.init(
+    self: PackageInstaller, project_dir: Path
+) {
     self.project_dir = project_dir;
     self.config_loader = JacClientConfig(project_dir);
     self.config_file = project_dir / 'jac.toml';

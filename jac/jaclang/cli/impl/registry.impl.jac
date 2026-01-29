@@ -5,8 +5,7 @@ import argparse;
 # ===============================================================================
 # CommandRegistry Implementation
 # ===============================================================================
-"""Initialize the command registry."""
-impl CommandRegistry.init -> None {
+"""Initialize the command registry.""" impl CommandRegistry.init -> None {
     self.commands = {};
     self._pending_extensions = {};
     self._finalized = False;
@@ -30,8 +29,7 @@ impl CommandRegistry.init -> None {
     );
 }
 
-"""Register a new command with metadata."""
-impl CommandRegistry.command(
+"""Register a new command with metadata.""" impl CommandRegistry.command(
     name: str,
     help: str,
     args: list[Arg] | None = None,
@@ -74,8 +72,7 @@ impl CommandRegistry.command(
     return decorator;
 }
 
-"""Extend an existing command with additional arguments or hooks."""
-impl CommandRegistry.extend_command(
+"""Extend an existing command with additional arguments or hooks.""" impl CommandRegistry.extend_command(
     command_name: str,
     args: list[Arg] | None = None,
     pre_hook: Callable[[HookContext], None] | None = None,
@@ -108,19 +105,18 @@ impl CommandRegistry.extend_command(
     }
 }
 
-"""Get a command by name."""
-impl CommandRegistry.get(name: str) -> CommandSpec | None {
+"""Get a command by name.""" impl CommandRegistry.get(name: str) -> CommandSpec | None {
     import from jaclang.cli.command { CommandSpec }
     return self.commands.get(name);
 }
 
-"""Check if a command exists."""
-impl CommandRegistry.has_command(name: str) -> bool {
+"""Check if a command exists.""" impl CommandRegistry.has_command(name: str) -> bool {
     return name in self.commands;
 }
 
-"""Get all commands, optionally filtered by group."""
-impl CommandRegistry.get_all(group: str | None = None) -> list[CommandSpec] {
+"""Get all commands, optionally filtered by group.""" impl CommandRegistry.get_all(
+    group: str | None = None
+) -> list[CommandSpec] {
     import from jaclang.cli.command { CommandSpec }
     if group is None {
         return list(self.commands.values());
@@ -132,8 +128,7 @@ impl CommandRegistry.get_all(group: str | None = None) -> list[CommandSpec] {
     ];
 }
 
-"""Get all command group names."""
-impl CommandRegistry.get_groups -> list[str] {
+"""Get all command group names.""" impl CommandRegistry.get_groups -> list[str] {
     groups = set();
     for spec in self.commands.values() {
         groups.add(spec.group);
@@ -141,8 +136,7 @@ impl CommandRegistry.get_groups -> list[str] {
     return sorted(list(groups));
 }
 
-"""Finalize the registry and build argparse parser."""
-impl CommandRegistry.finalize -> argparse.ArgumentParser {
+"""Finalize the registry and build argparse parser.""" impl CommandRegistry.finalize -> argparse.ArgumentParser {
     if self._finalized {
         return self.parser;
     }
@@ -154,8 +148,9 @@ impl CommandRegistry.finalize -> argparse.ArgumentParser {
     return self.parser;
 }
 
-"""Apply any pending extensions to a command."""
-impl CommandRegistry._apply_pending_extensions(name: str) -> None {
+"""Apply any pending extensions to a command.""" impl CommandRegistry._apply_pending_extensions(
+    name: str
+) -> None {
     if name not in self._pending_extensions {
         return;
     }
@@ -180,8 +175,7 @@ impl CommandRegistry._apply_pending_extensions(name: str) -> None {
     del self._pending_extensions[name];
 }
 
-"""Build argparse subparser for a command."""
-impl CommandRegistry._build_subparser(
+"""Build argparse subparser for a command.""" impl CommandRegistry._build_subparser(
     subparsers: Any, spec: CommandSpec
 ) -> argparse.ArgumentParser {
     import from jaclang.cli.command { CommandSpec }
@@ -227,8 +221,9 @@ impl CommandRegistry._build_subparser(
     return cmd_parser;
 }
 
-"""Add an argument to an argparse parser."""
-impl CommandRegistry._add_argument(parser: argparse.ArgumentParser, arg: Arg) -> None {
+"""Add an argument to an argparse parser.""" impl CommandRegistry._add_argument(
+    parser: argparse.ArgumentParser, arg: Arg
+) -> None {
     import from jaclang.cli.command { Arg, ArgKind }
     kwargs: dict = {"help": arg.help};
     if arg.choices {
@@ -296,8 +291,7 @@ impl CommandRegistry._add_argument(parser: argparse.ArgumentParser, arg: Arg) ->
 # ===============================================================================
 # Module-level Functions Implementation
 # ===============================================================================
-"""Get the global command registry."""
-impl get_registry -> CommandRegistry {
+"""Get the global command registry.""" impl get_registry -> CommandRegistry {
     import from jaclang.cli.registry { CommandRegistry }
     global _registry;
     if _registry is None {

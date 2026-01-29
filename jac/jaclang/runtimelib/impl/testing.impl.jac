@@ -11,8 +11,7 @@ import from urllib.parse { urlencode, urlparse }
 import from jaclang { JacRuntime as Jac }
 import from jaclang.runtimelib.server { JacAPIServer }
 
-"""Parse response body as JSON."""
-impl TestResponse.json -> dict[str, Any] {
+"""Parse response body as JSON.""" impl TestResponse.json -> dict[str, Any] {
     if self._json_cache is None {
         try {
             self._json_cache = json.loads(self.text);
@@ -23,13 +22,13 @@ impl TestResponse.json -> dict[str, Any] {
     return self._json_cache;
 }
 
-"""Check if response indicates success."""
-impl TestResponse.ok -> bool {
+"""Check if response indicates success.""" impl TestResponse.ok -> bool {
     return 200 <= self.status_code < 300;
 }
 
-"""Get data from response, handling TransportResponse envelope."""
-impl TestResponse.data -> (dict[str, Any] | None) {
+"""Get data from response, handling TransportResponse envelope.""" impl TestResponse.data -> (
+    dict[str, Any] | None
+) {
     response_json = self.json();
     # Handle TransportResponse envelope format
     if "data" in response_json {
@@ -38,8 +37,7 @@ impl TestResponse.data -> (dict[str, Any] | None) {
     return response_json;
 }
 
-"""Create test client from a .jac file path."""
-impl JacTestClient.from_file(
+"""Create test client from a .jac file path.""" impl JacTestClient.from_file(
     jac_file: str, base_path: (str | None) = None, module_name: (str | None) = None
 ) -> JacTestClient {
     resolved_path = Path(jac_file).resolve();
@@ -50,8 +48,7 @@ impl JacTestClient.from_file(
     return JacTestClient(_jac_file=str(resolved_path), _base_path=effective_base_path);
 }
 
-"""Initialize server and handler lazily."""
-impl JacTestClient._ensure_initialized -> None {
+"""Initialize server and handler lazily.""" impl JacTestClient._ensure_initialized -> None {
     import os;
     if self._server is not None {
         return;
@@ -79,8 +76,7 @@ impl JacTestClient._ensure_initialized -> None {
     self._handler_class = self._server.create_handler();
 }
 
-"""Make a GET request."""
-impl JacTestClient.get(
+"""Make a GET request.""" impl JacTestClient.get(
     path: str,
     params: (dict[str, Any] | None) = None,
     headers: (dict[str, str] | None) = None
@@ -88,8 +84,7 @@ impl JacTestClient.get(
     return self.request("GET", path, params=params, headers=headers);
 }
 
-"""Make a POST request with JSON body."""
-impl JacTestClient.post(
+"""Make a POST request with JSON body.""" impl JacTestClient.post(
     path: str,
     json: (dict[str, Any] | None) = None,
     headers: (dict[str, str] | None) = None
@@ -97,8 +92,7 @@ impl JacTestClient.post(
     return self.request("POST", path, json=json, headers=headers);
 }
 
-"""Make a PUT request with JSON body."""
-impl JacTestClient.put(
+"""Make a PUT request with JSON body.""" impl JacTestClient.put(
     path: str,
     json: (dict[str, Any] | None) = None,
     headers: (dict[str, str] | None) = None
@@ -106,8 +100,7 @@ impl JacTestClient.put(
     return self.request("PUT", path, json=json, headers=headers);
 }
 
-"""Make a request with specified method."""
-impl JacTestClient.request(
+"""Make a request with specified method.""" impl JacTestClient.request(
     method: str,
     path: str,
     json: (dict[str, Any] | None) = None,
@@ -138,19 +131,18 @@ impl JacTestClient.request(
     return self._execute_request(method, path, body, request_headers);
 }
 
-"""Set authentication token."""
-impl JacTestClient.set_auth_token(token: str) -> None {
+"""Set authentication token.""" impl JacTestClient.set_auth_token(token: str) -> None {
     self._auth_token = token;
 }
 
-"""Clear authentication."""
-impl JacTestClient.clear_auth -> None {
+"""Clear authentication.""" impl JacTestClient.clear_auth -> None {
     self._auth_token = None;
     self._current_user = None;
 }
 
-"""Register a new user and set auth token."""
-impl JacTestClient.register_user(username: str, password: str) -> TestResponse {
+"""Register a new user and set auth token.""" impl JacTestClient.register_user(
+    username: str, password: str
+) -> TestResponse {
     response = self.post(
         "/user/register", json={"username": username, "password": password}
     );
@@ -164,8 +156,9 @@ impl JacTestClient.register_user(username: str, password: str) -> TestResponse {
     return response;
 }
 
-"""Login existing user and set auth token."""
-impl JacTestClient.login(username: str, password: str) -> TestResponse {
+"""Login existing user and set auth token.""" impl JacTestClient.login(
+    username: str, password: str
+) -> TestResponse {
     response = self.post(
         "/user/login", json={"username": username, "password": password}
     );
@@ -179,8 +172,7 @@ impl JacTestClient.login(username: str, password: str) -> TestResponse {
     return response;
 }
 
-"""Execute request through mock handler."""
-impl JacTestClient._execute_request(
+"""Execute request through mock handler.""" impl JacTestClient._execute_request(
     method: str,
     path: str,
     body: (bytes | None) = None,
@@ -245,8 +237,9 @@ impl JacTestClient._execute_request(
     return self._parse_response(wfile.getvalue());
 }
 
-"""Parse raw HTTP response bytes into TestResponse."""
-impl JacTestClient._parse_response(raw_response: bytes) -> TestResponse {
+"""Parse raw HTTP response bytes into TestResponse.""" impl JacTestClient._parse_response(
+    raw_response: bytes
+) -> TestResponse {
     response_str = raw_response.decode("utf-8", errors="replace");
     # Split headers and body
     parts = response_str.split("\r\n\r\n", 1);
@@ -268,20 +261,17 @@ impl JacTestClient._parse_response(raw_response: bytes) -> TestResponse {
     return TestResponse(status_code=status_code, headers=headers, text=body);
 }
 
-"""Get the underlying server instance."""
-impl JacTestClient.server -> JacAPIServer {
+"""Get the underlying server instance.""" impl JacTestClient.server -> JacAPIServer {
     self._ensure_initialized();
     return self._server;
 }
 
-"""Get the user manager."""
-impl JacTestClient.user_manager -> Any {
+"""Get the user manager.""" impl JacTestClient.user_manager -> Any {
     self._ensure_initialized();
     return self._server.user_manager;
 }
 
-"""Reload the module (for HMR testing)."""
-impl JacTestClient.reload -> None {
+"""Reload the module (for HMR testing).""" impl JacTestClient.reload -> None {
     import os;
     import sys;
     self._ensure_initialized();
@@ -328,8 +318,7 @@ impl JacTestClient.reload -> None {
     self._handler_class = self._server.create_handler();
 }
 
-"""Cleanup resources."""
-impl JacTestClient.close -> None {
+"""Cleanup resources.""" impl JacTestClient.close -> None {
     import from contextlib { suppress }
     if self._server {
         with suppress(Exception) {

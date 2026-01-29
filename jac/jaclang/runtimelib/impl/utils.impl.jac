@@ -19,8 +19,7 @@ impl all_issubclass(
     }
 }
 
-"""Check if object is instance of target type."""
-impl is_instance(
+"""Check if object is instance of target type.""" impl is_instance(
     <>obj: object, target: type | UnionType | tuple[((type | UnionType), ...)]
 ) -> bool {
     match target {
@@ -39,8 +38,7 @@ impl is_instance(
     }
 }
 
-"""Extract model parameters, include and exclude information."""
-impl extract_params(
+"""Extract model parameters, include and exclude information.""" impl extract_params(
     body: uni.FuncCall
 ) -> tuple[
     dict[(str, uni.Expr)],
@@ -108,8 +106,9 @@ impl extract_params(
     return (model_params, include_info, exclude_info);
 }
 
-"""Collect type information in assignment using bfs."""
-impl extract_type(<>node: uni.UniNode) -> list[str] {
+"""Collect type information in assignment using bfs.""" impl extract_type(
+    <>node: uni.UniNode
+) -> list[str] {
     extracted_type = [];
     if isinstance(<>node, (uni.BuiltinType, uni.Token)) {
         extracted_type.append(<>node.value);
@@ -120,8 +119,7 @@ impl extract_type(<>node: uni.UniNode) -> list[str] {
     return extracted_type;
 }
 
-"""Traverse the graph using Breadth-First Search (BFS) or Depth-First Search (DFS)."""
-impl traverse_graph(
+"""Traverse the graph using Breadth-First Search (BFS) or Depth-First Search (DFS).""" impl traverse_graph(
     <>node: NodeArchetype,
     cur_depth: int,
     depth: int,
@@ -197,8 +195,7 @@ impl traverse_graph(
     }
 }
 
-"""Nodes and edges representing the graph are collected in visited_nodes and connections."""
-impl collect_node_connections(
+"""Nodes and edges representing the graph are collected in visited_nodes and connections.""" impl collect_node_connections(
     current_node: NodeArchetype, visited_nodes: set, connections: set, edge_ids: set
 ) -> None {
     if (current_node not in visited_nodes) {
@@ -227,8 +224,9 @@ impl collect_node_connections(
     }
 }
 
-"""Add a path to sys.path temporarily."""
-impl sys_path_context(path: str) -> Iterator[None] {
+"""Add a path to sys.path temporarily.""" impl sys_path_context(
+    path: str
+) -> Iterator[None] {
     novel_path = path not in sys.path;
     try {
         if novel_path {

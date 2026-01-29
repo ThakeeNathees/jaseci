@@ -34,8 +34,7 @@ Validate that the arguments can be assigned to the call's parameter list.
 Specializes the call based on arg types, and returns the specialized
 type of the return value. If it detects an error along the way, it emits
 a diagnostic and sets argumentErrors to true.
-"""
-impl TypeEvaluator.validate_call_args(expr: uni.FuncCall) -> TypeBase {
+""" impl TypeEvaluator.validate_call_args(expr: uni.FuncCall) -> TypeBase {
     caller_type = self.get_type_of_expression(expr.target);
     # 1. Call to a function.
     if isinstance(caller_type, types.FunctionType) {
@@ -136,8 +135,7 @@ Match arguments passed to a function to the corresponding parameters in that fun
 This matching is done based on positions and keywords. Type evaluation and
 validation is left to the caller.
 This logic is based on PEP 3102: https://www.python.org/dev/peps/pep-3102/
-"""
-impl TypeEvaluator.match_args_to_params(
+""" impl TypeEvaluator.match_args_to_params(
     arg_nodes: list[uni.Expr | uni.KWPair],
     node_for_error: uni.Expr | None,
     func_type: types.FunctionType,
@@ -206,8 +204,7 @@ impl TypeEvaluator.match_args_to_params(
 """
 Validate constructor method arguments. Handles both FunctionType and OverloadedType.
 Returns True if validation was performed (method has meaningful parameters), False otherwise.
-"""
-impl TypeEvaluator._validate_constructor_method(
+""" impl TypeEvaluator._validate_constructor_method(
     expr: uni.FuncCall, method_type: TypeBase
 ) -> bool {
     if isinstance(method_type, types.FunctionType) {

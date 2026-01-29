@@ -17,25 +17,25 @@ glob _jwt_config = get_scale_config().get_jwt_config(),
      JWT_SECRET = _jwt_config['secret'],
      JWT_ALGORITHM = _jwt_config['algorithm'];
 
-"""Generate HMAC-SHA256 signature for webhook payload."""
-impl WebhookUtils.generate_signature(payload: bytes, secret: str) -> str {
+"""Generate HMAC-SHA256 signature for webhook payload.""" impl WebhookUtils.generate_signature(
+    payload: bytes, secret: str
+) -> str {
     return hmac.new(secret.encode('utf-8'), payload, hashlib.sha256).hexdigest();
 }
 
-"""Verify HMAC-SHA256 signature for webhook payload."""
-impl WebhookUtils.verify_signature(payload: bytes, signature: str, secret: str) -> bool {
+"""Verify HMAC-SHA256 signature for webhook payload.""" impl WebhookUtils.verify_signature(
+    payload: bytes, signature: str, secret: str
+) -> bool {
     expected_signature = WebhookUtils.generate_signature(payload, secret);
     # Use constant-time comparison to prevent timing attacks
     return hmac.compare_digest(signature.lower(), expected_signature.lower());
 }
 
-"""Generate a cryptographically secure API key."""
-impl WebhookUtils.generate_api_key -> str {
+"""Generate a cryptographically secure API key.""" impl WebhookUtils.generate_api_key -> str {
     return secrets.token_hex(32);
 }
 
-"""Create a JWT-wrapped API key token."""
-impl WebhookUtils.create_api_key_token(
+"""Create a JWT-wrapped API key token.""" impl WebhookUtils.create_api_key_token(
     api_key_id: str, username: str, name: str, expiry_days: int | None = None
 ) -> str {
     _webhook_config = get_scale_config().get_webhook_config();
@@ -57,8 +57,9 @@ impl WebhookUtils.create_api_key_token(
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM);
 }
 
-"""Validate an API key token and extract user information."""
-impl WebhookUtils.validate_api_key(api_key: str) -> dict[str, str] | None {
+"""Validate an API key token and extract user information.""" impl WebhookUtils.validate_api_key(
+    api_key: str
+) -> dict[str, str] | None {
     try {
         payload = jwt.decode(api_key, JWT_SECRET, algorithms=[JWT_ALGORITHM]);
 
@@ -79,8 +80,9 @@ impl WebhookUtils.validate_api_key(api_key: str) -> dict[str, str] | None {
     }
 }
 
-"""Extract signature from request header value."""
-impl WebhookUtils.extract_signature(header_value: str) -> str {
+"""Extract signature from request header value.""" impl WebhookUtils.extract_signature(
+    header_value: str
+) -> str {
     # Handle prefixed signatures like "sha256=abc123..."
     if '=' in header_value {
         parts = header_value.split('=', 1);
@@ -91,8 +93,7 @@ impl WebhookUtils.extract_signature(header_value: str) -> str {
     return header_value;
 }
 
-"""Create a new API key for a user."""
-impl ApiKeyManager.create_api_key(
+"""Create a new API key for a user.""" impl ApiKeyManager.create_api_key(
     username: str, name: str, expiry_days: int | None = None
 ) -> TransportResponse {
     # Generate unique API key ID
@@ -135,8 +136,9 @@ impl ApiKeyManager.create_api_key(
     );
 }
 
-"""List all API keys for a user (metadata only, not the keys)."""
-impl ApiKeyManager.list_api_keys(username: str) -> TransportResponse {
+"""List all API keys for a user (metadata only, not the keys).""" impl ApiKeyManager.list_api_keys(
+    username: str
+) -> TransportResponse {
     user_key_ids = self._user_keys.get(username, []);
     keys: list[dict[str, Any]] = [];
     for key_id in user_key_ids {
@@ -158,8 +160,9 @@ impl ApiKeyManager.list_api_keys(username: str) -> TransportResponse {
     );
 }
 
-"""Revoke an API key."""
-impl ApiKeyManager.revoke_api_key(username: str, api_key_id: str) -> TransportResponse {
+"""Revoke an API key.""" impl ApiKeyManager.revoke_api_key(
+    username: str, api_key_id: str
+) -> TransportResponse {
     # Check if key exists
     if api_key_id not in self._api_keys {
         return TransportResponse.fail(
@@ -185,8 +188,9 @@ impl ApiKeyManager.revoke_api_key(username: str, api_key_id: str) -> TransportRe
     );
 }
 
-"""Validate an API key and return the associated username."""
-impl ApiKeyManager.validate_api_key(api_key: str) -> str | None {
+"""Validate an API key and return the associated username.""" impl ApiKeyManager.validate_api_key(
+    api_key: str
+) -> str | None {
     # Decode the JWT to get key info
     key_info = WebhookUtils.validate_api_key(api_key);
     if not key_info {
@@ -200,8 +204,9 @@ impl ApiKeyManager.validate_api_key(api_key: str) -> str | None {
     return key_info.get('username');
 }
 
-"""Check if an API key ID exists and is not revoked."""
-impl ApiKeyManager.is_key_active(api_key_id: str) -> bool {
+"""Check if an API key ID exists and is not revoked.""" impl ApiKeyManager.is_key_active(
+    api_key_id: str
+) -> bool {
     key_info = self._api_keys.get(api_key_id);
     if not key_info {
         # Key not in our store - could be from before server restart

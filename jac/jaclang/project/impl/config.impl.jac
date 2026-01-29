@@ -196,30 +196,25 @@ impl JacConfig.get_plugin_config(plugin_name: str) -> dict[str, Any] {
     return self.plugins.get(plugin_name, {});
 }
 
-"""Get the base build directory for all artifacts."""
-impl JacConfig.get_build_dir -> Path {
+"""Get the base build directory for all artifacts.""" impl JacConfig.get_build_dir -> Path {
     import from pathlib { Path }
     base = self.project_root or Path.cwd();
     return base / self.build.dir;
 }
 
-"""Get the bytecode cache directory (.jac/cache)."""
-impl JacConfig.get_cache_dir -> Path {
+"""Get the bytecode cache directory (.jac/cache).""" impl JacConfig.get_cache_dir -> Path {
     return self.get_build_dir() / "cache";
 }
 
-"""Get the virtual environment directory (.jac/venv)."""
-impl JacConfig.get_venv_dir -> Path {
+"""Get the virtual environment directory (.jac/venv).""" impl JacConfig.get_venv_dir -> Path {
     return self.get_build_dir() / "venv";
 }
 
-"""Get the data directory for runtime artifacts (.jac/data)."""
-impl JacConfig.get_data_dir -> Path {
+"""Get the data directory for runtime artifacts (.jac/data).""" impl JacConfig.get_data_dir -> Path {
     return self.get_build_dir() / "data";
 }
 
-"""Get the client build directory (.jac/client)."""
-impl JacConfig.get_client_dir -> Path {
+"""Get the client build directory (.jac/client).""" impl JacConfig.get_client_dir -> Path {
     return self.get_build_dir() / "client";
 }
 

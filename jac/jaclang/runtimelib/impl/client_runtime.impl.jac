@@ -870,8 +870,7 @@ impl __jacRegisterClientModule(
 Returns [value, setter] where value is the current state (not a getter function).
 When setter is called, schedules a re-render of the component.
 Uses hook index tracking to maintain state across re-renders.
-"""
-impl useState(initialValue: any) -> list {
+""" impl useState(initialValue: any) -> list {
     # Get current hook index
     hookIndex = __jacReactiveContext.hookIndex;
     hooks = __jacReactiveContext.hooks;
@@ -903,8 +902,7 @@ impl useState(initialValue: any) -> list {
 """useEffect - React-compatible effect hook.
 When deps is empty [], runs once on mount (like onMount).
 Otherwise tracks dependencies and re-runs when they change.
-"""
-impl useEffect(effectFn: any, deps: list = []) -> None {
+""" impl useEffect(effectFn: any, deps: list = []) -> None {
     # For now, always run on mount since we don't have React's dep tracking
     # This matches useEffect(() => { ... }, []) behavior
     onMount(effectFn);

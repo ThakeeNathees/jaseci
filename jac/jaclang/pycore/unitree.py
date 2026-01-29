@@ -1294,7 +1294,9 @@ class Test(ContextAwareNode, AstSymbolNode, ElementStmt, UniScopeNode, AstDocNod
         return res
 
 
-class ModuleCode(ContextAwareNode, ElementStmt, ArchBlockStmt, EnumBlockStmt, AstDocNode):
+class ModuleCode(
+    ContextAwareNode, ElementStmt, ArchBlockStmt, EnumBlockStmt, AstDocNode
+):
     """ModuleCode node type for Jac Ast."""
 
     def __init__(
@@ -1466,7 +1468,9 @@ class NativeBlock(ElementStmt):
         return res
 
 
-class PyInlineCode(ElementStmt, ArchBlockStmt, EnumBlockStmt, CodeBlockStmt, AstDocNode):
+class PyInlineCode(
+    ElementStmt, ArchBlockStmt, EnumBlockStmt, CodeBlockStmt, AstDocNode
+):
     """PyInlineCode node type for Jac Ast."""
 
     def __init__(

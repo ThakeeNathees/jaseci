@@ -7,8 +7,7 @@ import from typing { Any }
 # ===============================================================================
 # JacConsole Implementation
 # ===============================================================================
-"""Initialize the console."""
-impl JacConsole.init -> None {
+"""Initialize the console.""" impl JacConsole.init -> None {
     self.use_emoji = JacConsole._should_use_emoji();
     self.use_color = JacConsole._should_use_color();
 }
@@ -17,8 +16,7 @@ impl JacConsole.init -> None {
 
 Returns:
     True if emoji should be used, False otherwise
-"""
-impl JacConsole._should_use_emoji -> bool {
+""" impl JacConsole._should_use_emoji -> bool {
     if os.environ.get('NO_EMOJI') or os.environ.get('TERM') == 'dumb' {
         return False;
     }
@@ -32,8 +30,7 @@ impl JacConsole._should_use_emoji -> bool {
 
 Returns:
     True if color should be used, False otherwise
-"""
-impl JacConsole._should_use_color -> bool {
+""" impl JacConsole._should_use_color -> bool {
     if os.environ.get('NO_COLOR') {
         return False;
     }
@@ -43,8 +40,9 @@ impl JacConsole._should_use_color -> bool {
     return True;
 }
 
-"""Print to stdout, stripping Rich markup when Rich isn't available."""
-impl JacConsole.print(*args: Any, **kwargs: Any) -> None {
+"""Print to stdout, stripping Rich markup when Rich isn't available.""" impl JacConsole.print(
+    *args: Any, **kwargs: Any
+) -> None {
     import re;
     # Remove style and other Rich-specific kwargs
     filtered_kwargs = {
@@ -62,8 +60,9 @@ impl JacConsole.print(*args: Any, **kwargs: Any) -> None {
     print(*stripped_args, **filtered_kwargs);
 }
 
-"""Context manager for status during long operations (basic implementation)."""
-impl JacConsole.status(*args: Any, **kwargs: Any) -> object {
+"""Context manager for status during long operations (basic implementation).""" impl JacConsole.status(
+    *args: Any, **kwargs: Any
+) -> object {
     # Basic implementation - just print the message
     if args {
         print(args[0] if isinstance(args[0], str) else str(args[0]));
@@ -76,8 +75,9 @@ impl JacConsole.status(*args: Any, **kwargs: Any) -> object {
     return _noop_status();
 }
 
-"""Print a success message with checkmark."""
-impl JacConsole.success(message: str, emoji: bool = True) -> None {
+"""Print a success message with checkmark.""" impl JacConsole.success(
+    message: str, emoji: bool = True
+) -> None {
     prefix = '✔' if emoji and self.use_emoji else '[SUCCESS]';
     print(f"{prefix} {message}");
 }
@@ -88,8 +88,7 @@ Args:
     message: The error message
     hint: Optional hint or suggestion
     emoji: Whether to use emoji (✖) or text ([ERROR])
-"""
-impl JacConsole.error(
+""" impl JacConsole.error(
     message: str, hint: str | None = None, emoji: bool = True
 ) -> None {
     prefix = '✖' if emoji and self.use_emoji else '[ERROR]';
@@ -100,14 +99,16 @@ impl JacConsole.error(
     }
 }
 
-"""Print a warning message."""
-impl JacConsole.warning(message: str, emoji: bool = True) -> None {
+"""Print a warning message.""" impl JacConsole.warning(
+    message: str, emoji: bool = True
+) -> None {
     prefix = '⚠' if emoji and self.use_emoji else '[WARNING]';
     print(f"{prefix} {message}");
 }
 
-"""Print an info message."""
-impl JacConsole.info(message: str, emoji: bool = True) -> None {
+"""Print an info message.""" impl JacConsole.info(
+    message: str, emoji: bool = True
+) -> None {
     prefix = 'ℹ' if emoji and self.use_emoji else '[INFO]';
     print(f"{prefix} {message}");
 }
@@ -117,8 +118,7 @@ impl JacConsole.info(message: str, emoji: bool = True) -> None {
 Args:
     title: Header title
     version: Optional version string
-"""
-impl JacConsole.print_header(title: str, version: str | None = None) -> None {
+""" impl JacConsole.print_header(title: str, version: str | None = None) -> None {
     if version {
         print(f"{title} v{version}");
     } else {
@@ -132,8 +132,7 @@ Args:
     urls: Dict or list of tuples mapping labels to URLs
           (e.g., {"Local": "http://localhost:3000"} or [("Local", "http://..."), ("Network", "http://...")])
     symbol: Symbol to use before each line (default: ➜)
-"""
-impl JacConsole.print_urls(urls: Any, symbol: str = '➜') -> None {
+""" impl JacConsole.print_urls(urls: Any, symbol: str = '➜') -> None {
     items = urls.items() if isinstance(urls, <>dict) else urls;
     for (label, url) in items {
         padded_label = f"{label}:".ljust(10);
@@ -146,8 +145,9 @@ impl JacConsole.print_urls(urls: Any, symbol: str = '➜') -> None {
 Args:
     steps: List of step strings
     title: Box title (default: "Next Steps")
-"""
-impl JacConsole.print_next_steps(steps: list[str], title: str = 'Next Steps') -> None {
+""" impl JacConsole.print_next_steps(
+    steps: list[str], title: str = 'Next Steps'
+) -> None {
     print(f"\n{title}:");
     for (i, step) in enumerate(steps, 1) {
         print(f"  {i}. {step}");
@@ -161,8 +161,7 @@ Args:
     items: List of items to print
     style: Style name (ignored in base implementation, used by Rich plugins)
     symbol: Symbol to prefix each item
-"""
-impl JacConsole.print_list(
+""" impl JacConsole.print_list(
     items: list[str], style: str = 'success', symbol: str = '✔'
 ) -> None {
     for item in items {
@@ -176,8 +175,7 @@ Args:
     headers: Column headers
     rows: List of rows (each row is a list of strings)
     title: Optional table title
-"""
-impl JacConsole.print_table(
+""" impl JacConsole.print_table(
     headers: list[str], rows: list[list[str]], title: str | None = None
 ) -> None {
     if title {
@@ -214,8 +212,7 @@ Usage:
     with console.spinner("Loading..."):
         # do work
         pass
-"""
-@ contextmanager
+""" @ contextmanager
 impl JacConsole.spinner(text: str) -> object {
     # Basic implementation - just print the message
     print(f"{text}...", end='', flush=True);
@@ -230,8 +227,7 @@ impl JacConsole.spinner(text: str) -> object {
 
 Args:
     seconds: Time in seconds
-"""
-impl JacConsole.print_elapsed_time(seconds: float) -> None {
+""" impl JacConsole.print_elapsed_time(seconds: float) -> None {
     if seconds < 1 {
         ms = seconds * 1000;
         print(f"  Done in {ms:.0f}ms");
@@ -245,8 +241,7 @@ impl JacConsole.print_elapsed_time(seconds: float) -> None {
 Args:
     filepath: Path to the file
     action: Action performed (changed, created, deleted)
-"""
-impl JacConsole.print_file_change(filepath: str, action: str = 'changed') -> None {
+""" impl JacConsole.print_file_change(filepath: str, action: str = 'changed') -> None {
     import from datetime { datetime }
     timestamp = datetime.now().strftime('%H:%M:%S');
     emoji_map = {'changed': '⚡', 'created': '✨', 'deleted': '🗑️'};
@@ -259,8 +254,7 @@ impl JacConsole.print_file_change(filepath: str, action: str = 'changed') -> Non
 Args:
     pattern: File pattern being watched
     count: Number of files
-"""
-impl JacConsole.print_watching(pattern: str, count: int) -> None {
+""" impl JacConsole.print_watching(pattern: str, count: int) -> None {
     watch_emoji = '👀' if self.use_emoji else '[WATCHING]';
     print(f"{watch_emoji} Watching for changes...");
     print(f"   Monitoring: {pattern} ({count} files)");
@@ -269,8 +263,7 @@ impl JacConsole.print_watching(pattern: str, count: int) -> None {
 # ===============================================================================
 # Module-level function implementations
 # ===============================================================================
-"""Get the console instance using the hook system, allowing plugins to override."""
-impl _get_console -> JacConsole {
+"""Get the console instance using the hook system, allowing plugins to override.""" impl _get_console -> JacConsole {
     global _console_instance;
     if _console_instance is None {
         import from jaclang.pycore.runtime { JacRuntime as Jac }

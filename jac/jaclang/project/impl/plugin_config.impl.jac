@@ -3,8 +3,9 @@ import from pathlib { Path }
 import from typing { Any }
 import from jaclang.project.config { JacConfig }
 
-"""Deep merge two dictionaries recursively."""
-impl deep_merge(base: dict[str, Any], override_dict: dict[str, Any]) -> dict[str, Any] {
+"""Deep merge two dictionaries recursively.""" impl deep_merge(
+    base: dict[str, Any], override_dict: dict[str, Any]
+) -> dict[str, Any] {
     result = base.copy();
     for (key, value) in override_dict.items() {
         if (
@@ -20,8 +21,7 @@ impl deep_merge(base: dict[str, Any], override_dict: dict[str, Any]) -> dict[str
     return result;
 }
 
-"""Initialize config loader with project directory."""
-impl PluginConfigBase.postinit{
+"""Initialize config loader with project directory.""" impl PluginConfigBase.postinit{
     if self.project_dir is None {
         self.project_dir = Path.cwd();
     } else {
@@ -32,8 +32,10 @@ impl PluginConfigBase.postinit{
     self._jac_config = None;
 }
 
-"""Load configuration from jac.toml, merging with defaults."""
-impl PluginConfigBase.load -> dict[str, Any] {
+"""Load configuration from jac.toml, merging with defaults.""" impl PluginConfigBase.load -> dict[
+    str,
+    Any
+] {
     if self._config is not None {
         return self._config;
     }
@@ -51,8 +53,7 @@ impl PluginConfigBase.load -> dict[str, Any] {
     return self._config;
 }
 
-"""Get or load the core JacConfig instance."""
-impl PluginConfigBase.get_jac_config -> JacConfig {
+"""Get or load the core JacConfig instance.""" impl PluginConfigBase.get_jac_config -> JacConfig {
     if self._jac_config is None {
         if self.config_file.exists() {
             self._jac_config = JacConfig.load(self.config_file);
@@ -66,8 +67,7 @@ impl PluginConfigBase.get_jac_config -> JacConfig {
     return self._jac_config;
 }
 
-"""Get a configuration section with optional defaults."""
-impl PluginConfigBase.get_section(
+"""Get a configuration section with optional defaults.""" impl PluginConfigBase.get_section(
     section: str, defaults: dict[str, Any] | None = None
 ) -> dict[str, Any] {
     config = self.load();
@@ -79,7 +79,6 @@ impl PluginConfigBase.get_section(
     return section_config;
 }
 
-"""Invalidate the cached configuration."""
-impl PluginConfigBase.invalidate -> None {
+"""Invalidate the cached configuration.""" impl PluginConfigBase.invalidate -> None {
     self._config = None;
 }

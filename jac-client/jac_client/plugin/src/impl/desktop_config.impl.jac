@@ -5,8 +5,9 @@ import from jaclang.project.config { JacConfig, get_config }
 import from jaclang.project.plugin_config { deep_merge }
 import from jaclang.cli.console { console }
 
-"""Initialize DesktopConfig with project directory."""
-impl DesktopConfig.init(self: DesktopConfig, project_dir: Path | None = None) -> None {
+"""Initialize DesktopConfig with project directory.""" impl DesktopConfig.init(
+    self: DesktopConfig, project_dir: Path | None = None
+) -> None {
     if project_dir is None {
         self.project_dir = Path.cwd();
     } else {
@@ -16,8 +17,9 @@ impl DesktopConfig.init(self: DesktopConfig, project_dir: Path | None = None) ->
     self._jac_config = None;
 }
 
-"""Get default configuration structure for desktop target."""
-impl DesktopConfig.get_default_config(self: DesktopConfig) -> dict[str, Any] {
+"""Get default configuration structure for desktop target.""" impl DesktopConfig.get_default_config(
+    self: DesktopConfig
+) -> dict[str, Any] {
     # Try to get project name/version from JacConfig for defaults
     # If config is not available, use fallback defaults
     project_name = "my-jac-app";
@@ -56,8 +58,9 @@ impl DesktopConfig.get_default_config(self: DesktopConfig) -> dict[str, Any] {
     };
 }
 
-"""Get or load the core JacConfig instance."""
-impl DesktopConfig._get_jac_config(self: DesktopConfig) -> JacConfig {
+"""Get or load the core JacConfig instance.""" impl DesktopConfig._get_jac_config(
+    self: DesktopConfig
+) -> JacConfig {
     if self._jac_config is None {
         self._jac_config = get_config();
         if self._jac_config is None {
@@ -69,8 +72,9 @@ impl DesktopConfig._get_jac_config(self: DesktopConfig) -> JacConfig {
     return self._jac_config;
 }
 
-"""Load configuration from jac.toml, merging with defaults."""
-impl DesktopConfig.load(self: DesktopConfig) -> dict[str, Any] {
+"""Load configuration from jac.toml, merging with defaults.""" impl DesktopConfig.load(
+    self: DesktopConfig
+) -> dict[str, Any] {
     if self._config is not None {
         return self._config;
     }
@@ -98,8 +102,9 @@ impl DesktopConfig.load(self: DesktopConfig) -> dict[str, Any] {
     return self._config;
 }
 
-"""Get desktop configuration (name, identifier, version)."""
-impl DesktopConfig.get_desktop_config(self: DesktopConfig) -> dict[str, Any] {
+"""Get desktop configuration (name, identifier, version).""" impl DesktopConfig.get_desktop_config(
+    self: DesktopConfig
+) -> dict[str, Any] {
     config = self.load();
     return {
         'name': config.get('name', ''),
@@ -108,26 +113,30 @@ impl DesktopConfig.get_desktop_config(self: DesktopConfig) -> dict[str, Any] {
     };
 }
 
-"""Get window configuration."""
-impl DesktopConfig.get_window_config(self: DesktopConfig) -> dict[str, Any] {
+"""Get window configuration.""" impl DesktopConfig.get_window_config(
+    self: DesktopConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('window', {});
 }
 
-"""Get platforms configuration."""
-impl DesktopConfig.get_platforms_config(self: DesktopConfig) -> dict[str, Any] {
+"""Get platforms configuration.""" impl DesktopConfig.get_platforms_config(
+    self: DesktopConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('platforms', {});
 }
 
-"""Get features configuration."""
-impl DesktopConfig.get_features_config(self: DesktopConfig) -> dict[str, Any] {
+"""Get features configuration.""" impl DesktopConfig.get_features_config(
+    self: DesktopConfig
+) -> dict[str, Any] {
     config = self.load();
     return config.get('features', {});
 }
 
-"""Validate desktop configuration."""
-impl DesktopConfig.validate(self: DesktopConfig) -> None {
+"""Validate desktop configuration.""" impl DesktopConfig.validate(
+    self: DesktopConfig
+) -> None {
     config = self.load();
     # Required fields
     name = config.get('name', '');
