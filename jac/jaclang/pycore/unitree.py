@@ -806,6 +806,7 @@ class UniCFGNode(UniNode):
         self._nodes_out.append(next_false)
         next_false._nodes_in.append(self)
 
+
 class CFGPatchNode(UniCFGNode):
     """A placeholder node that need to be patched with a correct node."""
 

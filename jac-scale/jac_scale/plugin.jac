@@ -226,11 +226,6 @@ class JacScalePlugin {
         return JacScaleUserManager(base_path=base_path);
     }
 
-    """Provide jac-scale's storage backend.
-
-    This overrides the core store() to use jac-scale's StorageFactory,
-    which supports cloud backends (S3, GCS, Azure) via configuration.
-    """
     @hookimpl
     static def store(base_path: str = "./storage", create_dirs: bool = True) -> Storage {
         import from .factories.storage_factory { StorageFactory }

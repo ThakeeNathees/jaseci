@@ -24,7 +24,6 @@ class LocalStorage(Storage) {
         }
     }
 
-    """Resolve a relative path to an absolute path within the storage base."""
     def _resolve_path(self: LocalStorage, path: str) -> Path {
         return Path(self.base_path) / path.lstrip("/");
     }
