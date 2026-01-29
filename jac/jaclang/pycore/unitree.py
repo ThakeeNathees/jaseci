@@ -875,6 +875,8 @@ class Expr(UniCFGNode):
         # TODO: Refactor to eliminate this workaround
         self.attached_tokens: list[Token] | None = None
 
+        UniCFGNode.__init__(self)
+
     @property
     def expr_type(self) -> str:
         return self._sym_type
@@ -911,6 +913,7 @@ class EnumBlockStmt(UniCFGNode):
 
     def __init__(self, is_enum_stmt: bool) -> None:
         self.is_enum_stmt = is_enum_stmt
+        UniCFGNode.__init__(self)
 
 
 class CodeBlockStmt(UniCFGNode):
@@ -1082,6 +1085,7 @@ class Module(AstDocNode, UniScopeNode, UniCFGNode):
         UniNode.__init__(self, kid=kid)
         AstDocNode.__init__(self, doc=doc)
         UniScopeNode.__init__(self, name=self.name)
+        UniCFGNode.__init__(self)
 
     @property
     def annexable_by(self) -> str | None:
@@ -1188,6 +1192,7 @@ class GlobalVars(ContextAwareNode, ElementStmt, AstAccessNode):
         AstAccessNode.__init__(self, access=access)
         AstDocNode.__init__(self, doc=doc)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1262,6 +1267,7 @@ class Test(ContextAwareNode, AstSymbolNode, ElementStmt, UniScopeNode):
         AstDocNode.__init__(self, doc=doc)
         UniScopeNode.__init__(self, name=self.sym_name)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1346,6 +1352,7 @@ class ClientBlock(ElementStmt):
         self.body = list(body)
         self.implicit = implicit
         UniNode.__init__(self, kid=kid)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1387,6 +1394,7 @@ class ServerBlock(ElementStmt):
         self.body = list(body)
         self.implicit = implicit
         UniNode.__init__(self, kid=kid)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1428,6 +1436,7 @@ class NativeBlock(ElementStmt):
         self.body = list(body)
         self.implicit = implicit
         UniNode.__init__(self, kid=kid)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -2003,6 +2012,7 @@ class SemDef(ElementStmt, AstSymbolNode, UniScopeNode):
             sym_category=SymbolType.SEM,
         )
         UniScopeNode.__init__(self, name=self.sym_name)
+        UniCFGNode.__init__(self)
 
     def create_sem_name_node(self) -> Name:
         ret = Name(
@@ -2074,6 +2084,7 @@ class Enum(
         ArchSpec.__init__(self, decorators=decorators)
         UniScopeNode.__init__(self, name=self.sym_name)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
