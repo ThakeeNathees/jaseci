@@ -86,7 +86,9 @@ impl check(
     prog = JacProgram();
     for path in paths {
         path_obj = Path(path);
-        if path.endswith('.jac') {
+        # Cannot jac check an impl file without all the supporting
+        # impl files and the main file being present.
+        if path.endswith('.jac') and not path.endswith('.impl.jac') {
             if not ignore_check(path, ignore_list) {
                 total_files += 1;
                 (success, errs, warns) = check_single_file(prog, path);
