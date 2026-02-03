@@ -47,10 +47,7 @@ class ViteBundler {
     ) -> Path;
 
     def create_tsconfig(self: ViteBundler) -> Path;
-    """Create config files from jac.toml [plugins.client.configs]."""
     def create_config_files(self: ViteBundler) -> list[Path];
-
-    """Create a dev-mode vite config with API proxy for HMR."""
     def create_dev_vite_config(
         self: ViteBundler,
         entry_file: Path,
@@ -58,7 +55,6 @@ class ViteBundler {
         api_base_url_override: str = ""
     ) -> Path;
 
-    """Start Vite dev server as a subprocess."""
     def start_dev_server(self: ViteBundler, port: int = 3000) -> Any;
 }
 # Env var used to pass API base URL through deep call chains

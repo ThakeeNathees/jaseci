@@ -46,26 +46,14 @@ class ApiKeyResponse(BaseModel) {
 
 """Webhook utilities for signature generation and verification."""
 obj WebhookUtils {
-    """Generate HMAC-SHA256 signature for webhook payload."""
     static def generate_signature(payload: bytes, secret: str) -> str;
-
-    """Verify HMAC-SHA256 signature for webhook payload."""
     static def verify_signature(payload: bytes, signature: str, secret: str) -> bool;
-
-    """Generate a new API key."""
     static def generate_api_key -> str;
-
-    """Create a JWT-wrapped API key token.
-
-    The API key is embedded in a JWT for secure validation and expiry management."""
     static def create_api_key_token(
         api_key_id: str, username: str, name: str, expiry_days: int | None = None
     ) -> str;
 
-    """Validate an API key token and extract user information."""
     static def validate_api_key(api_key: str) -> dict[str, str] | None;
-
-    """Extract signature from request header value."""
     static def extract_signature(header_value: str) -> str;
 }
 
@@ -74,20 +62,12 @@ obj ApiKeyManager {
     has _api_keys: dict[str, dict[str, Any]] = {},  # api_key_id -> key info
         _user_keys: dict[str, list[str]] = {};  # username -> list of api_key_ids
 
-    """Create a new API key for a user."""
     def create_api_key(
         username: str, name: str, expiry_days: int | None = None
     ) -> TransportResponse;
 
-    """List all API keys for a user."""
     def list_api_keys(username: str) -> TransportResponse;
-
-    """Revoke an API key."""
     def revoke_api_key(username: str, api_key_id: str) -> TransportResponse;
-
-    """Validate an API key and return the associated username."""
     def validate_api_key(api_key: str) -> str | None;
-
-    """Check if an API key ID exists and is not revoked."""
     def is_key_active(api_key_id: str) -> bool;
 }

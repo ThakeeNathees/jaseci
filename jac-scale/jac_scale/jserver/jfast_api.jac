@@ -47,15 +47,11 @@ glob EndpointResponse: TypeAlias = Response | BaseModel | <>dict[(str, object)] 
 obj ParameterHandler {
     has type_converter: JFastApiServer;
 
-    """Generate parameter string for FastAPI function signature."""
     def generate_param_string(param: APIParameter) -> str;
-
-    """Get the actual Python type from parameter type string."""
     def get_type(param: APIParameter) -> type[Any] {
         return self.type_converter._get_python_type(param.data_type);
     }
 
-    """Get the type name for code generation."""
     def get_type_name(param: APIParameter) -> str {
         return self.get_type(param).__name__;
     }
@@ -90,7 +86,6 @@ obj FormBodyParameterHandler(ParameterHandler) {
 obj JSONBodyParameterHandler(ParameterHandler) {
     has body_params: list[APIParameter];
 
-    """Generate Pydantic model for JSON body."""
     def generate_body_model -> (type[BaseModel] | None);
 }
 

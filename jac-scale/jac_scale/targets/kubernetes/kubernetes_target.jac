@@ -47,7 +47,6 @@ class KubernetesTarget(DeploymentTarget) {
         }
     }
 
-    """Get init containers from all enabled database providers."""
     def _get_database_init_containers(
         self: KubernetesTarget, app_name: str
     ) -> list[dict[(str, Any)]] {
@@ -77,7 +76,6 @@ class KubernetesTarget(DeploymentTarget) {
         return init_containers;
     }
 
-    """Build resource requests and limits configuration."""
     def _build_resource_config(self: KubernetesTarget) -> dict[(str, Any)] {
         resource_requests: dict[(str, str)] = {};
         if self.k8s_config.cpu_request {
@@ -106,7 +104,6 @@ class KubernetesTarget(DeploymentTarget) {
         return resources;
     }
 
-    """Build readiness and liveness probe configurations."""
     def _build_probe_config(
         self: KubernetesTarget, health_check_path: str
     ) -> dict[(str, Any)] {
@@ -128,7 +125,6 @@ class KubernetesTarget(DeploymentTarget) {
         return {'readiness': probe_config, 'liveness': liveness_probe};
     }
 
-    """Build Kubernetes service configuration."""
     def _build_service_config(
         self: KubernetesTarget,
         app_name: str,
@@ -174,7 +170,6 @@ class KubernetesTarget(DeploymentTarget) {
         return service;
     }
 
-    """Build the bash command for setting up Jaseci runtime environment."""
     def _build_runtime_setup_command(
         self: KubernetesTarget, app_config: AppConfig
     ) -> list[str] {
@@ -260,7 +255,6 @@ class KubernetesTarget(DeploymentTarget) {
         return ['bash', '-c', full_command];
     }
 
-    """Build container configuration."""
     def _build_container_config(
         self: KubernetesTarget,
         app_name: str,
@@ -296,7 +290,6 @@ class KubernetesTarget(DeploymentTarget) {
         return container_config;
     }
 
-    """Build volumes and build container configuration for code sync."""
     def _build_volumes_config(
         self: KubernetesTarget,
         app_name: str,
@@ -338,7 +331,6 @@ class KubernetesTarget(DeploymentTarget) {
         return {'volumes': volumes, 'build_container': build_container};
     }
 
-    """Deploy all enabled databases."""
     def _deploy_databases(
         self: KubernetesTarget,
         app_name: str,
@@ -423,7 +415,6 @@ class KubernetesTarget(DeploymentTarget) {
         }
     }
 
-    """Wait for deployment to be ready and check status."""
     def _wait_for_deployment(
         self: KubernetesTarget,
         app_name: str,
@@ -485,7 +476,6 @@ class KubernetesTarget(DeploymentTarget) {
         }
     }
 
-    """Handle image registry if build is requested."""
     def _handle_image_registry(
         self: KubernetesTarget, app_name: str, app_config: AppConfig
     ) -> str {
@@ -663,7 +653,6 @@ class KubernetesTarget(DeploymentTarget) {
         );
     }
 
-    """Wait for resources to be completely deleted."""
     def _wait_for_deletion(
         self: KubernetesTarget,
         app_name: str,
@@ -792,7 +781,6 @@ class KubernetesTarget(DeploymentTarget) {
         }
     }
 
-    """Destroy all enabled databases."""
     def _destroy_databases(
         self: KubernetesTarget,
         app_name: str,

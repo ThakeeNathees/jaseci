@@ -25,7 +25,6 @@ enum ShapeType {
 obj Shape {
     has shape_type: ShapeType;
 
-    """Abstract method to calculate the area of a shape."""
     def area -> float abs;
 }
 
@@ -36,7 +35,6 @@ obj Circle(Shape) {
         self.radius = radius;
     }
 
-    """Overridden method to calculate the area of the circle."""
     override def area -> float {
         return math.pi * self.radius * self.radius;
     }

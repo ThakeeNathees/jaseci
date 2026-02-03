@@ -63,20 +63,17 @@ def fetch_mtir(func: Callable) -> Info | None {
 
 """Jac's with_llm feature."""
 class JacRuntime {
-    """Call JacLLM and return the result."""
     @hookimpl
     static def get_mtir(caller: Callable, args: dict, call_params: dict) -> object {
         import from byllm.mtir { MTIR }
         return MTIR(caller, args, call_params, fetch_mtir(caller)).runtime;
     }
 
-    """Call JacLLM and return the result."""
     @hookimpl
     static def call_llm(model: Model, mt_run: MTRuntime) -> object {
         return model.invoke(mt_run=mt_run);
     }
 
-    """Python library mode decorator for Jac's by llm() syntax."""
     @hookimpl
     static def by(model: Model) -> Callable {
         def _decorator(caller: Callable) -> Callable {
@@ -102,7 +99,6 @@ class JacRuntime {
         return _decorator;
     }
 
-    """by operator for LLM-guided routing."""
     @hookimpl
     static def by_operator(lhs: object, rhs: object) -> object {
         import from byllm.llm { BaseLLM }

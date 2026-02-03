@@ -18,7 +18,6 @@ import from jaclang.project.config { JacConfig }
 
 """Plugin configuration hooks for jac-client."""
 class JacClientPluginConfig {
-    """Return plugin metadata."""
     @hookimpl
     static def get_plugin_metadata -> dict[str, Any] {
         return {
@@ -28,7 +27,6 @@ class JacClientPluginConfig {
         };
     }
 
-    """Return the plugin's configuration schema for [plugins.client]."""
     @hookimpl
     static def get_config_schema -> dict[str, Any] {
         return {
@@ -80,7 +78,6 @@ class JacClientPluginConfig {
         };
     }
 
-    """Register npm as a dependency type for [dependencies.npm]."""
     @hookimpl
     static def register_dependency_type -> dict[str, Any] {
         return {
@@ -94,7 +91,6 @@ class JacClientPluginConfig {
         };
     }
 
-    """Register the client and fullstack project templates."""
     @hookimpl
     static def register_project_template -> list[dict[str, Any]] {
         templates: list[dict[str, Any]] = [];

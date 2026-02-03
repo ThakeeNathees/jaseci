@@ -804,6 +804,7 @@ class UniCFGNode(UniNode):
         self._nodes_out.append(next_false)
         next_false._nodes_in.append(self)
 
+
 class CFGPatchNode(UniCFGNode):
     """A placeholder node that need to be patched with a correct node."""
 
@@ -3218,6 +3219,7 @@ class CtrlStmt(CodeBlockStmt):
 
     def is_skip_stmt(self) -> bool:
         return self.ctrl.name == Tok.KW_SKIP
+
 
 class DeleteStmt(CodeBlockStmt):
     """DeleteStmt node type for Jac Ast."""

@@ -9,7 +9,6 @@ import from jaclang.cli.console { JacConsole as BaseJacConsole }
 
 """Jac Super Plugin for console enhancement."""
 class JacSuperPlugin {
-    """Get the Rich-enhanced console instance."""
     @hookimpl
     static def get_console -> BaseJacConsole {
         return JacSuperConsole();

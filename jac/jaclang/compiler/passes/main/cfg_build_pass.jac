@@ -3,7 +3,6 @@
 import jaclang.pycore.unitree as uni;
 import from jaclang.pycore.passes { UniPass }
 
-
 """Jac Symbol table build pass."""
 class CFGBuildPass(UniPass) {
     def before_pass(self: CFGBuildPass) -> None;

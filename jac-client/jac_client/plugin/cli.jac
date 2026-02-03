@@ -94,7 +94,6 @@ def setup(target: str) -> int {
 
 """Jac CLI extensions for client-side development."""
 class JacCmd {
-    """Create Jac CLI cmds."""
     @hookimpl
     static def create_cmd -> None {
         """Extend core commands to add --npm flag for npm package management.""";

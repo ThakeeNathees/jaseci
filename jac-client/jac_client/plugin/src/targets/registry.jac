@@ -18,10 +18,7 @@ class ClientTarget {
         required_dependencies: list[str] = [],
         output_dir: Optional[Path] = None;
 
-    """Setup the target (one-time initialization)."""
     def setup(self: ClientTarget, project_dir: Path) -> None abs;
-
-    """Build the target."""
     def build(
         self: ClientTarget,
         entry_file: Path,
@@ -29,10 +26,7 @@ class ClientTarget {
         platform: Optional[str] = None
     ) -> Path abs;
 
-    """Start dev server for the target."""
     def dev(self: ClientTarget, entry_file: Path, project_dir: Path) -> None abs;
-
-    """Start the target (production mode - build and run)."""
     def start(self: ClientTarget, entry_file: Path, project_dir: Path) -> None abs;
 }
 
@@ -45,25 +39,12 @@ obj TargetRegistry {
     has _targets: dict[str, ClientTarget] = {},
         _default_target: Optional[str] = None;
 
-    """Register a new build target."""
     def register(target: ClientTarget) -> None;
-
-    """Get a target by name."""
     def get(name: str) -> Optional[ClientTarget];
-
-    """Get the default target."""
     def get_default -> Optional[ClientTarget];
-
-    """Get all registered targets."""
     def get_all -> list[ClientTarget];
-
-    """Check if a target is registered."""
     def has(name: str) -> bool;
-
-    """Set the default target."""
     def set_default(name: str) -> None;
-
-    """Clear all registered targets (for testing)."""
     def clear -> None;
 }
 

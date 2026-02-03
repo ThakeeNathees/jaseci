@@ -40,33 +40,7 @@ Example:
     ```
 """
 obj SSOProvider {
-    """Initialize SSO authentication flow.
-
-    Args:
-        operation: The operation type ('login' or 'register')
-
-    Returns:
-        Response object (typically a redirect to the SSO provider's auth page)
-    """
     async def initiate_auth(operation: str) -> Response;
-
-    """Handle the OAuth callback from the SSO provider.
-
-    Args:
-        request: The FastAPI request object containing the OAuth callback data
-
-    Returns:
-        SSOUserInfo: Standardized user information from the provider
-
-    Raises:
-        Exception: If authentication fails or user info cannot be retrieved
-    """
     async def handle_callback(request: Request) -> SSOUserInfo;
-
-    """Get the platform identifier for this provider.
-
-    Returns:
-        str: Platform name (e.g., 'google', 'microsoft', 'github')
-    """
     def get_platform_name -> str;
 }

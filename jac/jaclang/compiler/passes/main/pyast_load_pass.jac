@@ -82,15 +82,11 @@ obj PyastBuildPass(Transform[(uni.PythonModuleAst, uni.Module)]) {
     def proc_continue(<>node: py_ast.Continue) -> uni.CtrlStmt;
     def proc_dict(<>node: py_ast.Dict) -> uni.DictVal;
     def proc_dict_comp(<>node: py_ast.DictComp) -> uni.DictCompr;
-    """Process python node."""
     def proc_ellipsis(<>node: py_ast.Constant) -> None { }
-
     def proc_except_handler(<>node: py_ast.ExceptHandler) -> uni.Except;
     def proc_expr(<>node: py_ast.Expr) -> uni.ExprStmt;
     def proc_formatted_value(<>node: py_ast.FormattedValue) -> uni.FormattedValue;
-    """Process python node."""
     def proc_function_type(<>node: py_ast.FunctionType) -> None { }
-
     def proc_generator_exp(<>node: py_ast.GeneratorExp) -> uni.GenCompr;
     def proc_global(<>node: py_ast.Global) -> uni.GlobalStmt;
     def proc_if_exp(<>node: py_ast.IfExp) -> uni.IfElseExpr;
@@ -160,18 +156,10 @@ obj PyastBuildPass(Transform[(uni.PythonModuleAst, uni.Module)]) {
     def proc_keyword(<>node: py_ast.keyword) -> uni.KWPair;
     def proc_match_case(<>node: py_ast.match_case) -> uni.MatchCase;
     def proc_withitem(<>node: py_ast.withitem) -> uni.ExprAsItem;
-    """Process python node."""
     def proc_param_spec(<>node: py_ast.ParamSpec) -> None { }
-
-    """Process python node."""
     def proc_type_alias(<>node: py_ast.TypeAlias) -> None { }
-
-    """Process python node."""
     def proc_type_var(<>node: py_ast.TypeVar) -> None { }
-
-    """Process python node."""
     def proc_type_var_tuple(<>node: py_ast.TypeVarTuple) -> None { }
-
     def convert_to_doc(string: uni.String) -> None;
     def aug_op_map(tok_dict: dict, op: uni.Token) -> str;
 }
