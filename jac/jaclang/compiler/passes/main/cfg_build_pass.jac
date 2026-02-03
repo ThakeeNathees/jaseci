@@ -1,41 +1,29 @@
-"""Control flow graph build pass for the Jac compiler.
+"""Control flow graph build pass for the Jac compiler."""
 
-This pass constructs a control flow graph (CFG) representation of the program by:
-1. Identifying basic blocks (sequences of statements with a single entry and exit point)
-2. Establishing control flow relationships between these blocks
-3. Tracking loop structures and maintaining proper nesting relationships
-4. Building connections between statements that affect control flow (conditionals, loops, etc.)
-
-The CFG provides a foundation for data flow analysis, optimization, and understanding program execution paths.
-The pass also includes functionality to coalesce basic blocks and generate visual representations of the CFG.
-"""
-import from collections.abc { Sequence }
 import jaclang.pycore.unitree as uni;
 import from jaclang.pycore.passes { UniPass }
+
+
 """Jac Symbol table build pass."""
-obj CFGBuildPass(UniPass) {
-    def init(ir_in: uni.Module, prog: Any, cancel_token: Any = None) -> None;
-    def before_pass -> None;
-    def push_loop_stack(loop_header: uni.UniCFGNode) -> None;
-    def pop_loop_stack(<>node: uni.UniCFGNode) -> None;
-    def get_parent_bb_stmt(<>node: uni.UniCFGNode) -> (uni.UniCFGNode | None);
-    def link_bbs(source: uni.UniCFGNode, target: uni.UniCFGNode) -> None;
-    def get_code_block_sequence(
-        <>node: (uni.UniNode | None)
-    ) -> (list[uni.UniCFGNode] | None);
-
-    def enter_node(<>node: uni.UniNode) -> None;
-    def exit_node(<>node: uni.UniNode) -> None;
-    def after_pass -> None;
+class CFGBuildPass(UniPass) {
+    def before_pass(self: CFGBuildPass) -> None;
+    # Simple statements
+    def exit_assignment(self: CFGBuildPass, node_: uni.UniNode) -> None;
+    def exit_expr_stmt(self: CFGBuildPass, node_: uni.UniNode) -> None;
+    # Compound statements
+    def exit_module_code(self: CFGBuildPass, node_: uni.ModuleCode) -> None;
+    def exit_if_stmt(self: CFGBuildPass, node_: uni.UniNode) -> None;
+    def exit_module(self: CFGBuildPass, node_: uni.UniNode) -> None;
+    # If we have a list of statement in a body block and need the reference to the first node
+    # to connect from the higher level node, this method will be the helper to get the first cfg node.
+    # the nodes parameter can also be None since the body of certain nodes (if-statement) is None instead
+    # of an emtpy list.
+    def _get_first_cfg_node_of_list_of_statements(
+        self: CFGBuildPass, nodes: list[uni.UniNode] | None
+    ) -> uni.UniCFGNode | None;
+    # This will connect a list of statement in a body block one and nother and return all the
+    # exit node from the entire sequence.
+    def _connect_list_of_stments(
+        self: CFGBuildPass, origin: uni.UniCFGNode, nodes: list[uni.UniNode]
+    ) -> list[uni.UniCFGNode];
 }
-
-"""Fetch basic blocks."""
-obj CoalesceBBPass(UniPass) {
-    def init(ir_in: uni.Module, prog: Any, cancel_token: Any = None) -> None;
-    def before_pass -> None;
-    def get_bb(<>node: uni.UniCFGNode) -> list[uni.UniCFGNode];
-    def enter_node(<>node: uni.UniNode) -> None;
-    def printgraph_cfg -> str;
-}
-
-def cfg_dot_from_file(file_name: str) -> str;

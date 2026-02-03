@@ -763,41 +763,70 @@ class WalkerStmtOnlyNode(UniNode):
 
 
 class UniCFGNode(UniNode):
-    """BasicBlockStmt node type for Jac Uniir."""
+    """BasicBlockStmt node type for Jac Uniir.
+    NOTE: the _nodes_out is a list of nodes (instead of labeled edge approach) where:
+    - For unconditional nodes, the _nodes_out is a list of length 1.
+    - For conditional nodes, the _nodes_out is a list of length >= 2.
+      - _nodes_out[0] is the true branch
+      - _nodes_out[1] is the false branch
+    - For match / switch statements, the _nodes_out is a list of length >= 2.
+    TODO: I'm not sure how to proceed with the exceptions at the moment but
+    this might change slightly in the near future.
+    """
 
     def __init__(self) -> None:
         """Initialize basic block statement node."""
-        self.bb_in: list[UniCFGNode] = []
-        self.bb_out: list[UniCFGNode] = []
+        self._nodes_in: list[UniCFGNode] = []
+        self._nodes_out: list[UniCFGNode] = []
 
-    def get_head(self) -> UniCFGNode:
-        """Get head by walking up the CFG iteratively."""
-        node = self
-        while (
-            node.bb_in
-            and len(node.bb_in) == 1
-            and not isinstance(node.bb_in[0], (InForStmt, IterForStmt, WhileStmt))
-            and node.bb_in[0].bb_out
-            and len(node.bb_in[0].bb_out) == 1
-        ):
-            node = node.bb_in[0]
-        return node
+        # If conditional, the nodes_out index 0, 1 are true and false branches respectively.
+        self._is_conditional = False
 
-    def get_tail(self) -> UniCFGNode:
-        """Get tail by walking down the CFG iteratively."""
-        node = self
-        while (
-            node.bb_out
-            and len(node.bb_out) == 1
-            and not isinstance(node.bb_out[0], (InForStmt, IterForStmt, WhileStmt))
-            and node.bb_out[0].bb_in
-            and len(node.bb_out[0].bb_in) == 1
-        ):
-            node = node.bb_out[0]
-        return node
+        # TODO: Figure out how to handle match / switch statement branch
+        # labeling.
+
+    @property
+    def is_conditional(self) -> bool:
+        return self._is_conditional
+
+    def set_next(self, next: UniCFGNode) -> None:
+        """Set next node."""
+        self._nodes_out.append(next)
+        next._nodes_in.append(self)
+
+    def set_next_conditional(
+        self, next_true: UniCFGNode, next_false: UniCFGNode
+    ) -> None:
+        """Set next nodes for conditional node."""
+        self._is_conditional = True
+        self._nodes_out.append(next_true)
+        next_true._nodes_in.append(self)
+        self._nodes_out.append(next_false)
+        next_false._nodes_in.append(self)
+
+class CFGPatchNode(UniCFGNode):
+    """A placeholder node that need to be patched with a correct node."""
+
+    def __init__(self, from_node: UniCFGNode) -> None:
+        UniCFGNode.__init__(self)
+        from_node.set_next(self)
+
+    def patch_with(self, node: UniCFGNode) -> None:
+        """This will replace this (self) node with the given node."""
+        assert len(self._nodes_in) == 1
+        #
+        # Before:
+        # [from_node] --> [patch_node]
+        #
+        # After:
+        # [from_node] --> [node]
+        #
+        from_node = self._nodes_in[0]
+        idx = from_node._nodes_out.index(self)
+        from_node._nodes_out[idx] = node
 
 
-class Expr(UniNode):
+class Expr(UniCFGNode):
     """Expression is a combination of values, variables operators and fuctions that are evaluated to produce a value.
 
     1. Literal Expressions.
@@ -843,6 +872,8 @@ class Expr(UniNode):
         # TODO: Refactor to eliminate this workaround
         self.attached_tokens: list[Token] | None = None
 
+        UniCFGNode.__init__(self)
+
     @property
     def expr_type(self) -> str:
         return self._sym_type
@@ -866,19 +897,20 @@ class AtomExpr(Expr, AstSymbolStubNode):
     """AtomExpr node type for Jac Ast."""
 
 
-class ElementStmt(AstDocNode):
+class ElementStmt(UniCFGNode):
     """ElementStmt node type for Jac Ast."""
 
 
-class ArchBlockStmt(UniNode):
+class ArchBlockStmt(UniCFGNode):
     """ArchBlockStmt node type for Jac Ast."""
 
 
-class EnumBlockStmt(UniNode):
+class EnumBlockStmt(UniCFGNode):
     """EnumBlockStmt node type for Jac Ast."""
 
     def __init__(self, is_enum_stmt: bool) -> None:
         self.is_enum_stmt = is_enum_stmt
+        UniCFGNode.__init__(self)
 
 
 class CodeBlockStmt(UniCFGNode):
@@ -1023,7 +1055,7 @@ class SubTag(UniNode, Generic[T]):
 
 # AST Mid Level Node Types
 # --------------------------
-class Module(AstDocNode, UniScopeNode):
+class Module(AstDocNode, UniScopeNode, UniCFGNode):
     """Whole Program node type for Jac Ast."""
 
     def __init__(
@@ -1054,6 +1086,7 @@ class Module(AstDocNode, UniScopeNode):
         UniNode.__init__(self, kid=kid)
         AstDocNode.__init__(self, doc=doc)
         UniScopeNode.__init__(self, name=self.name)
+        UniCFGNode.__init__(self)
 
     @property
     def annexable_by(self) -> str | None:
@@ -1160,6 +1193,7 @@ class GlobalVars(ContextAwareNode, ElementStmt, AstAccessNode):
         AstAccessNode.__init__(self, access=access)
         AstDocNode.__init__(self, doc=doc)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1234,6 +1268,7 @@ class Test(ContextAwareNode, AstSymbolNode, ElementStmt, UniScopeNode):
         AstDocNode.__init__(self, doc=doc)
         UniScopeNode.__init__(self, name=self.sym_name)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1277,6 +1312,7 @@ class ModuleCode(ContextAwareNode, ElementStmt, ArchBlockStmt, EnumBlockStmt):
         AstDocNode.__init__(self, doc=doc)
         EnumBlockStmt.__init__(self, is_enum_stmt=is_enum_stmt)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1318,6 +1354,7 @@ class ClientBlock(ElementStmt):
         self.body = list(body)
         self.implicit = implicit
         UniNode.__init__(self, kid=kid)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1359,6 +1396,7 @@ class ServerBlock(ElementStmt):
         self.body = list(body)
         self.implicit = implicit
         UniNode.__init__(self, kid=kid)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1400,6 +1438,7 @@ class NativeBlock(ElementStmt):
         self.body = list(body)
         self.implicit = implicit
         UniNode.__init__(self, kid=kid)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1444,6 +1483,7 @@ class PyInlineCode(ElementStmt, ArchBlockStmt, EnumBlockStmt, CodeBlockStmt):
         AstDocNode.__init__(self, doc=doc)
         CodeBlockStmt.__init__(self)
         EnumBlockStmt.__init__(self, is_enum_stmt=is_enum_stmt)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -1477,6 +1517,7 @@ class Import(ContextAwareNode, ElementStmt, CodeBlockStmt):
         AstDocNode.__init__(self, doc=doc)
         CodeBlockStmt.__init__(self)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     @property
     def is_py(self) -> bool:
@@ -1746,6 +1787,7 @@ class Archetype(
         UniScopeNode.__init__(self, name=self.sym_name)
         CodeBlockStmt.__init__(self)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def _get_impl_resolved_body(self) -> list:
         return (
@@ -1976,6 +2018,7 @@ class SemDef(ElementStmt, AstSymbolNode, UniScopeNode):
             sym_category=SymbolType.SEM,
         )
         UniScopeNode.__init__(self, name=self.sym_name)
+        UniCFGNode.__init__(self)
 
     def create_sem_name_node(self) -> Name:
         ret = Name(
@@ -2047,6 +2090,7 @@ class Enum(
         ArchSpec.__init__(self, decorators=decorators)
         UniScopeNode.__init__(self, name=self.sym_name)
         ContextAwareNode.__init__(self)
+        UniCFGNode.__init__(self)
 
     def normalize(self, deep: bool = False) -> bool:
         res = True
@@ -3166,6 +3210,14 @@ class CtrlStmt(CodeBlockStmt):
         self.set_kids(nodes=new_kid)
         return res
 
+    def is_break_stmt(self) -> bool:
+        return self.ctrl.name == Tok.KW_BREAK
+
+    def is_continue_stmt(self) -> bool:
+        return self.ctrl.name == Tok.KW_CONTINUE
+
+    def is_skip_stmt(self) -> bool:
+        return self.ctrl.name == Tok.KW_SKIP
 
 class DeleteStmt(CodeBlockStmt):
     """DeleteStmt node type for Jac Ast."""
