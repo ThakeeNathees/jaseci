@@ -46,7 +46,7 @@ impl check(
             prog.compile(file_path=file_path, type_check=not parse_only, no_cgen=True);
             new_errors = prog.errors_had[err_start:];
             new_warnings = prog.warnings_had[warn_start:];
-            # Filter out errors/warnings from ignored files
+            # Filter out errors/warnings from ignored files and .impl.jac files
             def filter_issues(issues: list) -> list {
                 return [
                     i
@@ -54,7 +54,10 @@ impl check(
                     if not (
                         i.loc
                         and i.loc.mod_path
-                        and any(p in i.loc.mod_path for p in ignore_list)
+                        and (
+                            i.loc.mod_path.endswith('.impl.jac')
+                            or any(p in i.loc.mod_path for p in ignore_list)
+                        )
                     )
                 ];
             }
