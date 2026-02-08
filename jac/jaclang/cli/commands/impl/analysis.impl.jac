@@ -27,9 +27,17 @@ impl check(
     if ignore
     else [];
     def ignore_check(file_path: str, ignore_patterns: list) -> bool {
-        path_parts = Path(file_path).parts;
+        path_obj = Path(file_path);
+        path_parts = path_obj.parts;
+        file_name = path_obj.name;
         for pattern in ignore_patterns {
-            if str(pattern).strip() in path_parts {
+            pattern_str = str(pattern).strip();
+            # Match exact filename (without directory)
+            if pattern_str == file_name {
+                return True;
+            }
+            # Match exact path component (directory or file)
+            if pattern_str in path_parts {
                 return True;
             }
         }
@@ -48,14 +56,37 @@ impl check(
             new_warnings = prog.warnings_had[warn_start:];
             # Filter out errors/warnings from ignored files
             def filter_issues(issues: list) -> list {
+                def should_ignore_issue(issue) -> bool {
+                    if not (issue.loc and issue.loc.mod_path) {
+                        return False;
+                    }
+                    mod_path_str = issue.loc.mod_path;
+                    # Only filter errors from files that actually exist on disk
+                    # This prevents phantom files (non-existent files) from being processed
+                    if not Path(mod_path_str).exists() {
+                        return False;
+                    }
+                    # Use exact pattern matching (same logic as ignore_check)
+                    path_obj = Path(mod_path_str);
+                    path_parts = path_obj.parts;
+                    file_name = path_obj.name;
+                    for pattern in ignore_list {
+                        pattern_str = str(pattern).strip();
+                        # Match exact filename (without directory)
+                        if pattern_str == file_name {
+                            return True;
+                        }
+                        # Match exact path component (directory or file)
+                        if pattern_str in path_parts {
+                            return True;
+                        }
+                    }
+                    return False;
+                }
                 return [
                     i
                     for i in issues
-                    if not (
-                        i.loc
-                        and i.loc.mod_path
-                        and any(p in i.loc.mod_path for p in ignore_list)
-                    )
+                    if not should_ignore_issue(i)
                 ];
             }
             filtered_errors = filter_issues(new_errors);
@@ -146,9 +177,17 @@ impl lint(paths: list, fix: bool = False, ignore: str = "") -> int {
     if ignore
     else [];
     def ignore_check(file_path: str, ignore_patterns: list) -> bool {
-        path_parts = Path(file_path).parts;
+        path_obj = Path(file_path);
+        path_parts = path_obj.parts;
+        file_name = path_obj.name;
         for pattern in ignore_patterns {
-            if str(pattern).strip() in path_parts {
+            pattern_str = str(pattern).strip();
+            # Match exact filename (without directory)
+            if pattern_str == file_name {
+                return True;
+            }
+            # Match exact path component (directory or file)
+            if pattern_str in path_parts {
                 return True;
             }
         }
