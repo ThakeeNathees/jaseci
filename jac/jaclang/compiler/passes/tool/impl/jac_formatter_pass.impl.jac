@@ -117,7 +117,13 @@ impl JacFormatPass.transform(ir_in: uni.Module) -> uni.Module {
     if ir_in.annexable_by is None {
         for impl_mod in ir_in.impl_mod {
             # Create a new formatter instance for each impl module
-            JacFormatPass(ir_in=impl_mod, prog=self.prog);
+            # This will automatically call transform() via __init__, which formats
+            # the impl module and sets impl_mod.gen.jac
+            formatter = JacFormatPass(ir_in=impl_mod, prog=self.prog);
+            # Ensure the formatted result is applied to the impl module
+            # The transform() method already sets impl_mod.gen.jac, but we
+            # explicitly use the result to ensure it's applied
+            impl_mod.gen.jac = formatter.ir_out.gen.jac;
         }
     }
     return ir_in;
