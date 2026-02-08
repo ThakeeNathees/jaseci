@@ -241,7 +241,7 @@ impl lint(paths: list, fix: bool = False, ignore: str = "") -> int {
                     unfixable_count += 1;
                 }
             }
-            # Only write if there were lint violations to fix
+            # Write main file if there were lint violations to fix
             if error_count > unfixable_count {
                 changed = formatted_code != original_code;
                 if changed {
@@ -249,14 +249,16 @@ impl lint(paths: list, fix: bool = False, ignore: str = "") -> int {
                         f.write(formatted_code);
                     }
                 }
-                for impl_mod in prog.mod.main.impl_mod {
-                    impl_path = impl_mod.loc.mod_path;
-                    impl_formatted = impl_mod.gen.jac;
-                    impl_original = impl_mod.source.code;
-                    if (impl_formatted != impl_original) {
-                        with open(impl_path, 'w') as f {
-                            f.write(impl_formatted);
-                        }
+            }
+            # Always write impl files if they were modified (regardless of error condition)
+            # This ensures impl files are updated even if main file has no fixable errors
+            for impl_mod in prog.mod.main.impl_mod {
+                impl_path = impl_mod.loc.mod_path;
+                impl_formatted = impl_mod.gen.jac;
+                impl_original = impl_mod.source.code;
+                if (impl_formatted != impl_original) {
+                    with open(impl_path, 'w') as f {
+                        f.write(impl_formatted);
                     }
                 }
             }
