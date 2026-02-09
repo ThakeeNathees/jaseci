@@ -38,6 +38,7 @@ obj JacAutoLintPass(UniPass) {
     def is_rule_enabled(rule: LintRule) -> bool;
     def _is_file_excluded(file_path: str) -> bool;
     def enter_module(node: uni.Module) -> None;
+    def exit_module(<>node: uni.Module) -> None;
     def can_convert_to_glob(assignment: uni.Assignment) -> bool;
     def is_module_level_construct(stmt: uni.UniNode) -> bool;
     def create_glob_from_assignment(assignment: uni.Assignment) -> uni.GlobalVars;

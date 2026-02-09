@@ -642,10 +642,6 @@ impl JacAutoLintPass.enter_module(node: uni.Module) -> None {
     # Store main module reference (first module, not impl modules)
     if self.main_module is None {
         self.main_module = module;
-        # Process impl modules after setting main_module
-        for impl_mod in module.impl_mod {
-            self.traverse(impl_mod);
-        }
     }
     # Transform module body in-place
     new_body: list[uni.UniNode] = [];
@@ -707,6 +703,24 @@ impl JacAutoLintPass.enter_module(node: uni.Module) -> None {
     }
     new_kid.extend(new_body);
     module.set_kids(nodes=new_kid if len(new_kid) else [uni.EmptyToken()]);
+}
+
+"""Process impl modules after main module is fully processed."""
+impl JacAutoLintPass.exit_module(<>node: uni.Module) -> None {
+    if not self.lint_enabled {
+        return;
+    }
+    # Only process impl modules for the main module (not annex modules themselves)
+    # This ensures the main module's body is fully processed before we try to
+    # fix signature mismatches in impl modules
+    # Use annexable_by check (same pattern as DocIRGenPass) to identify main module
+    if <>node.annexable_by is None and self.main_module is not None {
+        for impl_mod in <>node.impl_mod {
+            # Traverse the impl module to apply lint fixes
+            # This will call enter_impl_def for each ImplDef node in the impl module
+            self.traverse(impl_mod);
+        }
+    }
 }
 
 """Remove unnecessary angle bracket escaping from names that are not actual keywords.
