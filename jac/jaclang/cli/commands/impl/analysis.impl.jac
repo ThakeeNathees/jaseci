@@ -27,7 +27,7 @@ def should_ignore(file_path: Path | str, ignore_patterns: list[str]) -> bool {
     path_obj = Path(file_path) if isinstance(file_path, str) else file_path;
     path_parts = path_obj.parts;
     file_name = path_obj.name;
-    
+
     for pattern in ignore_patterns {
         pattern = pattern.strip();
         if not pattern {
@@ -35,12 +35,12 @@ def should_ignore(file_path: Path | str, ignore_patterns: list[str]) -> bool {
         }
         pattern_path = Path(pattern);
         pattern_parts = pattern_path.parts;
-        
+
         # Check for exact filename match (e.g., 'bar.jac' matches 'src/bar.jac')
         if pattern_path.name == file_name {
             return True;
         }
-        
+
         if len(pattern_parts) == 1 {
             # Simple pattern (no separators) - check if it matches any path component
             # This handles directory matches (e.g., 'test' matches 'test/foo.jac' or 'src/test/foo.jac')
@@ -100,7 +100,7 @@ def parse_ignore_patterns(ignore_str: str, warn_missing: bool = True) -> list[st
         for pattern in ignore_str.split(",")
         if pattern.strip()
     ];
-    
+
     if warn_missing {
         for pattern in patterns {
             pattern_path = Path(pattern);
@@ -114,7 +114,7 @@ def parse_ignore_patterns(ignore_str: str, warn_missing: bool = True) -> list[st
             }
         }
     }
-    
+
     return patterns;
 }
 
