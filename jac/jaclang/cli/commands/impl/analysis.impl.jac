@@ -6,6 +6,118 @@ Direct implementations - no delegation to cli.jac.
 import from pathlib { Path }
 import from jaclang.cli.console { console }
 
+"""Check if a file path should be ignored based on ignore patterns.
+
+Args:
+    file_path: The file path to check (can be Path or str)
+    ignore_patterns: List of ignore patterns to match against
+
+Returns:
+    True if the file should be ignored, False otherwise
+
+The function supports:
+- Exact filename matches (e.g., 'bar.jac' matches 'src/bar.jac')
+- Directory matches (e.g., 'test' matches 'test/foo.jac')
+- Uses pathlib.Path components to avoid substring matches (e.g., 'os' won't match 'cost.jac')
+"""
+def should_ignore(file_path: Path | str, ignore_patterns: list[str]) -> bool {
+    if not ignore_patterns {
+        return False;
+    }
+    path_obj = Path(file_path) if isinstance(file_path, str) else file_path;
+    path_parts = path_obj.parts;
+    file_name = path_obj.name;
+    
+    for pattern in ignore_patterns {
+        pattern = pattern.strip();
+        if not pattern {
+            continue;
+        }
+        pattern_path = Path(pattern);
+        pattern_parts = pattern_path.parts;
+        
+        # Check for exact filename match (e.g., 'bar.jac' matches 'src/bar.jac')
+        if pattern_path.name == file_name {
+            return True;
+        }
+        
+        if len(pattern_parts) == 1 {
+            # Simple pattern (no separators) - check if it matches any path component
+            # This handles directory matches (e.g., 'test' matches 'test/foo.jac' or 'src/test/foo.jac')
+            # Uses exact component matching to avoid substring issues (e.g., 'os' won't match 'cost.jac')
+            pattern_name = pattern_parts[0];
+            if pattern_name in path_parts {
+                return True;
+            }
+        } else {
+            # Pattern with separators - check if it matches a subpath
+            # e.g., 'test/foo' should match:
+            #   - 'test/foo.jac' (file where pattern matches directory + filename stem)
+            #   - 'test/foo/bar.jac' (directory)
+            #   - 'src/test/foo.jac' (nested)
+            if len(path_parts) >= len(pattern_parts) {
+                # Check if pattern matches any consecutive subpath
+                for i in range(len(path_parts) - len(pattern_parts) + 1) {
+                    # Check exact match of all pattern parts (e.g., 'test/foo' matches 'test/foo' directory)
+                    if i + len(pattern_parts) <= len(path_parts):
+                        subpath = path_parts[i:i+len(pattern_parts)];
+                        if subpath == pattern_parts {
+                            return True;
+                        }
+                    }
+                    # Check if pattern matches up to filename (e.g., 'test/foo' matches 'test/foo.jac')
+                    if i + len(pattern_parts) == len(path_parts) {
+                        # Check if first N-1 parts match and last part matches filename stem
+                        prefix_match = path_parts[i:i+len(pattern_parts)-1] == pattern_parts[:-1];
+                        if prefix_match {
+                            filename_stem = Path(path_parts[-1]).stem;
+                            if filename_stem == pattern_parts[-1]:
+                                return True;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return False;
+}
+
+"""Parse and validate ignore patterns from a comma-separated string.
+
+Args:
+    ignore_str: Comma-separated string of ignore patterns
+    warn_missing: If True, warn when patterns with separators don't exist
+
+Returns:
+    List of validated ignore patterns
+"""
+def parse_ignore_patterns(ignore_str: str, warn_missing: bool = True) -> list[str] {
+    if not ignore_str {
+        return [];
+    }
+    patterns = [
+        pattern.strip()
+        for pattern in ignore_str.split(",")
+        if pattern.strip()
+    ];
+    
+    if warn_missing {
+        for pattern in patterns {
+            pattern_path = Path(pattern);
+            # Only warn for patterns with path separators (likely file/directory paths)
+            if len(pattern_path.parts) > 1 {
+                if not pattern_path.exists() {
+                    console.warning(
+                        f"Ignore pattern '{pattern}' does not exist, but will still be used for matching."
+                    );
+                }
+            }
+        }
+    }
+    
+    return patterns;
+}
+
 """Run type checker for specified .jac files."""
 impl check(
     paths: list,
@@ -19,22 +131,7 @@ impl check(
     if isinstance(paths, str) {
         paths = [paths];
     }
-    ignore_list = [
-        pattern.strip()
-        for pattern in ignore.split(",")
-        if pattern.strip()
-    ]
-    if ignore
-    else [];
-    def ignore_check(file_path: str, ignore_patterns: list) -> bool {
-        path_parts = Path(file_path).parts;
-        for pattern in ignore_patterns {
-            if str(pattern).strip() in path_parts {
-                return True;
-            }
-        }
-        return False;
-    }
+    ignore_list = parse_ignore_patterns(ignore);
     def check_single_file(prog: JacProgram, file_path: str) -> tuple[bool, int, int] {
         path_obj = Path(file_path);
         if not path_obj.exists() {
@@ -54,7 +151,7 @@ impl check(
                     if not (
                         i.loc
                         and i.loc.mod_path
-                        and any(p in i.loc.mod_path for p in ignore_list)
+                        and should_ignore(i.loc.mod_path, ignore_list)
                     )
                 ];
             }
@@ -87,7 +184,7 @@ impl check(
     for path in paths {
         path_obj = Path(path);
         if path.endswith('.jac') {
-            if not ignore_check(path, ignore_list) {
+            if not should_ignore(path, ignore_list) {
                 total_files += 1;
                 (success, errs, warns) = check_single_file(prog, path);
                 total_errors += errs;
@@ -101,7 +198,7 @@ impl check(
                 if not jac_file.is_file() {
                     continue;
                 }
-                if not ignore_check(str(jac_file), ignore_list) {
+                if not should_ignore(jac_file, ignore_list) {
                     total_files += 1;
                     (success, errs, warns) = check_single_file(prog, str(jac_file));
                     total_errors += errs;
@@ -138,22 +235,7 @@ impl lint(paths: list, fix: bool = False, ignore: str = "") -> int {
     if isinstance(paths, str) {
         paths = [paths];
     }
-    ignore_list = [
-        pattern.strip()
-        for pattern in ignore.split(",")
-        if pattern.strip()
-    ]
-    if ignore
-    else [];
-    def ignore_check(file_path: str, ignore_patterns: list) -> bool {
-        path_parts = Path(file_path).parts;
-        for pattern in ignore_patterns {
-            if str(pattern).strip() in path_parts {
-                return True;
-            }
-        }
-        return False;
-    }
+    ignore_list = parse_ignore_patterns(ignore);
     def lint_report_file(file_path: str) -> tuple[bool, int] {
         # Lint-only: report errors without formatting or writing files
         path_obj = Path(file_path);
@@ -234,7 +316,7 @@ impl lint(paths: list, fix: bool = False, ignore: str = "") -> int {
     for path in paths {
         path_obj = Path(path);
         if path.endswith('.jac') {
-            if not ignore_check(path, ignore_list) {
+            if not should_ignore(path, ignore_list) {
                 total_files += 1;
                 if fix {
                     (success, errors, unfixable) = lint_fix_file(path);
@@ -252,7 +334,7 @@ impl lint(paths: list, fix: bool = False, ignore: str = "") -> int {
                 if not jac_file.is_file() {
                     continue;
                 }
-                if not ignore_check(str(jac_file), ignore_list) {
+                if not should_ignore(jac_file, ignore_list) {
                     total_files += 1;
                     if fix {
                         (success, errors, unfixable) = lint_fix_file(str(jac_file));
