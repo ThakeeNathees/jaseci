@@ -31,7 +31,7 @@ walker read_todos {
 }
 
 cl {
-    def:pub app -> any {
+    def:pub app -> Any {
         has todos: list = [],
             inputValue: str = "",
             filter: str = "all";
@@ -58,7 +58,7 @@ cl {
             console.log("toggleTodo", id);
             id spawn toggle_todo();
             todos = todos.map(
-                lambda todo: any  -> any { if todo._jac_id == id {
+                lambda todo: any  -> Any { if todo._jac_id == id {
                     updatedTodo = {
                         "_jac_id": todo._jac_id,
                         "text": todo.text,
@@ -257,7 +257,7 @@ cl {
                     if filteredTodos.length == 0
                     else (
                         filteredTodos.map(
-                            lambda todo: any  -> any { return
+                            lambda todo: any  -> Any { return
                                 <div
                                     key={todo._jac_id}
                                     style={{

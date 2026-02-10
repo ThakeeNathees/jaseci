@@ -373,7 +373,7 @@ cl {
     }
 
     # UI Components - Render a single tweet card
-    def TweetCard(tweet: ClientTweet) -> any {
+    def TweetCard(tweet: ClientTweet) -> Any {
         return
             <div
                 class="tweet-card"
@@ -409,7 +409,7 @@ cl {
     }
 
     # UI Components - Render a single tweet card
-    def TweetCard2(tweet: ClientTweet) -> any {
+    def TweetCard2(tweet: ClientTweet) -> Any {
         return
             <div class="tweet-actions" style={{"display": "flex", "gap": "15px"}}>
                 <button style={{"padding": "5px 10px"}}>
@@ -419,7 +419,7 @@ cl {
     }
 
     # UI Components - Render a single tweet card
-    def TweetCard3(tweet: ClientTweet) -> any {
+    def TweetCard3(tweet: ClientTweet) -> Any {
         return (
             <div class="tweet-actions" style={{"display": "flex", "gap": "15px"}}>
                 <button style={{"padding": "5px 10px"}}>
@@ -431,7 +431,7 @@ cl {
 
     # Handle liking a tweet - calls server walker directly
     # The compiler automatically transforms this to __jacCallFunction at compile time!
-    async def like_tweet_action(tweet_id: str) -> any {
+    async def like_tweet_action(tweet_id: str) -> Any {
         try {
             result = await like_tweet(tweet_id);
             print("Tweet liked:", result);

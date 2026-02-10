@@ -101,7 +101,7 @@ def clear_screen {
     print("\033[2J\033[H", end="");
 }
 
-def print_inventory_table {
+def print_inventory_table -> int {
     # Get terminal dimensions
     terminal_size = get_terminal_size();
     terminal_width = terminal_size.columns;

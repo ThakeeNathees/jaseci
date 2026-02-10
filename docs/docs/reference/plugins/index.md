@@ -57,7 +57,7 @@ Build React-style web applications in Jac:
 
 ```jac
 cl {
-    def:pub Counter() -> any {
+    def:pub Counter() -> Any {
         has count: int = 0;
 
         return <div>

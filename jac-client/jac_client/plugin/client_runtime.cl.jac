@@ -35,9 +35,9 @@ glob:
 
 def:pub useRouter -> dict;
 def:pub navigate(path: str) -> None;
-async def:pub __jacSpawn(left: str, right: str = "", fields: dict = {}) -> any;
-def:pub jacSpawn(left: str, right: str = "", fields: dict = {}) -> any;
-async def:pub __jacCallFunction(function_name: str, args: dict = {}) -> any;
+async def:pub __jacSpawn(left: str, right: str = "", fields: dict = {}) -> Any;
+def:pub jacSpawn(left: str, right: str = "", fields: dict = {}) -> Any;
+async def:pub __jacCallFunction(function_name: str, args: dict = {}) -> Any;
 async def:pub jacSignup(username: str, password: str) -> dict;
 async def:pub jacLogin(username: str, password: str) -> bool;
 def:pub jacLogout -> None;
@@ -46,6 +46,6 @@ def:pub __getApiBaseUrl -> str;
 def:pub __getLocalStorage(key: str) -> str;
 def:pub __setLocalStorage(key: str, value: str) -> None;
 def:pub __removeLocalStorage(key: str) -> None;
-def:pub AuthGuard(redirect: str = "/login") -> any;
-def:pub ErrorFallback(error: str, resetErrorBoundary: any) -> any;
-def:pub errorOverlay(filePath: str, errors: str) -> any;
+def:pub AuthGuard(redirect: str = "/login") -> Any;
+def:pub ErrorFallback(error: str, resetErrorBoundary: any) -> Any;
+def:pub errorOverlay(filePath: str, errors: str) -> Any;

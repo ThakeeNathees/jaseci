@@ -295,7 +295,7 @@ Jac will support generic type parameters using Python-style syntax (coming soon)
 # }
 
 # For now, use `any` as a placeholder:
-def first(items: list) -> any {
+def first(items: list) -> Any {
     return items[0];
 }
 
@@ -1655,7 +1655,7 @@ def fibonacci(limit: int) -> int {
 **yield from (delegation):**
 
 ```jac
-def flatten(nested: list) -> any {
+def flatten(nested: list) -> Any {
     for item in nested {
         if isinstance(item, list) {
             yield from flatten(item);  # Delegate to sub-generator

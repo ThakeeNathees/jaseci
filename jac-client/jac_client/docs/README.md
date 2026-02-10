@@ -150,7 +150,7 @@ Inside your `cl` block, define a function called `app()`:
 # The 'has' keyword automatically creates reactive state with useState under the hood.
 
 cl {
-    def app() -> any {
+    def app() -> Any {
         has count: int = 0;
         return <div>
             <h1>Hello, World!</h1>
@@ -179,15 +179,15 @@ cl {
 cl import from react { useEffect }
 
 cl {
-    def TodoList(todos: list) -> any {
+    def TodoList(todos: list) -> Any {
         return <ul>
-            {todos.map(lambda todo: any -> any {
+            {todos.map(lambda todo: any -> Any {
                 return <li key={todo._jac_id}>{todo.text}</li>;
             })}
         </ul>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         has todos: list = [];
 
         useEffect(lambda -> None {
@@ -216,7 +216,7 @@ Components in Jac are functions that return JSX (JavaScript XML). They're simila
 
 ```jac
 cl {
-    def MyComponent() -> any {
+    def MyComponent() -> Any {
         return <div>
             <h1>Hello from Jac!</h1>
         </div>;
@@ -229,7 +229,7 @@ cl {
 Components can accept parameters (props):
 
 ```jac
-def TodoItem(item: dict) -> any {
+def TodoItem(item: dict) -> Any {
     return <li key={item.id}>
         <span>{item.text}</span>
         <button onClick={lambda -> None { removeTodo(item.id); }}>
@@ -249,7 +249,7 @@ def TodoItem(item: dict) -> any {
 ### Example: TodoItem Component
 
 ```jac
-def TodoItem(item: dict) -> any {
+def TodoItem(item: dict) -> Any {
     return <li key={item.id} style={{
         "display": "flex",
         "gap": "12px",
@@ -294,7 +294,7 @@ Jac simplifies state management with the `has` keyword, which automatically uses
 cl import from react { useEffect }
 
 cl {
-    def Counter() -> any {
+    def Counter() -> Any {
         # The 'has' keyword creates reactive state (auto-injects useState)
         has count: int = 0;
 
@@ -338,7 +338,7 @@ Here's a complete example showing state management in a todo app:
 cl import from react { useEffect }
 
 cl {
-    def app() -> any {
+    def app() -> Any {
         # Reactive state using 'has' - no useState import needed!
         has todos: list = [];
         has input: str = "";
@@ -386,7 +386,7 @@ cl {
             <button onClick={addTodo}>Add</button>
 
             <div>
-                {filteredTodos.map(lambda todo: any -> any {
+                {filteredTodos.map(lambda todo: any -> Any {
                     return <div key={todo._jac_id}>
                         <span>{todo.text}</span>
                     </div>;
@@ -406,7 +406,7 @@ Event handling in Jac works just like React, but with Jac's lambda syntax.
 ### Basic Event Handlers
 
 ```jac
-def Button() -> any {
+def Button() -> Any {
     return <button onClick={lambda -> None {
         console.log("Button clicked!");
     }}>
@@ -418,7 +418,7 @@ def Button() -> any {
 ### Event Handlers with Event Object
 
 ```jac
-def InputField() -> any {
+def InputField() -> Any {
     # 'has' creates reactive state - useState is auto-injected
     has value: str = "";
 
@@ -436,7 +436,7 @@ def InputField() -> any {
 ### Form Submission
 
 ```jac
-def TodoForm() -> any {
+def TodoForm() -> Any {
     return <form onSubmit={onAddTodo}>
         <input id="todo-input" type="text" />
         <button type="submit">Add Todo</button>
@@ -469,7 +469,7 @@ async def onAddTodo(e: any) -> None {
 ### Advanced: Conditional Event Handlers
 
 ```jac
-def FilterButton(filterType: str, currentFilter: str, onFilterChange: any) -> any {
+def FilterButton(filterType: str, currentFilter: str, onFilterChange: any) -> Any {
     isActive = currentFilter == filterType;
 
     return <button
@@ -683,7 +683,7 @@ walker create_todo {
 # Note: No need to import useState - it's auto-injected when using 'has' keyword
 
 cl {
-    def app() -> any {
+    def app() -> Any {
         # Reactive state with 'has' - useState is auto-injected by the compiler
         has todos: list = [];
         has input: str = "";
@@ -709,7 +709,7 @@ cl {
             <button onClick={addTodo}>Add Todo</button>
 
             <div>
-                {todos.map(lambda todo: any -> any {
+                {todos.map(lambda todo: any -> Any {
                     return <div key={todo._jac_id}>
                         <span>{todo.text}</span>
                     </div>;

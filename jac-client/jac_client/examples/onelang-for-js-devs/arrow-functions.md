@@ -126,8 +126,8 @@ If you are coming from a React/JavaScript background, this guide will help you u
 | No return (void) | `lambda -> None { ... }`                   |
 | Returns int      | `lambda -> int { return 42; }`             |
 | Returns string   | `lambda -> str { return "hello"; }`        |
-| Returns any      | `lambda -> any { return value; }`          |
-| Returns JSX      | `lambda -> any { return <div>...</div>; }` |
+| Returns any      | `lambda -> Any { return value; }`          |
+| Returns JSX      | `lambda -> Any { return <div>...</div>; }` |
 
 ---
 
@@ -282,7 +282,7 @@ When you need to do multiple things or have logic inside an onClick handler:
 
     # useMemo
     memoizedValue = useMemo(
-        lambda -> any { return computeExpensive(a, b); },
+        lambda -> Any { return computeExpensive(a, b); },
         [a, b]
     );
     ```
@@ -305,15 +305,15 @@ When you need to do multiple things or have logic inside an onClick handler:
 
     ```jac
     # Define helper functions
-    def getName(user: dict, index: int) -> any {
+    def getName(user: dict, index: int) -> Any {
         return user["name"];
     }
 
-    def isAdult(user: dict, index: int) -> any {
+    def isAdult(user: dict, index: int) -> Any {
         return user["age"] >= 18;
     }
 
-    def renderItem(item: dict, index: int) -> any {
+    def renderItem(item: dict, index: int) -> Any {
         return <li key={item["id"]}>{item["name"]}</li>;
     }
 
@@ -327,7 +327,7 @@ When you need to do multiple things or have logic inside an onClick handler:
 
 ```jac
 # Inline lambda (used in some examples)
-{items.map(lambda item: any -> any {
+{items.map(lambda item: any -> Any {
     return <li key={item["id"]}>{item["name"]}</li>;
 })}
 ```
@@ -360,7 +360,7 @@ This is the pattern React developers use most often - rendering lists directly i
 
     ```jac
     <div>
-        {items.map(lambda item: any -> any {
+        {items.map(lambda item: any -> Any {
             isSelected = selected and selected["id"] == item["id"];
             return (
                 <button
@@ -395,9 +395,9 @@ This is the pattern React developers use most often - rendering lists directly i
 
     ```jac
     <div>
-        {items.filter(lambda item: any -> any {
+        {items.filter(lambda item: any -> Any {
             return item["inStock"];
-        }).map(lambda item: any -> any {
+        }).map(lambda item: any -> Any {
             return (
                 <span key={item["id"]}>In Stock: {item["name"]}</span>
             );
@@ -416,7 +416,7 @@ This is the pattern React developers use most often - rendering lists directly i
 === "JAC-Client"
 
     ```jac
-    {items.some(lambda item: any -> any { return not item["inStock"]; }) and (
+    {items.some(lambda item: any -> Any { return not item["inStock"]; }) and (
         <p>Some items are out of stock!</p>
     )}
     ```
@@ -432,7 +432,7 @@ This is the pattern React developers use most often - rendering lists directly i
 === "JAC-Client"
 
     ```jac
-    {items.every(lambda item: any -> any { return item["price"] < 10; }) and (
+    {items.every(lambda item: any -> Any { return item["price"] < 10; }) and (
         <p>All items under $10</p>
     )}
     ```
@@ -455,7 +455,7 @@ This is the pattern React developers use most often - rendering lists directly i
 
     ```jac
     <ol>
-        {items.map(lambda item: any, index: int -> any {
+        {items.map(lambda item: any, index: int -> Any {
             return (
                 <li key={item["id"]}>
                     #{index + 1}: {item["name"]}
@@ -504,7 +504,7 @@ This is the pattern React developers use most often - rendering lists directly i
 | `() => {}`                                 | `lambda -> None {}`                                                       |
 | `() => value`                              | `lambda: value`                                                           |
 | `(x) => x * 2`                             | `lambda x: int -> int { return x * 2; }`                                  |
-| `(e) => e.target.value`                    | `lambda e: any -> any { return e.target.value; }`                         |
+| `(e) => e.target.value`                    | `lambda e: any -> Any { return e.target.value; }`                         |
 | `(a, b) => a + b`                          | `lambda a: int, b: int -> int { return a + b; }`                          |
 | `onClick={() => fn(x)}`                    | `onClick={lambda: fn(x)}`                                                 |
 | **Complex onClick**                        |                                                                           |
@@ -514,10 +514,10 @@ This is the pattern React developers use most often - rendering lists directly i
 | `arr.map(x => x.name)`                     | Helper function + `arr.map(helperFn)`                                     |
 | `async () => {}`                           | `async def funcName() {}`                                                 |
 | **Inline JSX map**                         |                                                                           |
-| `{items.map(x => <li>{x}</li>)}`           | `{items.map(lambda x: any -> any { return <li>{x}</li>; })}`              |
-| `{items.filter(x => x.active).map(...)}`   | `{items.filter(lambda x: any -> any { return x["active"]; }).map(...)}`   |
-| `{arr.some(x => x.done) && <p>...</p>}`    | `{arr.some(lambda x: any -> any { return x["done"]; }) and (<p>...</p>)}` |
-| `{arr.every(x => x.ok) && <p>...</p>}`     | `{arr.every(lambda x: any -> any { return x["ok"]; }) and (<p>...</p>)}`  |
+| `{items.map(x => <li>{x}</li>)}`           | `{items.map(lambda x: any -> Any { return <li>{x}</li>; })}`              |
+| `{items.filter(x => x.active).map(...)}`   | `{items.filter(lambda x: any -> Any { return x["active"]; }).map(...)}`   |
+| `{arr.some(x => x.done) && <p>...</p>}`    | `{arr.some(lambda x: any -> Any { return x["done"]; }) and (<p>...</p>)}` |
+| `{arr.every(x => x.ok) && <p>...</p>}`     | `{arr.every(lambda x: any -> Any { return x["ok"]; }) and (<p>...</p>)}`  |
 
 ---
 
@@ -534,7 +534,7 @@ This is the pattern React developers use most often - rendering lists directly i
 
 3. **Array Methods**: Use helper functions or inline lambdas with full type annotations
 
-   - `.map()`, `.filter()`, etc. need `(item: any, index: int) -> any` signature
+   - `.map()`, `.filter()`, etc. need `(item: any, index: int) -> Any` signature
 
 4. **Async**: Use `async def funcName()` instead of `async () =>`
 

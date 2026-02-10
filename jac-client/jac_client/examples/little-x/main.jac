@@ -223,7 +223,7 @@ cl obj ClientProfile {
 }
 
 # UI Components - Render a single tweet card
-cl def TweetCard(tweet: ClientTweet) -> any {
+cl def TweetCard(tweet: ClientTweet) -> Any {
     return
         <div
             class="tweet-card"
@@ -261,7 +261,7 @@ cl def TweetCard(tweet: ClientTweet) -> any {
 # The compiler automatically transforms this to __jacCallFunction at compile time!
 cl async def like_tweet_action(
     tweet_id: str
-) -> any {
+) -> Any {
     try {
         result = await like_tweet(tweet_id);
         print("Tweet liked:", result);
@@ -273,7 +273,7 @@ cl async def like_tweet_action(
 }
 
 # Render the main feed view
-cl def FeedView(tweets: list) -> any {
+cl def FeedView(tweets: list) -> Any {
     return
         <div
             class="feed-container"
@@ -298,7 +298,7 @@ cl def FeedView(tweets: list) -> any {
 }
 
 # Render login form
-cl def LoginForm -> any {
+cl def LoginForm -> Any {
     suggestions = ['good luck', 'have fun', 'enjoy the ride'];
     randomSuggestion = _.sample(suggestions);
     result = "Good luck with your journey!";
@@ -386,7 +386,7 @@ cl async def handle_login(event: any) -> None {
 }
 
 # Render signup form
-cl def SignupForm -> any {
+cl def SignupForm -> Any {
     return
         <div
             class="signup-container"
@@ -509,26 +509,26 @@ cl def logout_action -> None {
 }
 
 # Main App component with declarative router
-cl def:pub App -> any {
+cl def:pub App -> Any {
     # Create routes array manually (workaround for JS compiler bug with named args)
     login_route = {
         "path": "/login",
-        "component": lambda -> any { return LoginForm(); },
+        "component": lambda -> Any { return LoginForm(); },
         "guard": None
     };
     signup_route = {
         "path": "/signup",
-        "component": lambda -> any { return SignupForm(); },
+        "component": lambda -> Any { return SignupForm(); },
         "guard": None
     };
     home_route = {
         "path": "/home",
-        "component": lambda -> any { return HomeView(); },
+        "component": lambda -> Any { return HomeView(); },
         "guard": jacIsLoggedIn
     };
     profile_route = {
         "path": "/profile",
-        "component": lambda -> any { return ProfileView(); },
+        "component": lambda -> Any { return ProfileView(); },
         "guard": jacIsLoggedIn
     };
 
@@ -551,7 +551,7 @@ cl def:pub App -> any {
 }
 
 # Helper to build navigation bar
-cl def build_nav_bar(route: str) -> any {
+cl def build_nav_bar(route: str) -> Any {
     if not jacIsLoggedIn() or route == "/login" or route == "/signup" {
         return None;
     }
@@ -614,7 +614,7 @@ cl def build_nav_bar(route: str) -> any {
 }
 
 # Home view - simplified for testing reactive routing
-cl def HomeView -> any {
+cl def HomeView -> Any {
     if not jacIsLoggedIn() {
         navigate("/login");
         return
@@ -642,7 +642,7 @@ cl def HomeView -> any {
 }
 
 # Profile view
-cl def ProfileView -> any {
+cl def ProfileView -> Any {
     if not jacIsLoggedIn() {
         navigate("/login");
         return
@@ -676,6 +676,6 @@ cl def ProfileView -> any {
 }
 
 # Main SPA entry point - simplified with reactive routing
-cl def:pub jac_app -> any {
+cl def:pub jac_app -> Any {
     return App();
 }

@@ -166,7 +166,7 @@ def:pub add(a: int, b: int) -> int {
 cl import from react { useEffect }
 
 cl {
-    def:pub app() -> any {
+    def:pub app() -> Any {
         has count: int = 0;
 
         return <div>

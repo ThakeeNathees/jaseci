@@ -7,7 +7,7 @@ cl import from ..constants.categories { CATEGORIES, CATEGORY_LABELS }
 cl import from ..constants.clients { CLIENTS }
 
 cl {
-    def:pub TransactionForm -> any {
+    def:pub TransactionForm -> Any {
         [description, setDescription] = useState("");
         [amount, setAmount] = useState("");
         [category, setCategory] = useState("OTHER");
@@ -143,7 +143,7 @@ cl {
                             className="form-select"
                         >
                             {availableCategories.map(
-                                lambda cat: str  -> any { return
+                                lambda cat: str  -> Any { return
                                     <option key={cat} value={cat}>
                                         {CATEGORY_LABELS[cat]}
                                     </option>; }
@@ -167,7 +167,7 @@ cl {
                                 Select Client (Optional)
                             </option>
                             {CLIENTS.map(
-                                lambda client: str  -> any { return
+                                lambda client: str  -> Any { return
                                     <option key={client} value={client}>
                                         {client}
                                     </option>; }

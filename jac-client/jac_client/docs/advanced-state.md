@@ -35,7 +35,7 @@ Jac uses React hooks for all state management. The most common hooks are:
 cl import from react { useState, useEffect }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
         [loading, setLoading] = useState(False);
@@ -53,7 +53,7 @@ cl {
         return <div>{/* your UI */}</div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -71,7 +71,7 @@ Instead of putting everything in one state object, split state into multiple var
 cl import from react { useState, useEffect }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         # Separate state variables for different concerns
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
@@ -98,13 +98,13 @@ cl {
         if error { return <div>Error: {error}</div>; }
 
         return <div>
-            {todos.map(lambda todo: any -> any {
+            {todos.map(lambda todo: any -> Any {
                 return <TodoItem key={todo._jac_id} todo={todo} />;
             })}
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -125,7 +125,7 @@ Sometimes an object makes sense for closely related data:
 cl import from react { useState }
 
 cl {
-    def UserProfile() -> any {
+    def UserProfile() -> Any {
         # Good: Related data in one object
         [user, setUser] = useState({
             "name": "",
@@ -158,7 +158,7 @@ Organize state by feature or domain using multiple `useState` calls:
 cl import from react { useState, useEffect }
 
 cl {
-    def App() -> any {
+    def App() -> Any {
         # User state
         [user, setUser] = useState(None);
         [isLoggedIn, setIsLoggedIn] = useState(False);
@@ -191,7 +191,7 @@ cl {
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <App />;
     }
 }
@@ -208,7 +208,7 @@ cl {
     # Create context for global state
     AppContext = createContext(None);
 
-    def App() -> any {
+    def App() -> Any {
         # Global state
         [currentUser, setCurrentUser] = useState(None);
         [theme, setTheme] = useState("light");
@@ -227,7 +227,7 @@ cl {
     }
 
     # Component with local state
-    def TodoForm() -> any {
+    def TodoForm() -> Any {
         # Access global context
         app = useContext(AppContext);
 
@@ -252,7 +252,7 @@ cl {
         </form>;
     }
 
-    def TodoList() -> any {
+    def TodoList() -> Any {
         # Local list state
         [sortBy, setSortBy] = useState("date");
         [order, setOrder] = useState("asc");
@@ -265,7 +265,7 @@ cl {
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <App />;
     }
 }
@@ -340,7 +340,7 @@ cl {
 
         async def toggleTodo(id: str) -> None {
             id spawn toggle_todo();
-            setTodos(todos.map(lambda todo: any -> any {
+            setTodos(todos.map(lambda todo: any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -362,7 +362,7 @@ cl {
     }
 
     # Using custom hooks in components
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         userData = useUser();
         todoData = useTodos();
 
@@ -373,13 +373,13 @@ cl {
         return <div>
             <h1>Welcome, {userData.user.name if userData.user else "Guest"}</h1>
             <button onClick={userData.logout}>Logout</button>
-            {todoData.todos.map(lambda todo: any -> any {
+            {todoData.todos.map(lambda todo: any -> Any {
                 return <TodoItem key={todo._jac_id} todo={todo} />;
             })}
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -397,7 +397,7 @@ Use `useMemo` to memoize expensive computations:
 cl import from react { useState, useMemo }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
@@ -428,13 +428,13 @@ cl {
             <div>
                 Total: {stats.total}, Active: {stats.active}, Completed: {stats.completed}
             </div>
-            {filteredTodos.map(lambda item: any -> any {
+            {filteredTodos.map(lambda item: any -> Any {
                 return <TodoItem key={item._jac_id} todo={item} />;
             })}
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -448,7 +448,7 @@ For simple computations, you don't need `useMemo`:
 cl import from react { useState }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
@@ -467,13 +467,13 @@ cl {
 
         return <div>
             <div>{activeCount} active todos</div>
-            {filtered.map(lambda item: any -> any {
+            {filtered.map(lambda item: any -> Any {
                 return <TodoItem key={item._jac_id} todo={item} />;
             })}
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -487,7 +487,7 @@ Use `useEffect` to sync derived state or perform side effects:
 cl import from react { useState, useEffect }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         [todos, setTodos] = useState([]);
         [stats, setStats] = useState({
             "total": 0,
@@ -513,13 +513,13 @@ cl {
 
         return <div>
             <StatsDisplay stats={stats} />
-            {todos.map(lambda item: any -> any {
+            {todos.map(lambda item: any -> Any {
                 return <TodoItem key={item._jac_id} todo={item} />;
             })}
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -546,7 +546,7 @@ cl {
         } elif type == "TOGGLE_TODO" {
             return {
                 ...state,
-                "todos": state.todos.map(lambda todo: any -> any {
+                "todos": state.todos.map(lambda todo: any -> Any {
                     if todo._jac_id == action.payload {
                         return {...todo, "done": not todo.done};
                     }
@@ -569,7 +569,7 @@ cl {
         return state;
     }
 
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         # Initial state
         initialState = {
             "todos": [],
@@ -603,7 +603,7 @@ cl {
 
         return <div>
             {state.loading and <div>Loading...</div>}
-            {state.todos.map(lambda todo: any -> any {
+            {state.todos.map(lambda todo: any -> Any {
                 return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
@@ -613,7 +613,7 @@ cl {
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -631,7 +631,7 @@ cl {
     TodoContext = createContext(None);
 
     # Provider component
-    def TodoProvider(props: dict) -> any {
+    def TodoProvider(props: dict) -> Any {
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
@@ -643,7 +643,7 @@ cl {
 
         async def toggleTodo(id: str) -> None {
             id spawn toggle_todo();
-            setTodos(todos.map(lambda todo: any -> any {
+            setTodos(todos.map(lambda todo: any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -670,7 +670,7 @@ cl {
     }
 
     # Components using the context
-    def TodoList() -> any {
+    def TodoList() -> Any {
         ctx = useTodoContext();
 
         filteredTodos = ctx.todos.filter(lambda todo: any -> bool {
@@ -680,7 +680,7 @@ cl {
         });
 
         return <div>
-            {filteredTodos.map(lambda todo: any -> any {
+            {filteredTodos.map(lambda todo: any -> Any {
                 return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
@@ -690,7 +690,7 @@ cl {
         </div>;
     }
 
-    def FilterButtons() -> any {
+    def FilterButtons() -> Any {
         ctx = useTodoContext();
 
         return <div>
@@ -701,14 +701,14 @@ cl {
     }
 
     # App with provider
-    def MainApp() -> any {
+    def MainApp() -> Any {
         return <TodoProvider>
             <FilterButtons />
             <TodoList />
         </TodoProvider>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <MainApp />;
     }
 }
@@ -722,12 +722,12 @@ Prevent unnecessary re-renders by memoizing callbacks:
 cl import from react { useState, useCallback }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         [todos, setTodos] = useState([]);
 
         # Memoized callback - only recreated if todos changes
         handleToggle = useCallback(lambda id: str -> None {
-            setTodos(todos.map(lambda todo: any -> any {
+            setTodos(todos.map(lambda todo: any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -736,7 +736,7 @@ cl {
         }, [todos]);
 
         return <div>
-            {todos.map(lambda todo: any -> any {
+            {todos.map(lambda todo: any -> Any {
                 return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
@@ -746,7 +746,7 @@ cl {
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -764,7 +764,7 @@ Encapsulate state logic in reusable action functions:
 cl import from react { useState }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
@@ -778,7 +778,7 @@ cl {
 
         async def toggleTodo(id: str) -> None {
             id spawn toggle_todo();
-            setTodos(todos.map(lambda todo: any -> any {
+            setTodos(todos.map(lambda todo: any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -803,7 +803,7 @@ cl {
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -817,7 +817,7 @@ Create memoized selector functions for derived data:
 cl import from react { useState, useMemo }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
@@ -842,13 +842,13 @@ cl {
         return <div>
             <div>Active: {activeTodos.length}</div>
             <div>Completed: {completedTodos.length}</div>
-            {filteredTodos.map(lambda todo: any -> any {
+            {filteredTodos.map(lambda todo: any -> Any {
                 return <TodoItem key={todo._jac_id} todo={todo} />;
             })}
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -866,7 +866,7 @@ cl {
     AppContext = createContext(None);
 
     # Main app with combined hooks
-    def App() -> any {
+    def App() -> Any {
         # User state with useState
         [user, setUser] = useState(None);
 
@@ -877,7 +877,7 @@ cl {
             } elif action.type == "TOGGLE" {
                 return {
                     ...state,
-                    "todos": state.todos.map(lambda t: any -> any {
+                    "todos": state.todos.map(lambda t: any -> Any {
                         if t._jac_id == action.payload {
                             return {...t, "done": not t.done};
                         }
@@ -915,7 +915,7 @@ cl {
         </AppContext.Provider>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <App />;
     }
 }
@@ -931,7 +931,7 @@ Here's a complete example combining multiple React hooks and patterns:
 cl import from react { useState, useEffect, useMemo, useCallback }
 
 cl {
-    def TodoApp() -> any {
+    def TodoApp() -> Any {
         # State management
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
@@ -991,7 +991,7 @@ cl {
         toggleTodo = useCallback(lambda id: str -> None {
             async def _toggleTodo() -> None {
                 id spawn toggle_todo();
-                setTodos(todos.map(lambda t: any -> any {
+                setTodos(todos.map(lambda t: any -> Any {
                     if t._jac_id == id {
                         return {...t, "done": not t.done};
                     }
@@ -1050,7 +1050,7 @@ cl {
 
                 # Todo list
                 <div>
-                    {filteredTodos.map(lambda todo: any -> any {
+                    {filteredTodos.map(lambda todo: any -> Any {
                         return <div key={todo._jac_id} style={{"marginBottom": "10px"}}>
                             <input
                                 type="checkbox"
@@ -1079,7 +1079,7 @@ cl {
         </div>;
     }
 
-    def app() -> any {
+    def app() -> Any {
         return <TodoApp />;
     }
 }
@@ -1095,7 +1095,7 @@ cl {
 cl import from react { useState }
 
 #  Good: Separate state variables
-def App() -> any {
+def App() -> Any {
     [user, setUser] = useState(None);
     [todos, setTodos] = useState([]);
     [sidebarOpen, setSidebarOpen] = useState(False);
@@ -1103,7 +1103,7 @@ def App() -> any {
 }
 
 #  Avoid: One giant state object for unrelated data
-def App() -> any {
+def App() -> Any {
     [appState, setAppState] = useState({
         "user": None,
         "todos": [],
@@ -1119,7 +1119,7 @@ def App() -> any {
 cl import from react { useState, useMemo }
 
 #  Good: Memoize expensive calculations
-def TodoApp() -> any {
+def TodoApp() -> Any {
     [todos, setTodos] = useState([]);
 
     activeTodos = useMemo(lambda -> list {
@@ -1128,7 +1128,7 @@ def TodoApp() -> any {
 }
 
 #  Avoid: Computing on every render
-def TodoApp() -> any {
+def TodoApp() -> Any {
     [todos, setTodos] = useState([]);
 
     # This runs on every render, even if todos hasn't changed
@@ -1142,13 +1142,13 @@ def TodoApp() -> any {
 cl import from react { useState }
 
 #  Good: Calculate derived values
-def TodoApp() -> any {
+def TodoApp() -> Any {
     [todos, setTodos] = useState([]);
     activeCount = todos.filter(lambda t: any -> bool { return not t.done; }).length;
 }
 
 #  Avoid: Storing derived values in state
-def TodoApp() -> any {
+def TodoApp() -> Any {
     [todos, setTodos] = useState([]);
     [activeCount, setActiveCount] = useState(0);  # Redundant!
 }
@@ -1160,7 +1160,7 @@ def TodoApp() -> any {
 cl import from react { useReducer }
 
 #  Good: useReducer for complex interdependent state
-def TodoApp() -> any {
+def TodoApp() -> Any {
     def reducer(state: dict, action: dict) -> dict {
         if action.type == "ADD" {
             return {...state, "todos": state.todos.concat([action.payload]), "count": state.count + 1};
@@ -1172,7 +1172,7 @@ def TodoApp() -> any {
 }
 
 #  Avoid: Multiple useState for interdependent state
-def TodoApp() -> any {
+def TodoApp() -> Any {
     [todos, setTodos] = useState([]);
     [count, setCount] = useState(0);
     # Risk of inconsistency - need to update both together
@@ -1185,7 +1185,7 @@ def TodoApp() -> any {
 cl import from react { useState, useEffect }
 
 #  Good: Comprehensive state management
-def TodoApp() -> any {
+def TodoApp() -> Any {
     [todos, setTodos] = useState([]);
     [loading, setLoading] = useState(False);
     [error, setError] = useState(None);
@@ -1218,11 +1218,11 @@ def TodoApp() -> any {
 cl import from react { useState, useCallback }
 
 #  Good: Memoized callbacks prevent unnecessary re-renders
-def TodoApp() -> any {
+def TodoApp() -> Any {
     [todos, setTodos] = useState([]);
 
     handleToggle = useCallback(lambda id: str -> None {
-        setTodos(todos.map(lambda t: any -> any {
+        setTodos(todos.map(lambda t: any -> Any {
             if t._jac_id == id { return {...t, "done": not t.done}; }
             return t;
         }));
@@ -1240,14 +1240,14 @@ cl import from react { useState, useContext, createContext }
 #  Good: Context avoids prop drilling
 ThemeContext = createContext("light");
 
-def App() -> any {
+def App() -> Any {
     [theme, setTheme] = useState("light");
     return <ThemeContext.Provider value={theme}>
         <DeeplyNestedComponent />
     </ThemeContext.Provider>;
 }
 
-def DeeplyNestedComponent() -> any {
+def DeeplyNestedComponent() -> Any {
     theme = useContext(ThemeContext);
     return <div style={{"background": theme}}></div>;
 }

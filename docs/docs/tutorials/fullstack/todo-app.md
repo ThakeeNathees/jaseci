@@ -266,7 +266,7 @@ sv {
 cl {
     import from frontend { app as ClientApp }
 
-    def:pub app -> any {
+    def:pub app -> Any {
         return <ClientApp />;
     }
 }
@@ -289,7 +289,7 @@ import from "@jac-client/utils" { jacSignup, jacLogin, jacLogout, jacIsLoggedIn 
 # Import server-side walkers for client use
 sv import from endpoints { AddTodo, ListTodos, ToggleTodo, DeleteTodo }
 
-def:pub app -> any {
+def:pub app -> Any {
     # Component state
     has isLoggedIn: bool = False,
         todos: list = [],
@@ -338,7 +338,7 @@ def:pub app -> any {
         root spawn ToggleTodo(todo_id=todoId);
 
         # Update local state
-        todos = todos.map(lambda t: any -> any {
+        todos = todos.map(lambda t: any -> Any {
             if t.id == todoId {
                 return {
                     "id": t.id,
@@ -380,7 +380,7 @@ def:pub app -> any {
                 <p>Loading...</p>
             ) if todosLoading else (
                 <ul>
-                    {todos.map(lambda todo: any -> any {
+                    {todos.map(lambda todo: any -> Any {
                         return
                             <li key={todo.id} style={{"display": "flex", "alignItems": "center", "gap": "0.5rem"}}>
                                 <input
@@ -511,7 +511,7 @@ Add to `frontend.cl.jac`:
 ```jac
 sv import from endpoints { AddTodo, ListTodos, ToggleTodo, DeleteTodo, MealToIngredients }
 
-def:pub app -> any {
+def:pub app -> Any {
     has mealDescription: str = "",
         mealLoading: bool = False;
     # ... other state ...

@@ -119,7 +119,7 @@ walker:pub delete_task {
 cl {
     import from jac_client { useWalker }
 
-    def:pub TaskList() -> any {
+    def:pub TaskList() -> Any {
         # Fetch data from walker
         (data, loading, error, refetch) = useWalker("get_tasks");
 
@@ -132,7 +132,7 @@ cl {
         }
 
         return <ul>
-            {data.map(lambda task: any -> any {
+            {data.map(lambda task: any -> Any {
                 return <li key={task["id"]}>{task["title"]}</li>;
             })}
         </ul>;
@@ -157,7 +157,7 @@ cl {
 cl {
     import from jac_client { useWalker }
 
-    def:pub FilteredTasks() -> any {
+    def:pub FilteredTasks() -> Any {
         has show_completed: bool = False;
 
         # Pass parameters to walker
@@ -181,7 +181,7 @@ cl {
             {loading and <p>Loading...</p>}
 
             <ul>
-                {data and data.map(lambda task: any -> any {
+                {data and data.map(lambda task: any -> Any {
                     return <li key={task["id"]}>{task["title"]}</li>;
                 })}
             </ul>
@@ -200,7 +200,7 @@ For create, update, delete operations, use `callWalker`:
 cl {
     import from jac_client { useWalker, callWalker }
 
-    def:pub TaskManager() -> any {
+    def:pub TaskManager() -> Any {
         has new_title: str = "";
 
         # Fetch tasks
@@ -244,7 +244,7 @@ cl {
             {loading and <p>Loading...</p>}
 
             <ul className="task-list">
-                {tasks and tasks.map(lambda task: any -> any {
+                {tasks and tasks.map(lambda task: any -> Any {
                     return <li key={task["id"]}>
                         <input
                             type="checkbox"
@@ -275,7 +275,7 @@ cl {
 cl {
     import from jac_client { callWalker }
 
-    def:pub SafeSubmit() -> any {
+    def:pub SafeSubmit() -> Any {
         has error_msg: str = "";
         has submitting: bool = False;
 
@@ -312,7 +312,7 @@ cl {
 
 ```jac
 cl {
-    def:pub DataView() -> any {
+    def:pub DataView() -> Any {
         has data: any = None;
         has loading: bool = True;
         has error: str = "";
@@ -352,7 +352,7 @@ cl {
     import from react { useEffect }
     import from jac_client { useWalker }
 
-    def:pub LiveData() -> any {
+    def:pub LiveData() -> Any {
         (data, loading, error, refetch) = useWalker("get_live_data");
 
         # Poll every 5 seconds
@@ -375,7 +375,7 @@ cl {
     import from react { useEffect }
     import from jac_client { useWalkerStream }
 
-    def:pub StreamingData() -> any {
+    def:pub StreamingData() -> Any {
         # Subscribe to walker updates
         (data, connected) = useWalkerStream("watch_updates");
 
@@ -384,7 +384,7 @@ cl {
                 {("Connected" if connected else "Disconnected")}
             </span>
             <ul>
-                {data.map(lambda item: any -> any {
+                {data.map(lambda item: any -> Any {
                     return <li key={item["id"]}>{item["message"]}</li>;
                 })}
             </ul>
@@ -442,7 +442,7 @@ walker:pub toggle_task {
 cl {
     import from jac_client { useWalker, callWalker }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         has input_text: str = "";
         (tasks, loading, _, refetch) = useWalker("get_tasks");
 
@@ -477,7 +477,7 @@ cl {
                 <p>Loading...</p>
             ) if loading else (
                 <ul>
-                    {tasks.map(lambda t: any -> any {
+                    {tasks.map(lambda t: any -> Any {
                         return <li
                             key={t.id}
                             className={t.completed and "done"}

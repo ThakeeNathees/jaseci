@@ -67,7 +67,7 @@ walker toggle_todo {
 # Frontend Components
 cl {
     # Navigation
-    def Navigation()  -> any {
+    def Navigation()  -> Any {
         isLoggedIn = jacIsLoggedIn();
         navigate = useNavigate();
 
@@ -152,7 +152,7 @@ cl {
     }
 
     # Login Page
-    def LoginPage()  -> any {
+    def LoginPage()  -> Any {
         [username, setUsername] = useState("");
         [password, setPassword] = useState("");
         [error, setError] = useState("");
@@ -278,7 +278,7 @@ cl {
     }
 
     # Signup Page
-    def SignupPage()  -> any {
+    def SignupPage()  -> Any {
         [username, setUsername] = useState("");
         [password, setPassword] = useState("");
         [error, setError] = useState("");
@@ -404,7 +404,7 @@ cl {
     }
 
     # Todos Page (Protected)
-    def TodosPage()  -> any {
+    def TodosPage()  -> Any {
         # Check if user is logged in, redirect if not
         if not jacIsLoggedIn() {
             return <Navigate to="/login" />;
@@ -438,7 +438,7 @@ cl {
             id spawn toggle_todo();
             setTodos(
                 todos.map(
-                    lambda  todo: any  -> any{
+                    lambda  todo: any  -> Any{
                         if todo._jac_id == id {
                             return {
                                 "_jac_id": todo._jac_id,
@@ -581,7 +581,7 @@ cl {
                 {(<div style={{"padding": "20px", "textAlign": "center", "color": "#999"}}>
                     No todos yet. Add one above!
                 </div>) if filteredTodos.length == 0 else (
-                    filteredTodos.map(lambda todo: any -> any {
+                    filteredTodos.map(lambda todo: any -> Any {
                         return <div
                             key={todo._jac_id}
                             style={{
@@ -649,7 +649,7 @@ cl {
     }
 
     # Home/Landing Page - auto-redirect
-    def HomePage()  -> any {
+    def HomePage()  -> Any {
         if jacIsLoggedIn() {
             return <Navigate to="/todos" />;
         }
@@ -657,7 +657,7 @@ cl {
     }
 
     # Main App with React Router
-    def:pub app()  -> any {
+    def:pub app()  -> Any {
         return <Router>
             <div
                 style={{"fontFamily": "system-ui, sans-serif"}}

@@ -17,7 +17,7 @@ Jac-client provides React Router-style routing:
 cl {
     import from jac_client { Router, Route, Link }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Router>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -37,28 +37,28 @@ cl {
 cl {
     import from jac_client { Router, Route, Link }
 
-    def:pub Home() -> any {
+    def:pub Home() -> Any {
         return <div>
             <h1>Home Page</h1>
             <p>Welcome to our site!</p>
         </div>;
     }
 
-    def:pub About() -> any {
+    def:pub About() -> Any {
         return <div>
             <h1>About Us</h1>
             <p>Learn more about our company.</p>
         </div>;
     }
 
-    def:pub Contact() -> any {
+    def:pub Contact() -> Any {
         return <div>
             <h1>Contact</h1>
             <p>Get in touch with us.</p>
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Router>
             <nav>
                 <Link to="/">Home</Link>
@@ -81,7 +81,7 @@ cl {
 ```jac
 cl {
     # Navigation example showing Link vs anchor
-    def:pub NavExample() -> any {
+    def:pub NavExample() -> Any {
         return <div>
             <Link to="/about">About</Link>
             <a href="https://example.com">External Site</a>
@@ -100,7 +100,7 @@ cl {
 cl {
     import from jac_client { Router, Route, useParams }
 
-    def:pub UserProfile() -> any {
+    def:pub UserProfile() -> Any {
         # Get URL parameters
         params = useParams();
         user_id = params["id"];
@@ -111,7 +111,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Router>
             <Route path="/user/:id" element={<UserProfile />} />
         </Router>;
@@ -125,7 +125,7 @@ cl {
 cl {
     import from jac_client { useParams }
 
-    def:pub BlogPost() -> any {
+    def:pub BlogPost() -> Any {
         params = useParams();
 
         return <div>
@@ -150,7 +150,7 @@ cl {
 cl {
     import from jac_client { Router, Route, Outlet }
 
-    def:pub DashboardLayout() -> any {
+    def:pub DashboardLayout() -> Any {
         return <div className="dashboard">
             <aside>
                 <Link to="/dashboard">Overview</Link>
@@ -164,19 +164,19 @@ cl {
         </div>;
     }
 
-    def:pub DashboardHome() -> any {
+    def:pub DashboardHome() -> Any {
         return <h2>Dashboard Overview</h2>;
     }
 
-    def:pub DashboardSettings() -> any {
+    def:pub DashboardSettings() -> Any {
         return <h2>Settings</h2>;
     }
 
-    def:pub DashboardProfile() -> any {
+    def:pub DashboardProfile() -> Any {
         return <h2>Profile</h2>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Router>
             <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardHome />} />
@@ -198,7 +198,7 @@ cl {
 cl {
     import from jac_client { useNavigate }
 
-    def:pub LoginForm() -> any {
+    def:pub LoginForm() -> Any {
         has email: str = "";
         has password: str = "";
 
@@ -232,7 +232,7 @@ cl {
 cl {
     import from jac_client { useNavigate }
 
-    def:pub NavExample() -> any {
+    def:pub NavExample() -> Any {
         navigate = useNavigate();
 
         return <div>
@@ -266,7 +266,7 @@ cl {
 cl {
     import from jac_client { useNavigate }
 
-    def:pub ProtectedRoute(props: dict) -> any {
+    def:pub ProtectedRoute(props: dict) -> Any {
         auth = use_auth();
         navigate = useNavigate();
 
@@ -283,7 +283,7 @@ cl {
         return <div>{props.children}</div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Router>
             <Route path="/login" element={<Login />} />
 
@@ -301,7 +301,7 @@ cl {
 
 ```jac
 cl {
-    def:pub AdminRoute(props: dict) -> any {
+    def:pub AdminRoute(props: dict) -> Any {
         auth = use_auth();
 
         if not auth.isAuthenticated {
@@ -330,7 +330,7 @@ cl {
 cl {
     import from jac_client { useSearchParams }
 
-    def:pub SearchResults() -> any {
+    def:pub SearchResults() -> Any {
         (searchParams, setSearchParams) = useSearchParams();
 
         query = searchParams.get("q") or "";
@@ -369,7 +369,7 @@ cl {
 cl {
     import from jac_client { Router, Route }
 
-    def:pub NotFound() -> any {
+    def:pub NotFound() -> Any {
         return <div className="error-page">
             <h1>404</h1>
             <p>Page not found</p>
@@ -377,7 +377,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Router>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -396,7 +396,7 @@ cl {
 cl {
     import from jac_client { NavLink }
 
-    def:pub Navigation() -> any {
+    def:pub Navigation() -> Any {
         return <nav>
             <NavLink
                 to="/"
@@ -442,7 +442,7 @@ cl {
     import from jac_client { Router, Route, Link, Outlet, useParams, useNavigate }
 
     # Layout
-    def:pub Layout() -> any {
+    def:pub Layout() -> Any {
         return <div className="app">
             <header>
                 <nav>
@@ -463,14 +463,14 @@ cl {
     }
 
     # Pages
-    def:pub Home() -> any {
+    def:pub Home() -> Any {
         return <div>
             <h1>Welcome!</h1>
             <Link to="/products">Browse Products</Link>
         </div>;
     }
 
-    def:pub Products() -> any {
+    def:pub Products() -> Any {
         products = [
             {"id": 1, "name": "Widget A"},
             {"id": 2, "name": "Widget B"},
@@ -480,7 +480,7 @@ cl {
         return <div>
             <h1>Products</h1>
             <ul>
-                {products.map(lambda p: any -> any {
+                {products.map(lambda p: any -> Any {
                     return <li key={p["id"]}>
                         <Link to={f"/products/{p['id']}"}>
                             {p["name"]}
@@ -491,7 +491,7 @@ cl {
         </div>;
     }
 
-    def:pub ProductDetail() -> any {
+    def:pub ProductDetail() -> Any {
         params = useParams();
         navigate = useNavigate();
 
@@ -506,14 +506,14 @@ cl {
         </div>;
     }
 
-    def:pub About() -> any {
+    def:pub About() -> Any {
         return <div>
             <h1>About Us</h1>
             <p>We make great products.</p>
         </div>;
     }
 
-    def:pub NotFound() -> any {
+    def:pub NotFound() -> Any {
         return <div>
             <h1>404 - Not Found</h1>
             <Link to="/">Go Home</Link>
@@ -521,7 +521,7 @@ cl {
     }
 
     # App
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Router>
             <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />

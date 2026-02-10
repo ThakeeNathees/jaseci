@@ -190,7 +190,7 @@ walker load_feed {
         }
 
         # Sort by date, limit results
-        sorted_tweets = sorted(tweets, key=lambda t: any -> any { t.created_at; }, reverse=True);
+        sorted_tweets = sorted(tweets, key=lambda t: any -> Any { t.created_at; }, reverse=True);
         report sorted_tweets[:self.limit];
     }
 }

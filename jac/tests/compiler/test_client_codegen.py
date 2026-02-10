@@ -209,7 +209,7 @@ def:pub get_server_data(name: str) -> dict {
 }
 
 cl {
-    def:pub app() -> any {
+    def:pub app() -> Any {
         data = await get_server_data("World");
         return <div>{data}</div>;
     }

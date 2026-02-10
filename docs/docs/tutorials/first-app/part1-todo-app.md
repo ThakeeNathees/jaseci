@@ -111,7 +111,7 @@ root ---> Todo("Buy groceries")
 ## Build the Frontend
 
 ```jac
-cl def:pub app -> any {
+cl def:pub app -> Any {
     has items: list = [],
         text: str = "";
 
@@ -130,7 +130,7 @@ cl def:pub app -> any {
     async def toggle(id: str) -> None {
         await toggle_todo(id);
         items = items.map(
-            lambda t: any -> any {
+            lambda t: any -> Any {
                 return {"id": t.id, "title": t.title, "done": not t.done}
                 if t.id == id else t;
             }
@@ -241,7 +241,7 @@ The rest is JSX-like syntax: `{[... for t in items]}` renders a list, `lambda` h
         return {};
     }
 
-    cl def:pub app -> any {
+    cl def:pub app -> Any {
         has items: list = [],
             text: str = "";
 
@@ -260,7 +260,7 @@ The rest is JSX-like syntax: `{[... for t in items]}` renders a list, `lambda` h
         async def toggle(id: str) -> None {
             await toggle_todo(id);
             items = items.map(
-                lambda t: any -> any {
+                lambda t: any -> Any {
                     return {"id": t.id, "title": t.title, "done": not t.done}
                     if t.id == id else t;
                 }

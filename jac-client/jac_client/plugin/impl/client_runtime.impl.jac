@@ -52,7 +52,7 @@ impl __getApiBaseUrl -> str {
     return globalThis.__JAC_API_BASE_URL__ || "";
 }
 
-impl __jacSpawn(left: str, right: str = "", fields: dict = {}) -> any {
+impl __jacSpawn(left: str, right: str = "", fields: dict = {}) -> Any {
     token = __getLocalStorage("jac_token");
     base_url = __getApiBaseUrl();
     url = f"{base_url}/walker/{left}";
@@ -80,11 +80,11 @@ impl __jacSpawn(left: str, right: str = "", fields: dict = {}) -> any {
     return payload["data"] if payload["data"] else {};
 }
 
-impl jacSpawn(left: str, right: str = "", fields: dict = {}) -> any {
+impl jacSpawn(left: str, right: str = "", fields: dict = {}) -> Any {
     return __jacSpawn(left, right, fields);
 }
 
-impl __jacCallFunction(function_name: str, args: dict = {}) -> any {
+impl __jacCallFunction(function_name: str, args: dict = {}) -> Any {
     token = __getLocalStorage("jac_token");
     base_url = __getApiBaseUrl();
     response = await fetch(
@@ -207,7 +207,7 @@ impl __removeLocalStorage(key: str) -> None {
 
 """Auth guard component for file-based routing. Renders child routes if
 authenticated, otherwise redirects to the login path."""
-impl AuthGuard(redirect: str = "/login") -> any {
+impl AuthGuard(redirect: str = "/login") -> Any {
     if jacIsLoggedIn() {
         return
             <ReactRouterOutlet />;
@@ -216,7 +216,7 @@ impl AuthGuard(redirect: str = "/login") -> any {
         <ReactRouterNavigate to={redirect} replace={True} />;
 }
 
-impl ErrorFallback(error: str, resetErrorBoundary: any) -> any {
+impl ErrorFallback(error: str, resetErrorBoundary: any) -> Any {
     return
         <div
             role="alert"
@@ -282,7 +282,7 @@ impl ErrorFallback(error: str, resetErrorBoundary: any) -> any {
         </div>;
 }
 
-impl errorOverlay(filePath: str, errors: str) -> any {
+impl errorOverlay(filePath: str, errors: str) -> Any {
     return (
         <div
             style={{

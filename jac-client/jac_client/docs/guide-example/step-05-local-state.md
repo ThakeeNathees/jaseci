@@ -16,7 +16,7 @@ Let's try using a normal variable to track todos:
 cl {
     # ... (keep all your components from Step 4)
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         # Try using a normal variable
         todos = [
             {"text": "Learn Jac", "done": false},
@@ -43,7 +43,7 @@ To make data interactive, we need `useState`. When you use `has` variables in `c
 
 ```jac
 cl {
-    def:pub app() -> any {
+    def:pub app() -> Any {
         # Create state with useState
         # Note: No import needed - useState is auto-injected when using has variables
         [todos, setTodos] = useState([]);
@@ -73,7 +73,7 @@ Let's make the input field work:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoInput(props: any) -> any {
+    def TodoInput(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -103,7 +103,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         # State for input field
         [input, setInput] = useState("");
 
@@ -130,7 +130,7 @@ Now let's track our todos list with state:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoItem(props: any) -> any {
+    def TodoItem(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "alignItems": "center",
@@ -159,7 +159,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         # State for todos
         [todos, setTodos] = useState([
             {"text": "Learn Jac basics", "done": false},
@@ -177,7 +177,7 @@ cl {
 
             # Display todos
             <div>
-                {todos.map(lambda todo: any -> any {
+                {todos.map(lambda todo: any -> Any {
                     return <TodoItem
                         text={todo.text}
                         done={todo.done}
@@ -204,7 +204,7 @@ Let's add filter state:
 cl {
     # ... (keep all previous components)
 
-    def TodoFilters(props: any) -> any {
+    def TodoFilters(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -243,7 +243,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         [todos, setTodos] = useState([
             {"text": "Learn Jac basics", "done": false},
             {"text": "Build a todo app", "done": true}
@@ -294,7 +294,7 @@ class TodoApp:
 
 ```jac
 # Jac with React
-def:pub app() -> any {
+def:pub app() -> Any {
     [todos, setTodos] = useState([]);  # This is state
 
     # When you call setTodos(), React automatically updates the UI!
@@ -336,7 +336,7 @@ def:pub app() -> any {
 **Without useState (doesn't work):**
 
 ```jac
-def:pub app() -> any {
+def:pub app() -> Any {
     count = 0;  # Normal variable
 
     # Button click would change count, but UI won't update!
@@ -347,7 +347,7 @@ def:pub app() -> any {
 **With useState (works!):**
 
 ```jac
-def:pub app() -> any {
+def:pub app() -> Any {
     [count, setCount] = useState(0);  # State
 
     # When setCount is called, React re-renders the component!
@@ -360,7 +360,7 @@ def:pub app() -> any {
 You can have multiple pieces of state:
 
 ```jac
-def:pub app() -> any {
+def:pub app() -> Any {
     [todos, setTodos] = useState([]);
     [input, setInput] = useState("");
     [filter, setFilter] = useState("all");
@@ -393,7 +393,7 @@ Follow this pattern:
 To render a list of items, use `.map()`:
 
 ```jac
-{todos.map(lambda todo: any -> any {
+{todos.map(lambda todo: any -> Any {
     return <TodoItem text={todo.text} done={todo.done} />;
 })}
 ```
@@ -409,7 +409,7 @@ items = [TodoItem(text=todo["text"]) for todo in todos]
 **Breakdown:**
 
 - `todos.map(...)` - Loop through each todo
-- `lambda todo: any -> any { ... }` - Function that runs for each item
+- `lambda todo: any -> Any { ... }` - Function that runs for each item
 - `return <TodoItem ... />` - Returns a component for each item
 
 ### State is Immutable
@@ -433,14 +433,14 @@ Why? Because React needs to detect changes to update the UI. If you modify direc
 State flows down through props:
 
 ```jac
-def Parent() -> any {
+def Parent() -> Any {
     [name, setName] = useState("Alice");
 
     # Pass state down as props
     return <Child name={name} />;
 }
 
-def Child(props: any) -> any {
+def Child(props: any) -> Any {
     # Access state via props
     return <div>Hello, {props.name}!</div>;
 }

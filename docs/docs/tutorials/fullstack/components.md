@@ -13,11 +13,11 @@ Build reusable UI components with JSX syntax.
 
 ```jac
 cl {
-    def:pub Greeting(props: dict) -> any {
+    def:pub Greeting(props: dict) -> Any {
         return <h1>Hello, {props.name}!</h1>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <div>
             <Greeting name="Alice" />
             <Greeting name="Bob" />
@@ -41,7 +41,7 @@ cl {
 
 ```jac
 cl {
-    def:pub MyComponent() -> any {
+    def:pub MyComponent() -> Any {
         return <div className="container">
             <h1>Title</h1>
             <p>Paragraph text</p>
@@ -58,7 +58,7 @@ cl {
 
 ```jac
 cl {
-    def:pub MyComponent() -> any {
+    def:pub MyComponent() -> Any {
         name = "World";
         items = [1, 2, 3];
 
@@ -81,7 +81,7 @@ Use `{ }` to embed any Jac expression.
 
 ```jac
 cl {
-    def:pub Status(props: dict) -> any {
+    def:pub Status(props: dict) -> Any {
         return <span>
             {("Active" if props.active else "Inactive")}
         </span>;
@@ -93,7 +93,7 @@ cl {
 
 ```jac
 cl {
-    def:pub Notification(props: dict) -> any {
+    def:pub Notification(props: dict) -> Any {
         return <div>
             {props.count > 0 and <span>You have {props.count} messages</span>}
         </div>;
@@ -105,7 +105,7 @@ cl {
 
 ```jac
 cl {
-    def:pub UserGreeting(props: dict) -> any {
+    def:pub UserGreeting(props: dict) -> Any {
         if props.isLoggedIn {
             return <h1>Welcome back!</h1>;
         }
@@ -120,15 +120,15 @@ cl {
 
 ```jac
 cl {
-    def:pub TodoList(props: dict) -> any {
+    def:pub TodoList(props: dict) -> Any {
         return <ul>
-            {props.items.map(lambda item: any -> any {
+            {props.items.map(lambda item: any -> Any {
                 return <li key={item.id}>{item.text}</li>;
             })}
         </ul>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         todos = [
             {"id": 1, "text": "Learn Jac"},
             {"id": 2, "text": "Build app"},
@@ -150,7 +150,7 @@ cl {
 
 ```jac
 cl {
-    def:pub Button() -> any {
+    def:pub Button() -> Any {
         def handle_click() -> None {
             print("Button clicked!");
         }
@@ -166,7 +166,7 @@ cl {
 
 ```jac
 cl {
-    def:pub SearchBox() -> any {
+    def:pub SearchBox() -> Any {
         has query: str = "";
 
         return <input
@@ -183,7 +183,7 @@ cl {
 
 ```jac
 cl {
-    def:pub LoginForm() -> any {
+    def:pub LoginForm() -> Any {
         has username: str = "";
         has password: str = "";
 
@@ -216,14 +216,14 @@ cl {
 
 ```jac
 cl {
-    def:pub Card(props: dict) -> any {
+    def:pub Card(props: dict) -> Any {
         return <div className="card">
             <div className="card-header">{props.title}</div>
             <div className="card-body">{props.children}</div>
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Card title="Welcome">
             <p>This is the card content.</p>
             <button>Action</button>
@@ -236,25 +236,25 @@ cl {
 
 ```jac
 cl {
-    def:pub Header() -> any {
+    def:pub Header() -> Any {
         return <header>
             <h1>My App</h1>
             <Nav />
         </header>;
     }
 
-    def:pub Nav() -> any {
+    def:pub Nav() -> Any {
         return <nav>
             <a href="/">Home</a>
             <a href="/about">About</a>
         </nav>;
     }
 
-    def:pub Footer() -> any {
+    def:pub Footer() -> Any {
         return <footer>© 2024</footer>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <div>
             <Header />
             <main>Content here</main>
@@ -273,7 +273,7 @@ cl {
 ```jac
 # No cl { } needed for .cl.jac files
 
-def:pub Header(props: dict) -> any {
+def:pub Header(props: dict) -> Any {
     return <header>
         <h1>{props.title}</h1>
     </header>;
@@ -286,7 +286,7 @@ def:pub Header(props: dict) -> any {
 cl {
     import from "./Header.cl.jac" { Header }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <div>
             <Header title="My App" />
             <main>Content</main>
@@ -320,7 +320,7 @@ export function Button({ label, onClick }: ButtonProps) {
 cl {
     import from "./Button.tsx" { Button }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <Button
             label="Click me"
             onClick={lambda -> None { print("Clicked!"); }}
@@ -337,7 +337,7 @@ cl {
 
 ```jac
 cl {
-    def:pub StyledBox() -> any {
+    def:pub StyledBox() -> Any {
         return <div style={{
             "backgroundColor": "#f0f0f0",
             "padding": "20px",
@@ -356,7 +356,7 @@ cl {
 cl {
     import ".styles.css";
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         return <div className="container">
             <h1 className="title">Hello</h1>
         </div>;
@@ -381,11 +381,11 @@ cl {
 
 | Concept | Syntax |
 |---------|--------|
-| Define component | `def:pub Name(props: dict) -> any { }` |
+| Define component | `def:pub Name(props: dict) -> Any { }` |
 | JSX element | `<div className="x">content</div>` |
 | Expression | `{expression}` |
 | Event handler | `onClick={lambda -> None { ... }}` |
-| List rendering | `{items.map(lambda x -> any { <li>{x}</li> })}` |
+| List rendering | `{items.map(lambda x -> Any { <li>{x}</li> })}` |
 | Conditional | `{condition ? <A /> : <B />}` |
 | Children | `{props.children}` |
 | Import component | `import from "./File.cl.jac" { Component }` |

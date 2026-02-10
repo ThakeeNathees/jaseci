@@ -10,7 +10,7 @@ This guide covers array and list methods for developers familiar with JavaScript
 
 | Method        | Purpose         | React/JS                          | JAC-Client                                        |
 | ------------- | --------------- | --------------------------------- | ------------------------------------------------- |
-| `.map()`      | Transform items | `arr.map(x => x * 2)`             | `arr.map(lambda x -> any { return x * 2; })`      |
+| `.map()`      | Transform items | `arr.map(x => x * 2)`             | `arr.map(lambda x -> Any { return x * 2; })`      |
 | `.filter()`   | Keep matching   | `arr.filter(x => x > 0)`          | `arr.filter(lambda x -> bool { return x > 0; })`  |
 | `.find()`     | First match     | `arr.find(x => x.id === 1)`       | `arr.find(lambda x -> bool { return x["id"] == 1; })` |
 | `.some()`     | Any match?      | `arr.some(x => x < 0)`            | `arr.some(lambda x -> bool { return x < 0; })`    |
@@ -36,7 +36,7 @@ This guide covers array and list methods for developers familiar with JavaScript
 
     ```jac
     <ul>
-        {items.map(lambda item: str, i: int -> any {
+        {items.map(lambda item: str, i: int -> Any {
             return <li key={i}>{item}</li>;
         })}
     </ul>

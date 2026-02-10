@@ -6,7 +6,7 @@ impl renderJsxTree(node: JsxElement, container: any) -> None {
     container.replaceChildren(__buildDom(node));
 }
 
-impl __buildDom(node: any) -> any {
+impl __buildDom(node: any) -> Any {
     if node == None {
         return document.createTextNode("");
     }
@@ -84,7 +84,7 @@ impl createSignal(initialValue: any) -> list {
     signalId = __jacReactiveContext.signals.length;
     signalData = {"value": initialValue, "subscribers": []};
     __jacReactiveContext.signals.push(signalData);
-    def getter -> any {
+    def getter -> Any {
         __jacTrackDependency(signalData.subscribers);
         return signalData.value;
     }
@@ -277,7 +277,7 @@ impl createRouter(routes: list, defaultRoute: str = "/") -> dict {
         }setCurrentPath(newPath);}
     );
     # Render method - returns component for current route
-    def render -> any {
+    def render -> Any {
         path = currentPath();  # Track dependency!
 
         # Find matching route
@@ -315,7 +315,7 @@ impl Route(path: str, component: any, guard: any = None) -> dict {
     return {"path": path, "component": component, "guard": guard};
 }
 
-impl Link(props: dict) -> any {
+impl Link(props: dict) -> Any {
     href = props["href"] if "href" in props else "/";
     children = props["children"] if "children" in props else [];
     def handleClick(event: any) -> None {
@@ -348,7 +348,7 @@ impl __jacGetPath -> str {
     return "/";
 }
 
-impl __jacSpawn(left: str, right: str = "", fields: dict = {}) -> any {
+impl __jacSpawn(left: str, right: str = "", fields: dict = {}) -> Any {
     token = __getLocalStorage("jac_token");
     url = f"/walker/{left}";
     if right != "" {
@@ -376,7 +376,7 @@ impl __jacSpawn(left: str, right: str = "", fields: dict = {}) -> any {
     return payload["data"] if payload["data"] else payload;
 }
 
-impl __jacCallFunction(function_name: str, args: dict = {}) -> any {
+impl __jacCallFunction(function_name: str, args: dict = {}) -> Any {
     token = __getLocalStorage("jac_token");
     response = await fetch(
         f"/function/{function_name}",
@@ -537,7 +537,7 @@ impl __jacEnsureObjectGetPolyfill -> None {
         return;
     }
     # Define the polyfill function inline
-    def get_polyfill(key: any, defaultValue: any = None) -> any {
+    def get_polyfill(key: any, defaultValue: any = None) -> Any {
         if __jacHasOwn(this, key) {
             return this[key];
         }
@@ -551,7 +551,7 @@ impl __jacEnsureObjectGetPolyfill -> None {
     );
 }
 
-impl __jacGetDocument(scope: any) -> any {
+impl __jacGetDocument(scope: any) -> Any {
     try {
         return scope.document;
     } except Exception {
@@ -559,7 +559,7 @@ impl __jacGetDocument(scope: any) -> any {
     }
 }
 
-impl __jacParseJsonObject(text: str) -> any {
+impl __jacParseJsonObject(text: str) -> Any {
     try {
         parsed = JSON.parse(text);
         if __isObject(parsed) {
@@ -585,7 +585,7 @@ impl __jacBuildOrderedArgs(order: list, argsDict: dict) -> list {
     return result;
 }
 
-impl __jacResolveRenderer(scope: any) -> any {
+impl __jacResolveRenderer(scope: any) -> Any {
     if scope.renderJsxTree {
         return scope.renderJsxTree;
     }
@@ -595,7 +595,7 @@ impl __jacResolveRenderer(scope: any) -> any {
     return None;
 }
 
-impl __jacResolveTarget(moduleRecord: dict, registry: dict, name: str) -> any {
+impl __jacResolveTarget(moduleRecord: dict, registry: dict, name: str) -> Any {
     moduleFunctions = (
         moduleRecord.moduleFunctions
         if moduleRecord and moduleRecord.moduleFunctions
@@ -623,7 +623,7 @@ impl __jacSafeCallTarget(
     }
 }
 
-impl __jacGlobalScope -> any {
+impl __jacGlobalScope -> Any {
     try {
         return globalThis;
     } except Exception { }
@@ -741,7 +741,7 @@ impl __jacHydrateFromDom(defaultModuleName: str) -> None {
         return;
     }
     # Set up reactive root component for automatic re-rendering
-    __jacReactiveContext.rootComponent = lambda -> any { __jacReactiveContext.currentComponent = "__root__";result = target.apply(
+    __jacReactiveContext.rootComponent = lambda -> Any { __jacReactiveContext.currentComponent = "__root__";result = target.apply(
         scope, orderedArgs
     );__jacReactiveContext.currentComponent = None;return result; };
     renderer = __jacResolveRenderer(scope);

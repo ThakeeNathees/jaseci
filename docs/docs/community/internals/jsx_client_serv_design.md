@@ -151,7 +151,7 @@ The client runtime ([client_runtime.cl.jac](https://github.com/Jaseci-Labs/jasec
 | **Client-Side Routing** | | |
 | `createRouter` | `(routes: list, defaultRoute: str = "/") -> dict` | Creates a router instance with reactive path tracking |
 | `Route` | `(path: str, component: any, guard: any = None) -> dict` | Creates a route configuration object |
-| `Link` | `(props: dict) -> any` | Renders a navigation link component |
+| `Link` | `(props: dict) -> Any` | Renders a navigation link component |
 | `navigate` | `(path: str) -> None` | Programmatically navigates to a path |
 | `useRouter` | `() -> dict` | Returns the current router instance |
 | **Authentication** | | |
@@ -633,7 +633,7 @@ On page load in the browser ([client_runtime.cl.jac:726-821](https://github.com/
 
 ```jac
 # Set up reactive root component for automatic re-rendering
-__jacReactiveContext.rootComponent = lambda -> any {
+__jacReactiveContext.rootComponent = lambda -> Any {
     __jacReactiveContext.currentComponent = "__root__";
     result = target(...orderedArgs);  # Execute with dependency tracking
     return result;

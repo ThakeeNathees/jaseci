@@ -46,7 +46,7 @@ walker get_data {
 
 # Frontend
 cl {
-    def:pub app() -> any {
+    def:pub app() -> Any {
         data = root spawn get_data();
         return <div>{data}</div>;
     }

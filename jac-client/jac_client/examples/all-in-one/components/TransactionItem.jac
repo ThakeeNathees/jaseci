@@ -18,7 +18,7 @@ cl {
         isBusiness: bool,
         clientName: any,
         onDelete: any
-    ) -> any {
+    ) -> Any {
         isIncome = txType == "income";
         color = CATEGORY_COLORS[category];
         label = CATEGORY_LABELS[category];

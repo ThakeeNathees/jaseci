@@ -53,7 +53,7 @@ walker toggle_todo {
 # Frontend Components
 cl {
     # Navigation
-    def Navigation -> any {
+    def Navigation -> Any {
         isLoggedIn = jacIsLoggedIn();
         navigate = useNavigate();
 
@@ -132,7 +132,7 @@ cl {
     }
 
     # Login Page
-    def LoginPage -> any {
+    def LoginPage -> Any {
         has username: str = "",
             password: str = "",
             error: str = "";
@@ -256,7 +256,7 @@ cl {
     }
 
     # Signup Page
-    def SignupPage -> any {
+    def SignupPage -> Any {
         has username: str = "",
             password: str = "",
             error: str = "";
@@ -380,7 +380,7 @@ cl {
     }
 
     # TodoInput Component
-    def TodoInput(props: any) -> any {
+    def TodoInput(props: any) -> Any {
         input = props.input;
         setInput = props.setInput;
         addTodo = props.addTodo;
@@ -420,7 +420,7 @@ cl {
     }
 
     # TodoFilters Component
-    def TodoFilters(props: any) -> any {
+    def TodoFilters(props: any) -> Any {
         filter = props.filter;
         setFilter = props.setFilter;
 
@@ -474,7 +474,7 @@ cl {
     }
 
     # TodoItem Component
-    def TodoItem(props: any) -> any {
+    def TodoItem(props: any) -> Any {
         todo = props.todo;
         toggleTodo = props.toggleTodo;
         deleteTodo = props.deleteTodo;
@@ -523,7 +523,7 @@ cl {
     }
 
     # TodoList Component
-    def TodoList(props: any) -> any {
+    def TodoList(props: any) -> Any {
         filteredTodos = props.filteredTodos;
         toggleTodo = props.toggleTodo;
         deleteTodo = props.deleteTodo;
@@ -540,7 +540,7 @@ cl {
         return
             <div>
                 {filteredTodos.map(
-                    lambda todo: any  -> any { return
+                    lambda todo: any  -> Any { return
                         <TodoItem
                             key={todo._jac_id}
                             todo={todo}
@@ -552,7 +552,7 @@ cl {
     }
 
     # Todos Page (Protected)
-    def TodosPage -> any {
+    def TodosPage -> Any {
         # Check if user is logged in, redirect if not
         if not jacIsLoggedIn() {
             return
@@ -587,7 +587,7 @@ cl {
             id spawn toggle_todo();
             setTodos(
                 todos.map(
-                    lambda todo: any  -> any { if todo._jac_id == id {
+                    lambda todo: any  -> Any { if todo._jac_id == id {
                         return {
                             "_jac_id": todo._jac_id,
                             "text": todo.text,
@@ -662,7 +662,7 @@ cl {
     }
 
     # Home/Landing Page - auto-redirect
-    def HomePage -> any {
+    def HomePage -> Any {
         if jacIsLoggedIn() {
             return
                 <Navigate to="/todos" />;
@@ -672,7 +672,7 @@ cl {
     }
 
     # Main App with React Router
-    def:pub app -> any {
+    def:pub app -> Any {
         return
             <Router>
                 <div style={{"fontFamily": "system-ui, sans-serif"}}>

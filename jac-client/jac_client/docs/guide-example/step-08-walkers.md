@@ -136,7 +136,7 @@ cl {
 Update your `useEffect` to load todos from the backend:
 
 ```jac
-def:pub app() -> any {
+def:pub app() -> Any {
     [todos, setTodos] = useState([]);
     [input, setInput] = useState("");
     [filter, setFilter] = useState("all");
@@ -185,7 +185,7 @@ async def toggleTodo(id: any) -> None {
     id spawn toggle_todo();
 
     # Update local state
-    setTodos(todos.map(lambda todo: any -> any {
+    setTodos(todos.map(lambda todo: any -> Any {
         if todo._jac_id == id {
             return {
                 "_jac_id": todo._jac_id,
@@ -216,7 +216,7 @@ When rendering todos, use `_jac_id` instead of custom id:
 ```jac
 # In your app() function
 <div>
-    {filteredTodos.map(lambda todo: any -> any {
+    {filteredTodos.map(lambda todo: any -> Any {
         return <TodoItem
             key={todo._jac_id}
             id={todo._jac_id}
@@ -388,7 +388,7 @@ walker create_todo {
 
 # Frontend (runs in browser)
 cl {
-    def:pub app() -> any {
+    def:pub app() -> Any {
         # This code runs in the browser
         result = root spawn create_todo(text="Todo");
     }

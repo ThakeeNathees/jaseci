@@ -158,7 +158,7 @@ Two small changes in the `app` component. In the `toggle` method, include `categ
     async def toggle(id: str) -> None {
         await toggle_todo(id);
         items = items.map(
-            lambda t: any -> any {
+            lambda t: any -> Any {
                 return {
                     "id": t.id, "title": t.title,
                     "done": not t.done, "category": t.category
@@ -256,7 +256,7 @@ Add one line to `styles.css`:
         return {};
     }
 
-    cl def:pub app -> any {
+    cl def:pub app -> Any {
         has items: list = [],
             text: str = "";
 
@@ -275,7 +275,7 @@ Add one line to `styles.css`:
         async def toggle(id: str) -> None {
             await toggle_todo(id);
             items = items.map(
-                lambda t: any -> any {
+                lambda t: any -> Any {
                     return {
                         "id": t.id, "title": t.title,
                         "done": not t.done, "category": t.category

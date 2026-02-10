@@ -139,7 +139,7 @@ def validateAge(age: int) -> None {
 ### Safe JSON Parsing
 
 ```jac
-def parseJson(jsonString: str) -> any {
+def parseJson(jsonString: str) -> Any {
     try {
         data = JSON.parse(jsonString);
         return data;
@@ -169,7 +169,7 @@ def parseNumber(value: str, defaultVal: int) -> int {
 ### Safe Array Access
 
 ```jac
-def safeGetItem(arr: list, index: int) -> any {
+def safeGetItem(arr: list, index: int) -> Any {
     try {
         if index < 0 or index >= arr.length {
             raise Exception("Index out of bounds!");

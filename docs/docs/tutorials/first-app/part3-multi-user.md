@@ -84,7 +84,7 @@ The server file has three sections: the app entry point, AI types and functions,
 cl {
     import from frontend { app as ClientApp }
 
-    def:pub app -> any {
+    def:pub app -> Any {
         return
             <ClientApp />;
     }
@@ -362,7 +362,7 @@ Two new import styles:
 The component declares its state and method signatures:
 
 ```jac
-def:pub app -> any {
+def:pub app -> Any {
     has isLoggedIn: bool = False,
         checkingAuth: bool = True,
         isSignup: bool = False,
@@ -451,7 +451,7 @@ Toggle and delete follow the same pattern:
 impl app.toggleTodo(todoId: str) -> None {
     root spawn ToggleTodo(todo_id=todoId);
     todos = todos.map(
-        lambda t: any -> any {
+        lambda t: any -> Any {
             if t.id == todoId {
                 return {
                     "id": t.id, "title": t.title,
@@ -585,7 +585,7 @@ Displays a single todo with toggle and delete:
 ```jac
 """Todo item component."""
 
-def:pub TodoItem(todo: dict, onToggle: any, onDelete: any) -> any {
+def:pub TodoItem(todo: dict, onToggle: any, onDelete: any) -> Any {
     return
         <div className="todo-item">
             <input
@@ -617,7 +617,7 @@ Displays a single ingredient with cost and carb badge:
 ```jac
 """Ingredient item component for the shopping list."""
 
-def:pub IngredientItem(ingredient: dict) -> any {
+def:pub IngredientItem(ingredient: dict) -> Any {
     return
         <div className="ingredient-item">
             <div className="ingredient-info">
@@ -648,7 +648,7 @@ def:pub AuthForm(
     error: str, loading: bool,
     onUsernameChange: any, onPasswordChange: any,
     onSubmit: any, onToggleMode: any
-) -> any {
+) -> Any {
     return
         <div className="auth-container">
             <div className="auth-card">
@@ -679,7 +679,7 @@ All the complete files are in the collapsible sections below. Create each file i
     cl {
         import from frontend { app as ClientApp }
 
-        def:pub app -> any {
+        def:pub app -> Any {
             return
                 <ClientApp />;
         }
@@ -893,7 +893,7 @@ All the complete files are in the collapsible sections below. Create each file i
         GenerateShoppingList, ListMealPlan, ClearMealPlan
     }
 
-    def:pub app -> any {
+    def:pub app -> Any {
         has isLoggedIn: bool = False,
             checkingAuth: bool = True,
             isSignup: bool = False,
@@ -1122,7 +1122,7 @@ All the complete files are in the collapsible sections below. Create each file i
     impl app.toggleTodo(todoId: str) -> None {
         root spawn ToggleTodo(todo_id=todoId);
         todos = todos.map(
-            lambda t: any -> any {
+            lambda t: any -> Any {
                 if t.id == todoId {
                     return {
                         "id": t.id, "title": t.title,
@@ -1249,7 +1249,7 @@ All the complete files are in the collapsible sections below. Create each file i
         onPasswordChange: any,
         onSubmit: any,
         onToggleMode: any
-    ) -> any {
+    ) -> Any {
         return
             <div className="auth-container">
                 <div className="auth-card">
@@ -1320,7 +1320,7 @@ All the complete files are in the collapsible sections below. Create each file i
     ```jac
     """Todo item component."""
 
-    def:pub TodoItem(todo: dict, onToggle: any, onDelete: any) -> any {
+    def:pub TodoItem(todo: dict, onToggle: any, onDelete: any) -> Any {
         return
             <div className="todo-item">
                 <input
@@ -1350,7 +1350,7 @@ All the complete files are in the collapsible sections below. Create each file i
     ```jac
     """Ingredient item component for the shopping list."""
 
-    def:pub IngredientItem(ingredient: dict) -> any {
+    def:pub IngredientItem(ingredient: dict) -> Any {
         return
             <div className="ingredient-item">
                 <div className="ingredient-info">

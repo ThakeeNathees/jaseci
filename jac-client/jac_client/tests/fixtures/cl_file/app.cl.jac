@@ -1,6 +1,6 @@
 import from react { useState }
 
-def app()  -> any {
+def app()  -> Any {
     [todos, setTodos] = useState([]);
     [input, setInput] = useState("");
 
@@ -35,7 +35,7 @@ def app()  -> any {
         </button>
         <div>
             {todos.map(
-                lambda  todo: any  -> any{ return <div
+                lambda  todo: any  -> Any{ return <div
                     key={todo._jac_id}
                 >
                     <span>

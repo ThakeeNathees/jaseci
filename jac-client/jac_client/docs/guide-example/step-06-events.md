@@ -16,7 +16,7 @@ Let's make the input field track what you type:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoInput(props: any) -> any {
+    def TodoInput(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -49,7 +49,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         [input, setInput] = useState("");
 
         return <div style={{
@@ -75,7 +75,7 @@ Now let's make the "Add" button work:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoInput(props: any) -> any {
+    def TodoInput(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -113,7 +113,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         [todos, setTodos] = useState([]);
         [input, setInput] = useState("");
 
@@ -146,7 +146,7 @@ cl {
 
             # Display todos
             <div>
-                {todos.map(lambda todo: any -> any {
+                {todos.map(lambda todo: any -> Any {
                     return <div style={{"padding": "8px"}}>
                         {todo.text}
                     </div>;
@@ -167,7 +167,7 @@ Let's add the ability to press Enter to add a todo:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoInput(props: any) -> any {
+    def TodoInput(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -226,7 +226,7 @@ Let's add the complete functionality:
 cl {
     # ... (keep TodoInput and TodoFilters)
 
-    def TodoItem(props: any) -> any {
+    def TodoItem(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "alignItems": "center",
@@ -268,7 +268,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         [todos, setTodos] = useState([]);
         [input, setInput] = useState("");
 
@@ -290,7 +290,7 @@ cl {
 
         # Toggle todo
         def toggleTodo(id: any) -> None {
-            setTodos(todos.map(lambda todo: any -> any {
+            setTodos(todos.map(lambda todo: any -> Any {
                 if todo["id"] == id {
                     return {
                         "id": todo["id"],
@@ -322,7 +322,7 @@ cl {
             />
 
             <div>
-                {todos.map(lambda todo: any -> any {
+                {todos.map(lambda todo: any -> Any {
                     return <TodoItem
                         key={todo["id"]}
                         id={todo["id"]}
@@ -352,7 +352,7 @@ Final step - make the filter buttons work:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoFilters(props: any) -> any {
+    def TodoFilters(props: any) -> Any {
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -406,7 +406,7 @@ cl {
         </div>;
     }
 
-    def:pub app() -> any {
+    def:pub app() -> Any {
         [todos, setTodos] = useState([]);
         [input, setInput] = useState("");
         [filter, setFilter] = useState("all");
@@ -439,7 +439,7 @@ cl {
             <TodoFilters filter={filter} setFilter={setFilter} />
 
             <div>
-                {filteredTodos.map(lambda todo: any -> any {
+                {filteredTodos.map(lambda todo: any -> Any {
                     return <TodoItem
                         key={todo["id"]}
                         id={todo["id"]}
@@ -517,7 +517,7 @@ onChange={lambda e: any -> None {
 You can pass functions down to child components:
 
 ```jac
-def Parent() -> any {
+def Parent() -> Any {
     def handleClick() -> None {
         console.log("Clicked!");
     }
@@ -526,7 +526,7 @@ def Parent() -> any {
     return <Child onClick={handleClick} />;
 }
 
-def Child(props: any) -> any {
+def Child(props: any) -> Any {
     # Call parent's function
     return <button onClick={props.onClick}>
         Click me
@@ -539,7 +539,7 @@ This lets children trigger parent behavior!
 ### Updating State in Event Handlers
 
 ```jac
-def:pub app() -> any {
+def:pub app() -> Any {
     [count, setCount] = useState(0);
 
     def increment() -> None {
@@ -571,7 +571,7 @@ setTodos(todos);
 
 ```jac
 # Toggle a todo
-setTodos(todos.map(lambda todo: any -> any {
+setTodos(todos.map(lambda todo: any -> Any {
     if todo["id"] == targetId {
         return {"id": todo["id"], "done": not todo["done"]};
     }

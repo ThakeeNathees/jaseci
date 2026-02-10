@@ -237,11 +237,11 @@ with entry {
 ### 8 Decorators
 
 ```jac
-def decorator(func: any) -> any {
+def decorator(func: any) -> Any {
     return func;
 }
 
-def decorator_with_args(arg1: any, arg2: any) -> any {
+def decorator_with_args(arg1: any, arg2: any) -> Any {
     return lambda func: any: func;
 }
 
