@@ -416,7 +416,7 @@ impl format(paths: list, to_screen: bool = False, lintfix: bool = False) -> int 
 }
 
 """Run the test suite in the specified .jac file or directory."""
-impl test(
+impl `test(
     filepath: str = "",
     test_name: str = "",
     filter: str = "",
