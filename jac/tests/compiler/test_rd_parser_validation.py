@@ -207,6 +207,17 @@ _gap_files = [
         "tests/compiler/fixtures/rd_parser_gaps/match_multistring.jac",
         "tests/compiler/fixtures/rd_parser_gaps/enum_pynline.jac",
         "tests/compiler/fixtures/rd_parser_gaps/enum_free_code.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/trailing_comma_collections.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/safe_call_subscript.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/bool_operators_symbols.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/init_as_call.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/decorator_on_impl.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/rstring_concat.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/impl_in_code_block.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/enum_impl_typed.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/glob_chained_assign.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/edge_ref_subscript.jac",
+        "tests/compiler/fixtures/rd_parser_gaps/lambda_typed_params.jac",
     ]
 ]
 
@@ -219,3 +230,39 @@ _gap_files = [
 def test_rd_parser_gap_coverage(gap_file: str) -> None:
     """Verify RD parser correctly handles previously missing grammar constructs."""
     rd_parser_comparison_test(gap_file)
+
+
+# =============================================================================
+# RD parser strictness parity tests
+# =============================================================================
+
+# Snippets the RD parser must reject (Lark also rejects these).
+_MUST_REJECT = {
+    "can_without_event_clause": "obj Foo { can bar { } }",
+    "per_variable_access_tag": "obj Foo { has :pub x: int, :priv y: str; }",
+    "pass_keyword": "with entry { match x { case 1: pass; } }",
+    "with_exit_at_module_level": 'with exit { print("bye"); }',
+    "abs_prefix_on_ability": "obj Foo { abs def bar(); }",
+    "abs_prefix_decorated_ability": "@mydeco abs def bar() { }",
+    "bare_expression_at_module_level": "5 + 3;",
+    "bare_expression_in_archetype": "obj Foo { 5 + 3; }",
+    "impl_bare_semicolon": "impl Foo.bar;",
+}
+
+
+@pytest.mark.parametrize(
+    "snippet",
+    list(_MUST_REJECT.values()),
+    ids=list(_MUST_REJECT.keys()),
+)
+def test_rd_parser_strictness_parity(snippet: str) -> None:
+    """RD parser must reject constructs that Lark also rejects."""
+    # Confirm Lark rejects
+    saved = JacTest.TEST_COUNT
+    lark_ast = parse_with_lark(snippet, "/tmp/strictness_test.jac")
+    JacTest.TEST_COUNT = saved
+    assert lark_ast is None, f"Lark unexpectedly accepted: {snippet!r}"
+
+    # Confirm RD also rejects
+    rd_ast = parse_with_rd(snippet, "/tmp/strictness_test.jac")
+    assert rd_ast is None, f"RD parser must reject (Lark rejects): {snippet!r}"
