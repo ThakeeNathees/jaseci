@@ -12,13 +12,12 @@ impl DocIRGenPass.exit_jsx_expression(`node: uni.JsxExpression) -> None {
     `node.gen.doc_ir = self.concat(parts, ast_node=`node);
 }
 
-"""Generate DocIR for JSX text."""
+"""Generate DocIR for JSX text - use stripped value to avoid raw whitespace."""
 impl DocIRGenPass.exit_jsx_text(`node: uni.JsxText) -> None {
-    parts: list[doc.DocType] = [];
-    for i in `node.kid {
-        parts.append(i.gen.doc_ir);
-    }
-    `node.gen.doc_ir = self.concat(parts, ast_node=`node);
+    # Use the JsxText.value (which is stripped) instead of raw token text
+    # to avoid extra newlines/whitespace from source formatting
+    source_tok = `node.kid[0] if `node.kid else None;
+    `node.gen.doc_ir = doc.Text(`node.value, source_token=source_tok);
 }
 
 """Generate DocIR for JSX normal attributes."""
@@ -294,6 +293,13 @@ impl DocIRGenPass.exit_impl_def(`node: uni.ImplDef) -> None {
             parts.append(i.gen.doc_ir);
             parts.append(self.hard_line());
         } elif self.is_within(i, `node.target) {
+            parts.append(i.gen.doc_ir);
+        } elif (
+            isinstance(i, uni.Token)
+            and (i.name == Tok.DOT)
+            and `node.target
+            and len(`node.target) > 1
+        ) {
             parts.append(i.gen.doc_ir);
         } elif (
             in_body

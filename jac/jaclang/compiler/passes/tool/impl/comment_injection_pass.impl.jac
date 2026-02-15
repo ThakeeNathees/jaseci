@@ -669,13 +669,13 @@ impl CommentInjectionPass._handle_body_comments(
             continue;
         }
         part_line: (int | None) = None;
-        tokens = self._get_tokens(part);
+        tokens = [
+            t
+            for t in self._get_tokens(part)
+            if t.loc and t.loc.first_line > 0
+        ];
         if tokens {
-            part_line = min(
-                t.loc.first_line
-                for t in tokens
-                if t.loc
-            );
+            part_line = min(t.loc.first_line for t in tokens);
         }
         if (part_line and (body_idx < len(body))) {
             while (body_idx < len(body)) {
@@ -777,7 +777,7 @@ impl CommentInjectionPass._inject_standalone_by_spans(
             }
         }
         result.append(part);
-        if (part_end is not None) {
+        if (part_end is not None) and (prev_line is None or part_end >= prev_line) {
             prev_line = part_end;
         }
     }
@@ -811,11 +811,24 @@ impl CommentInjectionPass._inject_into_parts(
         processed = self._process(ctx, part);
         result.append(processed);
         tokens = self._get_tokens(processed);
-        if (tokens and self._comments) {
+        # Filter out synthetic tokens (gen_token) which have wrong positions
+        real_tokens = [
+            t
+            for t in tokens
+            if not getattr(t, '_is_synthetic', False)
+        ];
+        if (real_tokens and self._comments) {
             last_token = max(
-                tokens, key=lambda t: Any : (t.loc.last_line, t.loc.col_end)
+                real_tokens, key=lambda t: Any : (t.loc.last_line, t.loc.col_end)
             );
-            token_id: int = id(last_token);
+            token_id: int = hash(
+                (
+                    last_token.loc.first_line,
+                    last_token.loc.col_start,
+                    last_token.loc.last_line,
+                    last_token.loc.col_end
+                )
+            );
             for info in self._comments.take_inline(token_id) {
                 add_line: bool = True;
                 if ((index + 1) < len(parts)) {
@@ -841,22 +854,14 @@ impl CommentInjectionPass._doc_line_span(
     tokens = [
         t
         for t in self._get_tokens(`node)
-        if getattr(t, 'loc', None)
+        if getattr(t, 'loc', None) and t.loc.first_line > 0
     ];
     if not tokens {
         return (None, None);
     }
     return (
-        min(
-            t.loc.first_line
-            for t in tokens
-            if t.loc
-        ),
-        max(
-            t.loc.last_line
-            for t in tokens
-            if t.loc
-        )
+        min(t.loc.first_line for t in tokens),
+        max(t.loc.last_line for t in tokens)
     );
 }
 
@@ -931,7 +936,7 @@ impl CommentInjectionPass._process(ctx: uni.UniNode, `node: doc.DocType) -> doc.
             processed_parts = self._handle_empty_body_comments(ctx, processed_parts);
         }
         target_ctx = `node.ast_node;
-        if target_ctx {
+        if target_ctx and not isinstance(target_ctx, uni.FString) {
             processed_parts = self._inject_standalone_by_spans(
                 processed_parts,
                 target_ctx,
@@ -1125,7 +1130,14 @@ impl CommentStore.from_module(module: uni.Module) -> CommentStore {
         }
         anchor_token_id: (int | None) = None;
         if (left_token and (left_token.loc.last_line == comment.loc.first_line)) {
-            anchor_token_id = id(left_token);
+            anchor_token_id = hash(
+                (
+                    left_token.loc.first_line,
+                    left_token.loc.col_start,
+                    left_token.loc.last_line,
+                    left_token.loc.col_end
+                )
+            );
         }
         info = CommentInfo(comment_idx, comment, anchor_token_id);
         if info.is_inline {

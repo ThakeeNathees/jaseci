@@ -186,7 +186,7 @@ class UniNode {
     }
 
     def gen_token(self: UniNode, name: Tok, value: (str | None) = None) -> Token {
-        import from jaclang.jac0core.jac_parser { TOKEN_MAP }
+        import from jaclang.jac0core.constant { TOKEN_MAP }
         value = value
         or (
             DELIM_MAP[name]
@@ -3355,7 +3355,7 @@ class Int(Literal) {
 
     @property
     def lit_value(self: Int) -> int {
-        return int(self.value);
+        return int(self.value, 0);
     }
 }
 
