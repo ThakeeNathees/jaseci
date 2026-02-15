@@ -255,6 +255,47 @@ impl Parser.error(message: str) {
     }
 }
 
+impl Parser.error_at(message: str, loc: SourceLoc) {
+    self.errors.append(ParseError(message=message, loc=loc));
+    if self.prog is not None and hasattr(self.prog, "errors_had") {
+        source = self.get_source();
+        tok = UniToken(
+            orig_src=source,
+            name="ERROR",
+            value="",
+            line=loc.line,
+            end_line=loc.end_line,
+            col_start=loc.col_start,
+            col_end=loc.col_end,
+            pos_start=loc.pos_start,
+            pos_end=loc.pos_end
+        );
+        code_loc = CodeLocInfo(tok, tok);
+        alrt = Alert(message, code_loc, Parser);
+        self.prog.errors_had.append(alrt);
+    }
+}
+
+impl Parser.warn_at(message: str, loc: SourceLoc) {
+    if self.prog is not None and hasattr(self.prog, "warnings_had") {
+        source = self.get_source();
+        tok = UniToken(
+            orig_src=source,
+            name="WARNING",
+            value="",
+            line=loc.line,
+            end_line=loc.end_line,
+            col_start=loc.col_start,
+            col_end=loc.col_end,
+            pos_start=loc.pos_start,
+            pos_end=loc.pos_end
+        );
+        code_loc = CodeLocInfo(tok, tok);
+        alrt = Alert(message, code_loc, Parser);
+        self.prog.warnings_had.append(alrt);
+    }
+}
+
 impl Parser.check_name -> bool {
     # Check for NAME or KWESC_NAME (keyword-escaped identifier like `type)
     return self.check(TokenKind.NAME) or self.check(TokenKind.KWESC_NAME);
@@ -3533,10 +3574,37 @@ impl Parser.parse_module_code -> ModuleCode {
 
 impl Parser.parse_code_block_stmts -> list {
     stmts: list = [];
+    checked_first = False;
     while not self.check(TokenKind.RBRACE) and not self.at_end() {
         before = self.pos;
         stmt = self.parse_statement();
         if stmt is not None {
+            # Reject Python-style docstrings as first statement in code block.
+            # In Jac, semstrings go before the declaration, not inside.
+            is_docstring = False;
+            if (
+                not checked_first
+                and isinstance(stmt, ExprStmt)
+                and not stmt.in_fstring
+            ) {
+                if isinstance(stmt.expr, String) {
+                    is_docstring = True;
+                } elif (
+                    isinstance(stmt.expr, MultiString)
+                    and all(isinstance(s, String) for s in stmt.expr.strings)
+                ) {
+                    is_docstring = True;
+                }
+            }
+            if is_docstring {
+                self.warn_at(
+                    'Docstrings in Jac go before the declaration, not inside the body. ' + 'Move this string before the enclosing test/can/obj/etc.',
+                    self.tokens[before].loc
+                );
+            }
+            if not isinstance(stmt, Semi) {
+                checked_first = True;
+            }
             stmts.append(stmt);
             # Add Semi token if present (for statements like assignment SEMI)
             if self.match_tok(TokenKind.SEMI) {
@@ -5860,8 +5928,9 @@ impl Parser.parse_enum_member -> Assignment {
 }
 
 impl Parser.parse_test -> Test {
+    import re;
     test_kw_uni = self.consume_uni(TokenKind.KW_TEST);
-    # When no explicit name, create a placeholder empty name token at current position
+    # When no explicit description, create a placeholder empty name token
     cur = self.current();
     name: Name | UniToken = UniToken(
         orig_src=self.get_source(),
@@ -5874,23 +5943,41 @@ impl Parser.parse_test -> Test {
         pos_start=cur.loc.pos_start,
         pos_end=cur.loc.pos_end
     );
-    has_explicit_name = False;
-    if self.check(TokenKind.NAME) {
-        name_tok = self.advance();
-        name = self.make_name(name_tok);
-        has_explicit_name = True;
+    has_description = False;
+    description: String | None = None;
+    if self.check(TokenKind.STRING) {
+        str_tok = self.advance();
+        description = self.make_string(str_tok);
+        # Derive a valid identifier from the string description
+        desc_text = description.lit_value;
+        ident = re.sub(r'[^a-zA-Z0-9]+', '_', desc_text).strip('_').lower();
+        if not ident {
+            ident = f"_jac_gen_{Test.TEST_COUNT + 1}";
+        }
+        name = Name(
+            orig_src=self.get_source(),
+            name=Tok.NAME.value,
+            value=ident,
+            line=str_tok.loc.line,
+            end_line=str_tok.loc.end_line,
+            col_start=str_tok.loc.col_start,
+            col_end=str_tok.loc.col_end,
+            pos_start=str_tok.loc.pos_start,
+            pos_end=str_tok.loc.pos_end
+        );
+        has_description = True;
     }
     test_lb_uni = self.consume_uni(TokenKind.LBRACE);
     body = self.parse_code_block_stmts();
     test_rb_uni = self.consume_uni(TokenKind.RBRACE);
     kid: list = [test_kw_uni];
-    if has_explicit_name {
-        kid.append(name);
+    if has_description {
+        kid.append(description);
     }
     kid.append(test_lb_uni);
     kid.extend(body);
     kid.append(test_rb_uni);
-    return Test(name=name, body=body, kid=kid, doc=None);
+    return Test(name=name, body=body, kid=kid, doc=None, description=description);
 }
 
 impl Parser.parse_switch_stmt -> SwitchStmt {
