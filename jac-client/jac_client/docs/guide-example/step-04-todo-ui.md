@@ -15,7 +15,8 @@ Let's build the complete UI. Replace your entire `app.jac` with:
 ```jac
 cl {
     # Component 1: Todo Input
-    def TodoInput(props: any) -> Any {
+    def TodoInput(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -46,7 +47,8 @@ cl {
     }
 
     # Component 2: Filter Buttons
-    def TodoFilters(props: any) -> Any {
+    def TodoFilters(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -89,7 +91,8 @@ cl {
     }
 
     # Component 3: Single Todo Item
-    def TodoItem(props: any) -> Any {
+    def TodoItem(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "alignItems": "center",
@@ -124,7 +127,8 @@ cl {
     }
 
     # Component 4: Todo List (renders multiple TodoItems)
-    def TodoList(props: any) -> Any {
+    def TodoList(props: Any) -> JsxElement {
+
         return <div>
             <TodoItem text="Learn Jac basics" done={true} />
             <TodoItem text="Build a todo app" done={false} />
@@ -133,7 +137,8 @@ cl {
     }
 
     # Main App
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div style={{
             "maxWidth": "600px",
             "margin": "20px auto",
@@ -176,7 +181,8 @@ cl {
     # ... (keep all previous components)
 
     # Updated TodoList with empty state
-    def TodoList(props: any) -> Any {
+    def TodoList(props: Any) -> JsxElement {
+
         # For now, we'll manually control this
         hasTodos = true;  # Change to false to see empty state
 
@@ -232,7 +238,8 @@ app (main container)
 `TodoList` is a **container component** - it manages and renders multiple child components:
 
 ```jac
-def TodoList() -> Any {
+def TodoList() -> JsxElement {
+
     return <div>
         <TodoItem text="Task 1" done={false} />
         <TodoItem text="Task 2" done={true} />
@@ -280,7 +287,8 @@ This is called **conditional rendering** - showing different UI based on conditi
 **Method 1: If/Else in component**
 
 ```jac
-def TodoList() -> Any {
+def TodoList() -> JsxElement {
+
     if hasTodos {
         return <div>Show todos</div>;
     } else {
@@ -426,7 +434,8 @@ Try customizing your app:
 **2. Add more mock todos:**
 
 ```jac
-def TodoList() -> Any {
+def TodoList() -> JsxElement {
+
     return <div>
         <TodoItem text="Task 1" done={false} />
         <TodoItem text="Task 2" done={true} />
@@ -440,7 +449,8 @@ def TodoList() -> Any {
 **3. Add a header:**
 
 ```jac
-def:pub app() -> Any {
+def:pub app() -> JsxElement {
+
     return <div>
         # Add a header
         <div style={{

@@ -64,7 +64,8 @@ For detailed guides and tutorials, see the **[docs folder](jac_client/docs/)**:
 cl import from react { useEffect }
 
 cl {
-    def Counter() -> Any {
+    def Counter() -> JsxElement {
+
         # useState is automatically available - no import needed!
         [count, setCount] = useState(0);
 
@@ -74,7 +75,7 @@ cl {
 
         return <div>
             <h1>Count: {count}</h1>
-            <button onClick={lambda e: any -> None {
+            <button onClick={lambda e: Any -> None {
                 setCount(count + 1);
             }}>
                 Increment
@@ -82,7 +83,8 @@ cl {
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return Counter();
     }
 }
@@ -119,7 +121,8 @@ walker read_todos {
 
 # Frontend: React component
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         # useState is automatically available - no import needed!
         [todos, setTodos] = useState([]);
 
@@ -133,7 +136,7 @@ cl {
 
         return <div>
             <h1>My Todos</h1>
-            {todos.map(lambda todo: any -> Any {
+            {todos.map(lambda todo: Any -> Any {
                 return <div key={todo._jac_id}>{todo.text}</div>;
             })}
         </div>;

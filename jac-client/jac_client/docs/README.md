@@ -150,12 +150,13 @@ Inside your `cl` block, define a function called `app()`:
 # The 'has' keyword automatically creates reactive state with useState under the hood.
 
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         has count: int = 0;
         return <div>
             <h1>Hello, World!</h1>
             <p>Count: {count}</p>
-            <button onClick={lambda e: any -> None { count = count + 1; }}>
+            <button onClick={lambda e: Any -> None { count = count + 1; }}>
                 Increment
             </button>
         </div>;
@@ -179,15 +180,17 @@ cl {
 cl import from react { useEffect }
 
 cl {
-    def TodoList(todos: list) -> Any {
+    def TodoList(todos: list) -> JsxElement {
+
         return <ul>
-            {todos.map(lambda todo: any -> Any {
+            {todos.map(lambda todo: Any -> Any {
                 return <li key={todo._jac_id}>{todo.text}</li>;
             })}
         </ul>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         has todos: list = [];
 
         useEffect(lambda -> None {
@@ -216,7 +219,8 @@ Components in Jac are functions that return JSX (JavaScript XML). They're simila
 
 ```jac
 cl {
-    def MyComponent() -> Any {
+    def MyComponent() -> JsxElement {
+
         return <div>
             <h1>Hello from Jac!</h1>
         </div>;
@@ -229,7 +233,8 @@ cl {
 Components can accept parameters (props):
 
 ```jac
-def TodoItem(item: dict) -> Any {
+def TodoItem(item: dict) -> JsxElement {
+
     return <li key={item.id}>
         <span>{item.text}</span>
         <button onClick={lambda -> None { removeTodo(item.id); }}>
@@ -249,7 +254,8 @@ def TodoItem(item: dict) -> Any {
 ### Example: TodoItem Component
 
 ```jac
-def TodoItem(item: dict) -> Any {
+def TodoItem(item: dict) -> JsxElement {
+
     return <li key={item.id} style={{
         "display": "flex",
         "gap": "12px",
@@ -294,7 +300,8 @@ Jac simplifies state management with the `has` keyword, which automatically uses
 cl import from react { useEffect }
 
 cl {
-    def Counter() -> Any {
+    def Counter() -> JsxElement {
+
         # The 'has' keyword creates reactive state (auto-injects useState)
         has count: int = 0;
 
@@ -304,7 +311,7 @@ cl {
 
         return <div>
             <h1>Count: {count}</h1>
-            <button onClick={lambda e: any -> None {
+            <button onClick={lambda e: Any -> None {
                 count = count + 1;
             }}>
                 Increment
@@ -338,7 +345,8 @@ Here's a complete example showing state management in a todo app:
 cl import from react { useEffect }
 
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         # Reactive state using 'has' - no useState import needed!
         has todos: list = [];
         has input: str = "";
@@ -365,9 +373,9 @@ cl {
         # Filter todos
         def getFilteredTodos() -> list {
             if filter == "active" {
-                return todos.filter(lambda todo: any -> bool { return not todo.done; });
+                return todos.filter(lambda todo: Any -> bool { return not todo.done; });
             } elif filter == "completed" {
-                return todos.filter(lambda todo: any -> bool { return todo.done; });
+                return todos.filter(lambda todo: Any -> bool { return todo.done; });
             }
             return todos;
         }
@@ -378,15 +386,15 @@ cl {
             <h1>My Todos</h1>
             <input
                 value={input}
-                onChange={lambda e: any -> None { input = e.target.value; }}
-                onKeyPress={lambda e: any -> None {
+                onChange={lambda e: Any -> None { input = e.target.value; }}
+                onKeyPress={lambda e: Any -> None {
                     if e.key == "Enter" { addTodo(); }
                 }}
             />
             <button onClick={addTodo}>Add</button>
 
             <div>
-                {filteredTodos.map(lambda todo: any -> Any {
+                {filteredTodos.map(lambda todo: Any -> Any {
                     return <div key={todo._jac_id}>
                         <span>{todo.text}</span>
                     </div>;
@@ -406,7 +414,8 @@ Event handling in Jac works just like React, but with Jac's lambda syntax.
 ### Basic Event Handlers
 
 ```jac
-def Button() -> Any {
+def Button() -> JsxElement {
+
     return <button onClick={lambda -> None {
         console.log("Button clicked!");
     }}>
@@ -418,14 +427,15 @@ def Button() -> Any {
 ### Event Handlers with Event Object
 
 ```jac
-def InputField() -> Any {
+def InputField() -> JsxElement {
+
     # 'has' creates reactive state - useState is auto-injected
     has value: str = "";
 
     return <input
         type="text"
         value={value}
-        onChange={lambda e: any -> None {
+        onChange={lambda e: Any -> None {
             console.log("Input value:", e.target.value);
             value = e.target.value;
         }}
@@ -436,14 +446,15 @@ def InputField() -> Any {
 ### Form Submission
 
 ```jac
-def TodoForm() -> Any {
+def TodoForm() -> JsxElement {
+
     return <form onSubmit={onAddTodo}>
         <input id="todo-input" type="text" />
         <button type="submit">Add Todo</button>
     </form>;
 }
 
-async def onAddTodo(e: any) -> None {
+async def onAddTodo(e: Any) -> None {
     e.preventDefault();  # Prevent page refresh
     inputEl = document.getElementById("todo-input");
     text = inputEl.value.trim();
@@ -462,14 +473,15 @@ async def onAddTodo(e: any) -> None {
 | Event | Syntax | Use Case |
 |-------|--------|----------|
 | `onClick` | `onClick={lambda -> None {...}}` | Button clicks |
-| `onChange` | `onChange={lambda e: any -> None {...}}` | Input changes |
-| `onSubmit` | `onSubmit={lambda e: any -> None {...}}` | Form submission |
-| `onKeyPress` | `onKeyPress={lambda e: any -> None {...}}` | Keyboard input |
+| `onChange` | `onChange={lambda e: Any -> None {...}}` | Input changes |
+| `onSubmit` | `onSubmit={lambda e: Any -> None {...}}` | Form submission |
+| `onKeyPress` | `onKeyPress={lambda e: Any -> None {...}}` | Keyboard input |
 
 ### Advanced: Conditional Event Handlers
 
 ```jac
-def FilterButton(filterType: str, currentFilter: str, onFilterChange: any) -> Any {
+def FilterButton(filterType: str, currentFilter: str, onFilterChange: Any) -> JsxElement {
+
     isActive = currentFilter == filterType;
 
     return <button
@@ -584,7 +596,7 @@ walker read_todos {
 **Frontend (in `cl` block):**
 
 ```jac
-async def onAddTodo(e: any) -> None {
+async def onAddTodo(e: Any) -> None {
     e.preventDefault();
     text = document.getElementById("todo-input").value.trim();
     if not text { return; }
@@ -683,7 +695,8 @@ walker create_todo {
 # Note: No need to import useState - it's auto-injected when using 'has' keyword
 
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         # Reactive state with 'has' - useState is auto-injected by the compiler
         has todos: list = [];
         has input: str = "";
@@ -701,15 +714,15 @@ cl {
             <h2>My Todos</h2>
             <input
                 value={input}
-                onChange={lambda e: any -> None { input = e.target.value; }}
-                onKeyPress={lambda e: any -> None {
+                onChange={lambda e: Any -> None { input = e.target.value; }}
+                onKeyPress={lambda e: Any -> None {
                     if e.key == "Enter" { addTodo(); }
                 }}
             />
             <button onClick={addTodo}>Add Todo</button>
 
             <div>
-                {todos.map(lambda todo: any -> Any {
+                {todos.map(lambda todo: Any -> Any {
                     return <div key={todo._jac_id}>
                         <span>{todo.text}</span>
                     </div>;

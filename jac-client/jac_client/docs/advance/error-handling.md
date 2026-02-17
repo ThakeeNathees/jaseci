@@ -16,7 +16,8 @@ You can wrap any section of your component hierarchy with `JacClientErrorBoundar
 cl import from "@jac/runtime" {JacClientErrorBoundary, ErrorFallback }
 
 cl{
-    def:pub app -> Any {
+    def:pub app -> JsxElement {
+
         return (
             <JacClientErrorBoundary FallbackComponent={ErrorFallback}>
             <MainAppComponents />

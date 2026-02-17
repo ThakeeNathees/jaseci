@@ -14,7 +14,8 @@ Let's make our TodoItem look better:
 
 ```jac
 cl {
-    def TodoItem(props: any) -> Any {
+    def TodoItem(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "alignItems": "center",
@@ -48,7 +49,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div style=  {{"padding": "20px"}}>
             <h1>My Todos</h1>
             <TodoItem text="Learn Jac basics" done={true} />
@@ -64,7 +66,8 @@ cl {
 
 ```jac
 cl {
-    def TodoInput(props: any) -> Any {
+    def TodoInput(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -94,7 +97,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div style={{"padding": "20px"}}>
             <h1>My Todos</h1>
             <TodoInput />
@@ -107,7 +111,8 @@ cl {
 
 ```jac
 cl {
-    def TodoFilters(props: any) -> Any {
+    def TodoFilters(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -149,7 +154,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div style={{"padding": "20px"}}>
             <h1>My Todos</h1>
             <TodoFilters />
@@ -376,7 +382,8 @@ Flexbox is a powerful layout system. Here are the basics:
 You can store styles in variables to avoid repetition:
 
 ```jac
-def:pub app() -> Any {
+def:pub app() -> JsxElement {
+
     # Define common button style
     buttonStyle = {
         "padding": "8px 16px",
@@ -449,7 +456,8 @@ def:pub app() -> Any {
 Try adding a container with centered content:
 
 ```jac
-def:pub app() -> Any {
+def:pub app() -> JsxElement {
+
     return <div style={{
         "maxWidth": "600px",
         "margin": "0 auto",

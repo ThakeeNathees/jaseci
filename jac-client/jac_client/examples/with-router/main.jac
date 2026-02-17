@@ -12,11 +12,12 @@ cl import from "@jac/runtime" {
 
 cl {
     # Home Page Component
-    def Home -> Any {
+    def Home -> JsxElement {
+
         location = useLocation();
         navigate = useNavigate();
 
-        def goToAbout(e: any) -> None {
+        def goToAbout(e: Any) -> None {
             navigate("/about");
         }
 
@@ -48,7 +49,8 @@ cl {
     }
 
     # About Page Component
-    def About -> Any {
+    def About -> JsxElement {
+
         location = useLocation();
 
         return
@@ -77,7 +79,8 @@ cl {
     }
 
     # Team Page Component (nested route example)
-    def Team -> Any {
+    def Team -> JsxElement {
+
         return
             <div>
                 <h1>
@@ -93,7 +96,8 @@ cl {
     }
 
     # User Profile Component (with URL parameters)
-    def UserProfile -> Any {
+    def UserProfile -> JsxElement {
+
         params = useParams();
         userId = params.id or "Unknown";
 
@@ -121,15 +125,16 @@ cl {
     }
 
     # Contact Page Component
-    def Contact -> Any {
+    def Contact -> JsxElement {
+
         has submitted: bool = False;
 
-        def handleSubmit(e: any) -> None {
+        def handleSubmit(e: Any) -> None {
             e.preventDefault();
             submitted = True;
         }
 
-        def resetForm(e: any) -> None {
+        def resetForm(e: Any) -> None {
             submitted = False;
         }
 
@@ -181,11 +186,12 @@ cl {
     }
 
     # 404 Not Found Component
-    def NotFound -> Any {
+    def NotFound -> JsxElement {
+
         location = useLocation();
         navigate = useNavigate();
 
-        def goHome(e: any) -> None {
+        def goHome(e: Any) -> None {
             navigate("/");
         }
 
@@ -208,7 +214,8 @@ cl {
     }
 
     # Navigation Component with active link styling
-    def Navigation -> Any {
+    def Navigation -> JsxElement {
+
         location = useLocation();
 
         def linkStyle(path: str) -> dict {
@@ -259,11 +266,12 @@ cl {
     }
 
     # Main App Component with React Router HashRouter
-    def:pub app -> Any {
+    def:pub app -> JsxElement {
+
         return
             <Router>
                 <div style={{"fontFamily": "system-ui, -apple-system, sans-serif"}}>
-                    <Navigation />
+                    <Navigation/>
                     <div
                         style={{
                             "maxWidth": "1200px",
@@ -272,12 +280,12 @@ cl {
                         }}
                     >
                         <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/about" element={<About />} />
-                            <Route path="/about/team" element={<Team />} />
-                            <Route path="/contact" element={<Contact />} />
-                            <Route path="/user/:id" element={<UserProfile />} />
-                            <Route path="*" element={<NotFound />} />
+                            <Route path="/" element={<Home/>}/>
+                            <Route path="/about" element={<About/>}/>
+                            <Route path="/about/team" element={<Team/>}/>
+                            <Route path="/contact" element={<Contact/>}/>
+                            <Route path="/user/:id" element={<UserProfile/>}/>
+                            <Route path="*" element={<NotFound/>}/>
                         </Routes>
                     </div>
                 </div>

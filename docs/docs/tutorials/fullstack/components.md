@@ -13,11 +13,12 @@ Build reusable UI components with JSX syntax.
 
 ```jac
 cl {
-    def:pub Greeting(props: dict) -> Any {
+    def:pub Greeting(props: dict) -> JsxElement {
         return <h1>Hello, {props.name}!</h1>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <Greeting name="Alice" />
             <Greeting name="Bob" />
@@ -41,7 +42,8 @@ cl {
 
 ```jac
 cl {
-    def:pub MyComponent() -> Any {
+    def:pub MyComponent() -> JsxElement {
+
         return <div className="container">
             <h1>Title</h1>
             <p>Paragraph text</p>
@@ -58,7 +60,8 @@ cl {
 
 ```jac
 cl {
-    def:pub MyComponent() -> Any {
+    def:pub MyComponent() -> JsxElement {
+
         name = "World";
         items = [1, 2, 3];
 
@@ -81,7 +84,8 @@ Use `{ }` to embed any Jac expression.
 
 ```jac
 cl {
-    def:pub Status(props: dict) -> Any {
+    def:pub Status(props: dict) -> JsxElement {
+
         return <span>
             {("Active" if props.active else "Inactive")}
         </span>;
@@ -93,7 +97,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Notification(props: dict) -> Any {
+    def:pub Notification(props: dict) -> JsxElement {
+
         return <div>
             {props.count > 0 and <span>You have {props.count} messages</span>}
         </div>;
@@ -105,7 +110,8 @@ cl {
 
 ```jac
 cl {
-    def:pub UserGreeting(props: dict) -> Any {
+    def:pub UserGreeting(props: dict) -> JsxElement {
+
         if props.isLoggedIn {
             return <h1>Welcome back!</h1>;
         }
@@ -120,15 +126,17 @@ cl {
 
 ```jac
 cl {
-    def:pub TodoList(props: dict) -> Any {
+    def:pub TodoList(props: dict) -> JsxElement {
+
         return <ul>
-            {props.items.map(lambda item: any -> Any {
+            {props.items.map(lambda item: Any -> Any {
                 return <li key={item.id}>{item.text}</li>;
             })}
         </ul>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         todos = [
             {"id": 1, "text": "Learn Jac"},
             {"id": 2, "text": "Build app"},
@@ -150,7 +158,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Button() -> Any {
+    def:pub Button() -> JsxElement {
+
         def handle_click() -> None {
             print("Button clicked!");
         }
@@ -166,13 +175,14 @@ cl {
 
 ```jac
 cl {
-    def:pub SearchBox() -> Any {
+    def:pub SearchBox() -> JsxElement {
+
         has query: str = "";
 
         return <input
             type="text"
             value={query}
-            onChange={lambda e: any -> None { query = e.target.value; }}
+            onChange={lambda e: Any -> None { query = e.target.value; }}
             placeholder="Search..."
         />;
     }
@@ -183,24 +193,25 @@ cl {
 
 ```jac
 cl {
-    def:pub LoginForm() -> Any {
+    def:pub LoginForm() -> JsxElement {
+
         has username: str = "";
         has password: str = "";
 
-        def handle_submit(e: any) -> None {
+        def handle_submit(e: Any) -> None {
             e.preventDefault();
             print(f"Login: {username}");
         }
 
-        return <form onSubmit={lambda e: any -> None { handle_submit(e); }}>
+        return <form onSubmit={lambda e: Any -> None { handle_submit(e); }}>
             <input
                 value={username}
-                onChange={lambda e: any -> None { username = e.target.value; }}
+                onChange={lambda e: Any -> None { username = e.target.value; }}
             />
             <input
                 type="password"
                 value={password}
-                onChange={lambda e: any -> None { password = e.target.value; }}
+                onChange={lambda e: Any -> None { password = e.target.value; }}
             />
             <button type="submit">Login</button>
         </form>;
@@ -216,14 +227,16 @@ cl {
 
 ```jac
 cl {
-    def:pub Card(props: dict) -> Any {
+    def:pub Card(props: dict) -> JsxElement {
+
         return <div className="card">
             <div className="card-header">{props.title}</div>
             <div className="card-body">{props.children}</div>
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Card title="Welcome">
             <p>This is the card content.</p>
             <button>Action</button>
@@ -236,25 +249,28 @@ cl {
 
 ```jac
 cl {
-    def:pub Header() -> Any {
+    def:pub Header() -> JsxElement {
+
         return <header>
             <h1>My App</h1>
             <Nav />
         </header>;
     }
 
-    def:pub Nav() -> Any {
+    def:pub Nav() -> JsxElement {
+
         return <nav>
             <a href="/">Home</a>
             <a href="/about">About</a>
         </nav>;
     }
 
-    def:pub Footer() -> Any {
+    def:pub Footer() -> JsxElement {
         return <footer>© 2024</footer>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <Header />
             <main>Content here</main>
@@ -273,7 +289,8 @@ cl {
 ```jac
 # No cl { } needed for .cl.jac files
 
-def:pub Header(props: dict) -> Any {
+def:pub Header(props: dict) -> JsxElement {
+
     return <header>
         <h1>{props.title}</h1>
     </header>;
@@ -286,7 +303,8 @@ def:pub Header(props: dict) -> Any {
 cl {
     import from "./Header.cl.jac" { Header }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <Header title="My App" />
             <main>Content</main>
@@ -320,7 +338,8 @@ export function Button({ label, onClick }: ButtonProps) {
 cl {
     import from "./Button.tsx" { Button }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Button
             label="Click me"
             onClick={lambda -> None { print("Clicked!"); }}
@@ -337,7 +356,8 @@ cl {
 
 ```jac
 cl {
-    def:pub StyledBox() -> Any {
+    def:pub StyledBox() -> JsxElement {
+
         return <div style={{
             "backgroundColor": "#f0f0f0",
             "padding": "20px",
@@ -356,7 +376,8 @@ cl {
 cl {
     import ".styles.css";
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div className="container">
             <h1 className="title">Hello</h1>
         </div>;
@@ -381,7 +402,8 @@ cl {
 
 | Concept | Syntax |
 |---------|--------|
-| Define component | `def:pub Name(props: dict) -> Any { }` |
+| Define component | `def:pub Name(props: dict) -> JsxElement { }` |
+
 | JSX element | `<div className="x">content</div>` |
 | Expression | `{expression}` |
 | Event handler | `onClick={lambda -> None { ... }}` |

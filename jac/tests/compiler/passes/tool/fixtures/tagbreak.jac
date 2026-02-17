@@ -141,7 +141,7 @@ with entry {
 
 import from typing { Any, Awaitable, Callable, Coroutine, Optional, ParamSpec, TypeVar }
 
-import from jaclang.pycore.constant {
+import from jaclang.jac0core.constant {
     JacSemTokenModifier as SemTokMod,
     JacSemTokenType as SemTokType,
 }
@@ -373,7 +373,8 @@ cl {
     }
 
     # UI Components - Render a single tweet card
-    def TweetCard(tweet: ClientTweet) -> Any {
+    def TweetCard(tweet: ClientTweet) -> JsxElement {
+
         return
             <div
                 class="tweet-card"
@@ -409,7 +410,8 @@ cl {
     }
 
     # UI Components - Render a single tweet card
-    def TweetCard2(tweet: ClientTweet) -> Any {
+    def TweetCard2(tweet: ClientTweet) -> JsxElement {
+
         return
             <div class="tweet-actions" style={{"display": "flex", "gap": "15px"}}>
                 <button style={{"padding": "5px 10px"}}>
@@ -419,7 +421,8 @@ cl {
     }
 
     # UI Components - Render a single tweet card
-    def TweetCard3(tweet: ClientTweet) -> Any {
+    def TweetCard3(tweet: ClientTweet) -> JsxElement {
+
         return (
             <div class="tweet-actions" style={{"display": "flex", "gap": "15px"}}>
                 <button style={{"padding": "5px 10px"}}>

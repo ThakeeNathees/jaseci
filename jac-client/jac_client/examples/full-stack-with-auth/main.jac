@@ -53,11 +53,12 @@ walker toggle_todo {
 # Frontend Components
 cl {
     # Navigation
-    def Navigation -> Any {
+    def Navigation -> JsxElement {
+
         isLoggedIn = jacIsLoggedIn();
         navigate = useNavigate();
 
-        def handleLogout(e: any) -> None {
+        def handleLogout(e: Any) -> None {
             e.preventDefault();
             jacLogout();
             navigate("/login");
@@ -132,14 +133,15 @@ cl {
     }
 
     # Login Page
-    def LoginPage -> Any {
+    def LoginPage -> JsxElement {
+
         has username: str = "",
             password: str = "",
             error: str = "";
 
         navigate = useNavigate();
 
-        async def handleLogin(e: any) -> None {
+        async def handleLogin(e: Any) -> None {
             e.preventDefault();
             error = "";
             if not username or not password {
@@ -154,11 +156,11 @@ cl {
             }
         }
 
-        def handleUsernameChange(e: any) -> None {
+        def handleUsernameChange(e: Any) -> None {
             username = e.target.value;
         }
 
-        def handlePasswordChange(e: any) -> None {
+        def handlePasswordChange(e: Any) -> None {
             password = e.target.value;
         }
 
@@ -256,14 +258,15 @@ cl {
     }
 
     # Signup Page
-    def SignupPage -> Any {
+    def SignupPage -> JsxElement {
+
         has username: str = "",
             password: str = "",
             error: str = "";
 
         navigate = useNavigate();
 
-        async def handleSignup(e: any) -> None {
+        async def handleSignup(e: Any) -> None {
             e.preventDefault();
             error = "";
             if not username or not password {
@@ -278,11 +281,11 @@ cl {
             }
         }
 
-        def handleUsernameChange(e: any) -> None {
+        def handleUsernameChange(e: Any) -> None {
             username = e.target.value;
         }
 
-        def handlePasswordChange(e: any) -> None {
+        def handlePasswordChange(e: Any) -> None {
             password = e.target.value;
         }
 
@@ -380,7 +383,8 @@ cl {
     }
 
     # TodoInput Component
-    def TodoInput(props: any) -> Any {
+    def TodoInput(props: Any) -> JsxElement {
+
         input = props.input;
         setInput = props.setInput;
         addTodo = props.addTodo;
@@ -390,8 +394,8 @@ cl {
                 <input
                     type="text"
                     value={input}
-                    onChange={lambda e: any  -> None { setInput(e.target.value);}}
-                    onKeyPress={lambda e: any  -> None { if e.key == "Enter" {
+                    onChange={lambda e: Any  -> None { setInput(e.target.value);}}
+                    onKeyPress={lambda e: Any  -> None { if e.key == "Enter" {
                         addTodo();
                     }}}
                     placeholder="What needs to be done?"
@@ -420,7 +424,8 @@ cl {
     }
 
     # TodoFilters Component
-    def TodoFilters(props: any) -> Any {
+    def TodoFilters(props: Any) -> JsxElement {
+
         filter = props.filter;
         setFilter = props.setFilter;
 
@@ -474,7 +479,8 @@ cl {
     }
 
     # TodoItem Component
-    def TodoItem(props: any) -> Any {
+    def TodoItem(props: Any) -> JsxElement {
+
         todo = props.todo;
         toggleTodo = props.toggleTodo;
         deleteTodo = props.deleteTodo;
@@ -523,12 +529,13 @@ cl {
     }
 
     # TodoList Component
-    def TodoList(props: any) -> Any {
+    def TodoList(props: Any) -> JsxElement {
+
         filteredTodos = props.filteredTodos;
         toggleTodo = props.toggleTodo;
         deleteTodo = props.deleteTodo;
 
-        if filteredTodos.length == 0 {
+        if len(filteredTodos) == 0 {
             return
                 <div
                     style={{"padding": "20px", "textAlign": "center", "color": "#999"}}
@@ -540,7 +547,7 @@ cl {
         return
             <div>
                 {filteredTodos.map(
-                    lambda todo: any  -> Any { return
+                    lambda todo: Any  -> Any { return
                         <TodoItem
                             key={todo._jac_id}
                             todo={todo}
@@ -552,11 +559,12 @@ cl {
     }
 
     # Todos Page (Protected)
-    def TodosPage -> Any {
+    def TodosPage -> JsxElement {
+
         # Check if user is logged in, redirect if not
         if not jacIsLoggedIn() {
             return
-                <Navigate to="/login" />;
+                <Navigate to="/login"/>;
         }
 
         [todos, setTodos] = useState([]);
@@ -574,20 +582,20 @@ cl {
 
         # Add todo
         async def addTodo -> None {
-            if not input.trim() {
+            if not input.strip() {
                 return;
             }
-            result = root spawn create_todo(text=input.trim());
+            result = root spawn create_todo(text=input.strip());
             setTodos(todos.concat([result.reports[0][0]]));
             setInput("");
         }
 
         # Toggle todo
-        async def toggleTodo(id: any) -> None {
+        async def toggleTodo(id: Any) -> None {
             id spawn toggle_todo();
             setTodos(
                 todos.map(
-                    lambda todo: any  -> Any { if todo._jac_id == id {
+                    lambda todo: Any  -> Any { if todo._jac_id == id {
                         return {
                             "_jac_id": todo._jac_id,
                             "text": todo.text,
@@ -599,10 +607,10 @@ cl {
         }
 
         # Delete todo
-        async def deleteTodo(id: any) -> None {
+        async def deleteTodo(id: Any) -> None {
             #id spawn delete_todo();
             setTodos(
-                todos.filter(lambda todo: any  -> bool { return todo._jac_id != id; })
+                todos.filter(lambda todo: Any  -> bool { return todo._jac_id != id; })
             );
         }
 
@@ -610,16 +618,18 @@ cl {
         def getFilteredTodos -> list {
             if filter == "active" {
                 return todos.filter(
-                    lambda todo: any  -> bool { return not todo.done; }
+                    lambda todo: Any  -> bool { return not todo.done; }
                 );
             } elif filter == "completed" {
-                return todos.filter(lambda todo: any  -> bool { return todo.done; });
+                return todos.filter(lambda todo: Any  -> bool { return todo.done; });
             }
             return todos;
         }
 
         filteredTodos = getFilteredTodos();
-        activeCount = todos.filter(lambda todo: any  -> bool { return not todo.done; }).length;
+        activeCount = len(
+            todos.filter(lambda todo: Any  -> bool { return not todo.done; })
+        );
 
         return
             <div
@@ -635,8 +645,8 @@ cl {
                 <h1 style={{"marginBottom": "20px"}}>
                     My Todos
                 </h1>
-                <TodoInput input={input} setInput={setInput} addTodo={addTodo} />
-                <TodoFilters filter={filter} setFilter={setFilter} />
+                <TodoInput input={input} setInput={setInput} addTodo={addTodo}/>
+                <TodoFilters filter={filter} setFilter={setFilter}/>
                 <TodoList
                     filteredTodos={filteredTodos}
                     toggleTodo={toggleTodo}
@@ -656,32 +666,34 @@ cl {
                         {activeCount}{"item" if activeCount == 1 else "items"}left
                     </div>
                 )
-                if todos.length > 0
+                if len(todos) > 0
                 else None}
             </div>;
     }
 
     # Home/Landing Page - auto-redirect
-    def HomePage -> Any {
+    def HomePage -> JsxElement {
+
         if jacIsLoggedIn() {
             return
-                <Navigate to="/todos" />;
+                <Navigate to="/todos"/>;
         }
         return
-            <Navigate to="/login" />;
+            <Navigate to="/login"/>;
     }
 
     # Main App with React Router
-    def:pub app -> Any {
+    def:pub app -> JsxElement {
+
         return
             <Router>
                 <div style={{"fontFamily": "system-ui, sans-serif"}}>
-                    <Navigation />
+                    <Navigation/>
                     <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/signup" element={<SignupPage />} />
-                        <Route path="/todos" element={<TodosPage />} />
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/login" element={<LoginPage/>}/>
+                        <Route path="/signup" element={<SignupPage/>}/>
+                        <Route path="/todos" element={<TodosPage/>}/>
                     </Routes>
                 </div>
             </Router>;

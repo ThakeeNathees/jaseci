@@ -4,7 +4,8 @@ cl import from .utils { formatMessage, calculateSum, JS_CONSTANT, MessageFormatt
 
 cl glob JS_IMPORT_LABEL: str = "JavaScript Import Test";
 
-cl def JsImportTest()  -> Any {
+cl def JsImportTest()  -> JsxElement {
+
     greeting = formatMessage("Jac");
     sum = calculateSum(5, 3);
     formatter = MessageFormatter("JS");
@@ -29,6 +30,7 @@ cl def JsImportTest()  -> Any {
     </div>;
 }
 
-cl def app()  -> Any {
+cl def app()  -> JsxElement {
+
     return <JsImportTest />;
 }

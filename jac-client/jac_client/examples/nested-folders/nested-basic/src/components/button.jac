@@ -1,6 +1,7 @@
 cl import from antd { Button }
 
-cl def:pub CustomButton -> Any {
+cl def:pub CustomButton -> JsxElement {
+
     return
         <Button>
             Click Me

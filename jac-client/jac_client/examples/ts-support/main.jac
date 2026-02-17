@@ -3,11 +3,12 @@
 cl import from ".components/Button.tsx" { Button }
 
 cl {
-    def:pub app -> Any {
+    def:pub app -> JsxElement {
+
         has count: int = 0;
 
         can with count entry {
-            console.log("Count: ", count);
+            print("Count: ", count);
         }
 
         return
@@ -16,7 +17,7 @@ cl {
                     Hello, World!
                 </h1>
                 <p>
-                    Count: {count}
+                    Count:{count}
                 </p>
                 <div style={{display: "flex", gap: "1rem", marginTop: "1rem"}}>
                     <Button

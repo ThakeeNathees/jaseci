@@ -117,7 +117,8 @@ cl import from ".components/Button.tsx" { Button }
 cl {
     has count: int = 0;  # Automatically creates React state
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         useEffect(lambda -> None {
             console.log("Count: ", count);
         }, [count]);

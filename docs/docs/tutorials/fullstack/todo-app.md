@@ -266,7 +266,8 @@ sv {
 cl {
     import from frontend { app as ClientApp }
 
-    def:pub app -> Any {
+    def:pub app -> JsxElement {
+
         return <ClientApp />;
     }
 }
@@ -289,7 +290,8 @@ import from "@jac-client/utils" { jacSignup, jacLogin, jacLogout, jacIsLoggedIn 
 # Import server-side walkers for client use
 sv import from endpoints { AddTodo, ListTodos, ToggleTodo, DeleteTodo }
 
-def:pub app -> Any {
+def:pub app -> JsxElement {
+
     # Component state
     has isLoggedIn: bool = False,
         todos: list = [],
@@ -317,7 +319,7 @@ def:pub app -> Any {
 
     # Add a new todo
     async def addTodo -> None {
-        if not newTodoText.trim() { return; }
+        if not newTodoText.strip() { return; }
 
         response = root spawn AddTodo(title=newTodoText);
         newTodo = response.reports[0];
@@ -338,7 +340,7 @@ def:pub app -> Any {
         root spawn ToggleTodo(todo_id=todoId);
 
         # Update local state
-        todos = todos.map(lambda t: any -> Any {
+        todos = todos.map(lambda t: Any -> Any {
             if t.id == todoId {
                 return {
                     "id": t.id,
@@ -355,7 +357,7 @@ def:pub app -> Any {
     # Delete a todo
     async def deleteTodo(todoId: str) -> None {
         root spawn DeleteTodo(todo_id=todoId);
-        todos = todos.filter(lambda t: any -> bool {
+        todos = todos.filter(lambda t: Any -> bool {
             return t.id != todoId and t.parent_id != todoId;
         });
     }
@@ -369,7 +371,7 @@ def:pub app -> Any {
                 <input
                     type="text"
                     value={newTodoText}
-                    onChange={lambda e: any -> None { newTodoText = e.target.value; }}
+                    onChange={lambda e: Any -> None { newTodoText = e.target.value; }}
                     placeholder="What needs to be done?"
                     style={{"flex": "1", "padding": "0.5rem"}}
                 />
@@ -380,7 +382,7 @@ def:pub app -> Any {
                 <p>Loading...</p>
             ) if todosLoading else (
                 <ul>
-                    {todos.map(lambda todo: any -> Any {
+                    {todos.map(lambda todo: Any -> Any {
                         return
                             <li key={todo.id} style={{"display": "flex", "alignItems": "center", "gap": "0.5rem"}}>
                                 <input
@@ -511,13 +513,14 @@ Add to `frontend.cl.jac`:
 ```jac
 sv import from endpoints { AddTodo, ListTodos, ToggleTodo, DeleteTodo, MealToIngredients }
 
-def:pub app -> Any {
+def:pub app -> JsxElement {
+
     has mealDescription: str = "",
         mealLoading: bool = False;
     # ... other state ...
 
     async def generateMealIngredients -> None {
-        if not mealDescription.trim() { return; }
+        if not mealDescription.strip() { return; }
         mealLoading = True;
 
         try {
@@ -526,16 +529,16 @@ def:pub app -> Any {
             # MealToIngredients has multiple reports:
             # reports[0] = ListTodos output (from nested spawn)
             # reports[1] = Summary object with ingredients_added
-            if response.reports and response.reports.length > 1 {
+            if response.reports and len(response.reports) > 1 {
                 result = response.reports[1];
                 added = result["ingredients_added"];
 
-                if added and added.length > 0 {
+                if added and len(added) > 0 {
                     todos = todos.concat(added);
                 }
             }
         } except Exception as e {
-            console.error("Error generating ingredients:", e);
+            print("Error generating ingredients:", e);
         }
 
         mealDescription = "";
@@ -550,7 +553,7 @@ def:pub app -> Any {
                 <input
                     type="text"
                     value={mealDescription}
-                    onChange={lambda e: any -> None { mealDescription = e.target.value; }}
+                    onChange={lambda e: Any -> None { mealDescription = e.target.value; }}
                     placeholder="Describe a meal (e.g., spaghetti bolognese)"
                     disabled={mealLoading}
                 />

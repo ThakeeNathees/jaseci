@@ -41,7 +41,8 @@ Use `cl { }` to define client-side (React) code:
 
 ```jac
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <h1>Hello, World!</h1>
         </div>;
@@ -55,7 +56,8 @@ The entry `app()` function must be exported with `:pub`:
 
 ```jac
 cl {
-    def:pub app() -> Any {  # :pub required
+    def:pub app() -> JsxElement {  # :pub required
+
         return <App />;
     }
 }
@@ -69,7 +71,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Button(props: dict) -> Any {
+    def:pub Button(props: dict) -> JsxElement {
+
         return <button
             className={props.get("className", "")}
             onClick={props.get("onClick")}
@@ -84,7 +87,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Card(props: dict) -> Any {
+    def:pub Card(props: dict) -> JsxElement {
+
         return <div className="card">
             <h2>{props["title"]}</h2>
             <p>{props["description"]}</p>
@@ -98,7 +102,8 @@ cl {
 
 ```jac
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <Card title="Welcome" description="Hello!">
                 <Button onClick={lambda -> None { print("clicked"); }}>
@@ -120,7 +125,8 @@ Inside `cl { }` blocks, `has` creates reactive state:
 
 ```jac
 cl {
-    def:pub Counter() -> Any {
+    def:pub Counter() -> JsxElement {
+
         has count: int = 0;  # Compiles to useState(0)
 
         return <div>
@@ -144,7 +150,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Form() -> Any {
+    def:pub Form() -> JsxElement {
+
         has name: str = "";
         has items: list = [];
         has data: dict = {"key": "value"};
@@ -177,7 +184,8 @@ Similar to how `has` variables automatically generate `useState`, the `can with 
 
 ```jac
 cl {
-    def:pub DataLoader() -> Any {
+    def:pub DataLoader() -> JsxElement {
+
         has data: list = [];
         has loading: bool = True;
 
@@ -195,7 +203,8 @@ cl {
         return <div>...</div>;
     }
 
-    def:pub UserProfile(userId: str) -> Any {
+    def:pub UserProfile(userId: str) -> JsxElement {
+
         has user: dict = {};
 
         # Re-run when userId changes (dependency array)
@@ -221,7 +230,8 @@ You can also use `useEffect` manually by importing it from React:
 cl {
     import from react { useEffect }
 
-    def:pub DataLoader() -> Any {
+    def:pub DataLoader() -> JsxElement {
+
         has data: list = [];
         has loading: bool = True;
 
@@ -248,7 +258,8 @@ cl {
 
     glob AppContext = createContext(None);
 
-    def:pub AppProvider(props: dict) -> Any {
+    def:pub AppProvider(props: dict) -> JsxElement {
+
         has theme: str = "light";
 
         return <AppContext.Provider value={{"theme": theme}}>
@@ -256,7 +267,8 @@ cl {
         </AppContext.Provider>;
     }
 
-    def:pub ThemedComponent() -> Any {
+    def:pub ThemedComponent() -> JsxElement {
+
         ctx = useContext(AppContext);
         return <div className={ctx.theme}>Content</div>;
     }
@@ -275,7 +287,8 @@ Fetch data from walkers:
 cl {
     import from jac_client { useWalker }
 
-    def:pub TaskList() -> Any {
+    def:pub TaskList() -> JsxElement {
+
         (data, loading, error, refetch) = useWalker("get_tasks");
 
         if loading {
@@ -302,7 +315,8 @@ cl {
 
 ```jac
 cl {
-    def:pub SearchTasks() -> Any {
+    def:pub SearchTasks() -> JsxElement {
+
         has search_term: str = "";
         (data, loading, error, refetch) = useWalker(
             "search_tasks",
@@ -340,7 +354,8 @@ cl {
 cl {
     import from jac_client { Router, Route, Link }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <nav>
                 <Link to="/">Home</Link>
@@ -360,7 +375,8 @@ cl {
 cl {
     import from jac_client { useParams }
 
-    def:pub UserProfile() -> Any {
+    def:pub UserProfile() -> JsxElement {
+
         params = useParams();
         user_id = params["id"];
 
@@ -377,7 +393,8 @@ cl {
 cl {
     import from jac_client { useNavigate }
 
-    def:pub LoginForm() -> Any {
+    def:pub LoginForm() -> JsxElement {
+
         navigate = useNavigate();
 
         async def handle_login() -> None {
@@ -400,7 +417,8 @@ cl {
 cl {
     import from jac_client { Outlet }
 
-    def:pub DashboardLayout() -> Any {
+    def:pub DashboardLayout() -> JsxElement {
+
         # Child routes render where Outlet is placed
         return <div>
             <Sidebar />
@@ -446,7 +464,8 @@ cl {
 
 ```jac
 cl {
-    def:pub StyledComponent() -> Any {
+    def:pub StyledComponent() -> JsxElement {
+
         return <div style={{"color": "blue", "padding": "10px"}}>
             Styled content
         </div>;
@@ -458,7 +477,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Card() -> Any {
+    def:pub Card() -> JsxElement {
+
         return <div className="card card-primary">
             Content
         </div>;
@@ -506,7 +526,8 @@ export const Button: React.FC<ButtonProps> = ({ label, onClick }) => {
 cl {
     import from "./components/Button" { Button }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Button label="Click" onClick={lambda -> None { }} />;
     }
 }
@@ -677,14 +698,15 @@ In dev mode, API routes are automatically proxied:
 
 ```jac
 cl {
-    def:pub Form() -> Any {
+    def:pub Form() -> JsxElement {
+
         has value: str = "";
 
         return <div>
             <input
                 value={value}
-                onChange={lambda e: any -> None { value = e.target.value; }}
-                onKeyPress={lambda e: any -> None {
+                onChange={lambda e: Any -> None { value = e.target.value; }}
+                onKeyPress={lambda e: Any -> None {
                     if e.key == "Enter" { submit(); }
                 }}
             />
@@ -702,7 +724,8 @@ cl {
 
 ```jac
 cl {
-    def:pub ConditionalComponent() -> Any {
+    def:pub ConditionalComponent() -> JsxElement {
+
         has show: bool = False;
         has items: list = [];
 

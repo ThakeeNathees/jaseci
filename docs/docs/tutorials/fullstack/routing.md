@@ -17,7 +17,8 @@ Jac-client provides React Router-style routing:
 cl {
     import from jac_client { Router, Route, Link }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -37,28 +38,32 @@ cl {
 cl {
     import from jac_client { Router, Route, Link }
 
-    def:pub Home() -> Any {
+    def:pub Home() -> JsxElement {
+
         return <div>
             <h1>Home Page</h1>
             <p>Welcome to our site!</p>
         </div>;
     }
 
-    def:pub About() -> Any {
+    def:pub About() -> JsxElement {
+
         return <div>
             <h1>About Us</h1>
             <p>Learn more about our company.</p>
         </div>;
     }
 
-    def:pub Contact() -> Any {
+    def:pub Contact() -> JsxElement {
+
         return <div>
             <h1>Contact</h1>
             <p>Get in touch with us.</p>
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <nav>
                 <Link to="/">Home</Link>
@@ -81,7 +86,8 @@ cl {
 ```jac
 cl {
     # Navigation example showing Link vs anchor
-    def:pub NavExample() -> Any {
+    def:pub NavExample() -> JsxElement {
+
         return <div>
             <Link to="/about">About</Link>
             <a href="https://example.com">External Site</a>
@@ -100,7 +106,8 @@ cl {
 cl {
     import from jac_client { Router, Route, useParams }
 
-    def:pub UserProfile() -> Any {
+    def:pub UserProfile() -> JsxElement {
+
         # Get URL parameters
         params = useParams();
         user_id = params["id"];
@@ -111,7 +118,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <Route path="/user/:id" element={<UserProfile />} />
         </Router>;
@@ -125,7 +133,8 @@ cl {
 cl {
     import from jac_client { useParams }
 
-    def:pub BlogPost() -> Any {
+    def:pub BlogPost() -> JsxElement {
+
         params = useParams();
 
         return <div>
@@ -150,7 +159,8 @@ cl {
 cl {
     import from jac_client { Router, Route, Outlet }
 
-    def:pub DashboardLayout() -> Any {
+    def:pub DashboardLayout() -> JsxElement {
+
         return <div className="dashboard">
             <aside>
                 <Link to="/dashboard">Overview</Link>
@@ -164,19 +174,20 @@ cl {
         </div>;
     }
 
-    def:pub DashboardHome() -> Any {
+    def:pub DashboardHome() -> JsxElement {
         return <h2>Dashboard Overview</h2>;
     }
 
-    def:pub DashboardSettings() -> Any {
+    def:pub DashboardSettings() -> JsxElement {
         return <h2>Settings</h2>;
     }
 
-    def:pub DashboardProfile() -> Any {
+    def:pub DashboardProfile() -> JsxElement {
         return <h2>Profile</h2>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardHome />} />
@@ -198,7 +209,8 @@ cl {
 cl {
     import from jac_client { useNavigate }
 
-    def:pub LoginForm() -> Any {
+    def:pub LoginForm() -> JsxElement {
+
         has email: str = "";
         has password: str = "";
 
@@ -216,7 +228,7 @@ cl {
         return <form>
             <input
                 value={email}
-                onChange={lambda e: any -> None { email = e.target.value; }}
+                onChange={lambda e: Any -> None { email = e.target.value; }}
             />
             <button onClick={lambda -> None { handle_login(); }}>
                 Login
@@ -232,7 +244,8 @@ cl {
 cl {
     import from jac_client { useNavigate }
 
-    def:pub NavExample() -> Any {
+    def:pub NavExample() -> JsxElement {
+
         navigate = useNavigate();
 
         return <div>
@@ -266,7 +279,8 @@ cl {
 cl {
     import from jac_client { useNavigate }
 
-    def:pub ProtectedRoute(props: dict) -> Any {
+    def:pub ProtectedRoute(props: dict) -> JsxElement {
+
         auth = use_auth();
         navigate = useNavigate();
 
@@ -283,7 +297,8 @@ cl {
         return <div>{props.children}</div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <Route path="/login" element={<Login />} />
 
@@ -301,7 +316,8 @@ cl {
 
 ```jac
 cl {
-    def:pub AdminRoute(props: dict) -> Any {
+    def:pub AdminRoute(props: dict) -> JsxElement {
+
         auth = use_auth();
 
         if not auth.isAuthenticated {
@@ -330,7 +346,8 @@ cl {
 cl {
     import from jac_client { useSearchParams }
 
-    def:pub SearchResults() -> Any {
+    def:pub SearchResults() -> JsxElement {
+
         (searchParams, setSearchParams) = useSearchParams();
 
         query = searchParams.get("q") or "";
@@ -369,7 +386,8 @@ cl {
 cl {
     import from jac_client { Router, Route }
 
-    def:pub NotFound() -> Any {
+    def:pub NotFound() -> JsxElement {
+
         return <div className="error-page">
             <h1>404</h1>
             <p>Page not found</p>
@@ -377,7 +395,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -396,11 +415,12 @@ cl {
 cl {
     import from jac_client { NavLink }
 
-    def:pub Navigation() -> Any {
+    def:pub Navigation() -> JsxElement {
+
         return <nav>
             <NavLink
                 to="/"
-                className={lambda info: any -> str {
+                className={lambda info: Any -> str {
                     return "nav-link " + ("active" if info.isActive else "");
                 }}
             >
@@ -409,7 +429,7 @@ cl {
 
             <NavLink
                 to="/about"
-                className={lambda info: any -> str {
+                className={lambda info: Any -> str {
                     return "nav-link " + ("active" if info.isActive else "");
                 }}
             >
@@ -442,7 +462,8 @@ cl {
     import from jac_client { Router, Route, Link, Outlet, useParams, useNavigate }
 
     # Layout
-    def:pub Layout() -> Any {
+    def:pub Layout() -> JsxElement {
+
         return <div className="app">
             <header>
                 <nav>
@@ -463,14 +484,16 @@ cl {
     }
 
     # Pages
-    def:pub Home() -> Any {
+    def:pub Home() -> JsxElement {
+
         return <div>
             <h1>Welcome!</h1>
             <Link to="/products">Browse Products</Link>
         </div>;
     }
 
-    def:pub Products() -> Any {
+    def:pub Products() -> JsxElement {
+
         products = [
             {"id": 1, "name": "Widget A"},
             {"id": 2, "name": "Widget B"},
@@ -480,7 +503,7 @@ cl {
         return <div>
             <h1>Products</h1>
             <ul>
-                {products.map(lambda p: any -> Any {
+                {products.map(lambda p: Any -> Any {
                     return <li key={p["id"]}>
                         <Link to={f"/products/{p['id']}"}>
                             {p["name"]}
@@ -491,7 +514,8 @@ cl {
         </div>;
     }
 
-    def:pub ProductDetail() -> Any {
+    def:pub ProductDetail() -> JsxElement {
+
         params = useParams();
         navigate = useNavigate();
 
@@ -506,14 +530,16 @@ cl {
         </div>;
     }
 
-    def:pub About() -> Any {
+    def:pub About() -> JsxElement {
+
         return <div>
             <h1>About Us</h1>
             <p>We make great products.</p>
         </div>;
     }
 
-    def:pub NotFound() -> Any {
+    def:pub NotFound() -> JsxElement {
+
         return <div>
             <h1>404 - Not Found</h1>
             <Link to="/">Go Home</Link>
@@ -521,7 +547,8 @@ cl {
     }
 
     # App
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <Router>
             <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />

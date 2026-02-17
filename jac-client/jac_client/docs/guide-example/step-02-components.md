@@ -15,7 +15,8 @@ Update your `app.jac`:
 ```jac
 cl {
     # A component to display a single todo
-    def TodoItem(props: any) -> Any {
+    def TodoItem(props: Any) -> JsxElement {
+
         return <div>
             <input type="checkbox" />
             <span>Learn Jac basics</span>
@@ -23,7 +24,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <h1>My Todos</h1>
             <TodoItem />
@@ -41,7 +43,8 @@ Now let's make the TodoItem display different text:
 ```jac
 cl {
     # Component that accepts data via props
-    def TodoItem(props: any) -> Any {
+    def TodoItem(props: Any) -> JsxElement {
+
         return <div>
             <input type="checkbox" checked={props.done} />
             <span>{props.text}</span>
@@ -49,7 +52,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <h1>My Todos</h1>
             <TodoItem text="Learn Jac basics" done={false} />
@@ -69,7 +73,8 @@ Let's add more components to organize our app:
 ```jac
 cl {
     # Component 1: TodoInput (input field + Add button)
-    def TodoInput(props: any) -> Any {
+    def TodoInput(props: Any) -> JsxElement {
+
         return <div>
             <input type="text" placeholder="What needs to be done?" />
             <button>Add</button>
@@ -77,7 +82,8 @@ cl {
     }
 
     # Component 2: TodoFilters (filter buttons)
-    def TodoFilters(props: any) -> Any {
+    def TodoFilters(props: Any) -> JsxElement {
+
         return <div>
             <button>All</button>
             <button>Active</button>
@@ -86,7 +92,8 @@ cl {
     }
 
     # Component 3: TodoItem (single todo)
-    def TodoItem(props: any) -> Any {
+    def TodoItem(props: Any) -> JsxElement {
+
         return <div>
             <input type="checkbox" checked={props.done} />
             <span>{props.text}</span>
@@ -95,7 +102,8 @@ cl {
     }
 
     # Component 4: TodoList (list of todos)
-    def TodoList(props: any) -> Any {
+    def TodoList(props: Any) -> JsxElement {
+
         return <div>
             <TodoItem text="Learn Jac basics" done={true} />
             <TodoItem text="Build a todo app" done={false} />
@@ -104,7 +112,8 @@ cl {
     }
 
     # Main app - combines all components
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <h1>My Todos</h1>
             <TodoInput />
@@ -142,7 +151,8 @@ print(greet_user("Bob"))    # Hello, Bob!
 
 ```jac
 # Jac - returns UI
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     return <div>{props.text}</div>;
 }
 
@@ -183,9 +193,10 @@ If there's a bug in how todos display, you know to check `TodoItem`.
 
 ```jac
 #  Correct
-def TodoItem() -> Any { ... }
-def UserProfile() -> Any { ... }
-def NavigationBar() -> Any { ... }
+def TodoItem() -> JsxElement { ... }
+def UserProfile() -> JsxElement { ... }
+def NavigationBar() -> JsxElement { ... }
+
 
 #  Wrong
 def todoItem() -> Any { ... }      # camelCase
@@ -197,14 +208,15 @@ def navigation-bar() -> Any { ... } # kebab-case
 
 ```jac
 #  Good names
-def TodoItem() -> Any { ... }
-def LoginForm() -> Any { ... }
-def ProductCard() -> Any { ... }
+def TodoItem() -> JsxElement { ... }
+def LoginForm() -> JsxElement { ... }
+def ProductCard() -> JsxElement { ... }
 
 #  Bad names
-def Component1() -> Any { ... }
-def Thing() -> Any { ... }
-def X() -> Any { ... }
+def Component1() -> JsxElement { ... }
+def Thing() -> JsxElement { ... }
+def X() -> JsxElement { ... }
+
 ```
 
 ### Understanding Props
@@ -216,7 +228,8 @@ def X() -> Any { ... }
 <TodoItem text="Learn Jac" done={false} />
 
 # Receiving props (in the component)
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     text = props.text;      # "Learn Jac"
     done = props.done;      # false
     return <div>{text}</div>;
@@ -227,14 +240,16 @@ def TodoItem(props: any) -> Any {
 
 ```jac
 #  Correct way
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     text = props.text;
     done = props.done;
     # ...
 }
 
 #  Wrong way (won't work)
-def TodoItem(text: str, done: bool) -> Any {
+def TodoItem(text: str, done: bool) -> JsxElement {
+
     # This doesn't work in React!
 }
 ```
@@ -246,7 +261,8 @@ Three ways to access props:
 **Method 1: Direct access**
 
 ```jac
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     return <span>{props.text}</span>;
 }
 ```
@@ -254,7 +270,8 @@ def TodoItem(props: any) -> Any {
 **Method 2: Extract to variables**
 
 ```jac
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     text = props.text;
     done = props.done;
     return <span>{text}</span>;
@@ -264,7 +281,8 @@ def TodoItem(props: any) -> Any {
 **Method 3: Dictionary access (explicit)**
 
 ```jac
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     text = props["text"];
     done = props["done"];
     return <span>{text}</span>;
@@ -279,7 +297,8 @@ You can nest components inside other components:
 
 ```jac
 # TodoList uses TodoItem
-def TodoList() -> Any {
+def TodoList() -> JsxElement {
+
     return <div>
         <TodoItem text="Task 1" done={false} />
         <TodoItem text="Task 2" done={true} />
@@ -287,7 +306,8 @@ def TodoList() -> Any {
 }
 
 # App uses TodoList
-def:pub app() -> Any {
+def:pub app() -> JsxElement {
+
     return <div>
         <h1>My Todos</h1>
         <TodoList />
@@ -356,12 +376,14 @@ myText = "Learn Jac";
 
 ```jac
 #  Wrong
-def TodoItem(text: str, done: bool) -> Any {
+def TodoItem(text: str, done: bool) -> JsxElement {
+
     # ...
 }
 
 #  Correct
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     text = props.text;
     # ...
 }
@@ -379,7 +401,8 @@ def TodoItem(props: any) -> Any {
 <TodoItem text="Learn" done={false} />
 
 # Receiving props (names must match!)
-def TodoItem(props: any) -> Any {
+def TodoItem(props: Any) -> JsxElement {
+
     props.text  # "Learn"
     props.done  # false
 }
@@ -392,7 +415,8 @@ def TodoItem(props: any) -> Any {
 Try adding a new component:
 
 ```jac
-def TodoStats(props: any) -> Any {
+def TodoStats(props: Any) -> JsxElement {
+
     return <div>
         <p>Total: {props.total}</p>
         <p>Completed: {props.completed}</p>
@@ -400,7 +424,8 @@ def TodoStats(props: any) -> Any {
 }
 
 # Use it in app
-def:pub app() -> Any {
+def:pub app() -> JsxElement {
+
     return <div>
         <h1>My Todos</h1>
         <TodoStats total={3} completed={1} />

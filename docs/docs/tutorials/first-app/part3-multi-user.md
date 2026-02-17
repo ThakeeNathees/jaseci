@@ -84,7 +84,8 @@ The server file has three sections: the app entry point, AI types and functions,
 cl {
     import from frontend { app as ClientApp }
 
-    def:pub app -> Any {
+    def:pub app -> JsxElement {
+
         return
             <ClientApp />;
     }
@@ -362,7 +363,8 @@ Two new import styles:
 The component declares its state and method signatures:
 
 ```jac
-def:pub app -> Any {
+def:pub app -> JsxElement {
+
     has isLoggedIn: bool = False,
         checkingAuth: bool = True,
         isSignup: bool = False,
@@ -397,12 +399,12 @@ def:pub app -> Any {
     async def handleLogin -> None;
     async def handleSignup -> None;
     def handleLogout -> None;
-    async def handleSubmit(e: any) -> None;
-    def handleTodoKeyPress(e: any) -> None;
+    async def handleSubmit(e: Any) -> None;
+    def handleTodoKeyPress(e: Any) -> None;
     async def fetchMealPlan -> None;
     async def generateIngredients -> None;
     async def clearIngredients -> None;
-    def handleMealKeyPress(e: any) -> None;
+    def handleMealKeyPress(e: Any) -> None;
     def getIngredientsTotal -> float;
 
     # ... UI rendering follows ...
@@ -430,7 +432,7 @@ impl app.fetchTodos -> None {
 }
 
 impl app.addTodo -> None {
-    if not newTodoText.trim() { return; }
+    if not newTodoText.strip() { return; }
     response = root spawn AddTodo(title=newTodoText);
     newTodo = response.reports[0];
     todos = todos.concat([{
@@ -451,7 +453,7 @@ Toggle and delete follow the same pattern:
 impl app.toggleTodo(todoId: str) -> None {
     root spawn ToggleTodo(todo_id=todoId);
     todos = todos.map(
-        lambda t: any -> Any {
+        lambda t: Any -> Any {
             if t.id == todoId {
                 return {
                     "id": t.id, "title": t.title,
@@ -466,7 +468,7 @@ impl app.toggleTodo(todoId: str) -> None {
 impl app.deleteTodo(todoId: str) -> None {
     root spawn DeleteTodo(todo_id=todoId);
     todos = todos.filter(
-        lambda t: any -> bool { return t.id != todoId; }
+        lambda t: Any -> bool { return t.id != todoId; }
     );
 }
 ```
@@ -476,7 +478,7 @@ Authentication uses the built-in `jacLogin`, `jacSignup`, and `jacLogout` functi
 ```jac
 impl app.handleLogin -> None {
     error = "";
-    if not username.trim() or not password {
+    if not username.strip() or not password {
         error = "Please fill in all fields";
         return;
     }
@@ -494,11 +496,11 @@ impl app.handleLogin -> None {
 
 impl app.handleSignup -> None {
     error = "";
-    if not username.trim() or not password {
+    if not username.strip() or not password {
         error = "Please fill in all fields";
         return;
     }
-    if password.length < 4 {
+    if len(password) < 4 {
         error = "Password must be at least 4 characters";
         return;
     }
@@ -534,7 +536,7 @@ impl app.fetchMealPlan -> None {
 }
 
 impl app.generateIngredients -> None {
-    if not mealInput.trim() { return; }
+    if not mealInput.strip() { return; }
     ingredientsLoading = True;
     result = root spawn GenerateShoppingList(meal_description=mealInput);
     ingredients = result.reports[0] if result.reports else [];
@@ -551,17 +553,17 @@ impl app.clearIngredients -> None {
 The remaining utility methods:
 
 ```jac
-impl app.handleSubmit(e: any) -> None {
+impl app.handleSubmit(e: Any) -> None {
     e.preventDefault();
     if isSignup { await handleSignup(); }
     else { await handleLogin(); }
 }
 
-impl app.handleTodoKeyPress(e: any) -> None {
+impl app.handleTodoKeyPress(e: Any) -> None {
     if e.key == "Enter" { addTodo(); }
 }
 
-impl app.handleMealKeyPress(e: any) -> None {
+impl app.handleMealKeyPress(e: Any) -> None {
     if e.key == "Enter" { generateIngredients(); }
 }
 
@@ -585,7 +587,8 @@ Displays a single todo with toggle and delete:
 ```jac
 """Todo item component."""
 
-def:pub TodoItem(todo: dict, onToggle: any, onDelete: any) -> Any {
+def:pub TodoItem(todo: dict, onToggle: Any, onDelete: Any) -> JsxElement {
+
     return
         <div className="todo-item">
             <input
@@ -617,7 +620,8 @@ Displays a single ingredient with cost and carb badge:
 ```jac
 """Ingredient item component for the shopping list."""
 
-def:pub IngredientItem(ingredient: dict) -> Any {
+def:pub IngredientItem(ingredient: dict) -> JsxElement {
+
     return
         <div className="ingredient-item">
             <div className="ingredient-info">
@@ -646,8 +650,8 @@ A login/signup form. It's the longest component, so here's the structure -- the 
 def:pub AuthForm(
     isSignup: bool, username: str, password: str,
     error: str, loading: bool,
-    onUsernameChange: any, onPasswordChange: any,
-    onSubmit: any, onToggleMode: any
+    onUsernameChange: Any, onPasswordChange: Any,
+    onSubmit: Any, onToggleMode: Any
 ) -> Any {
     return
         <div className="auth-container">
@@ -679,7 +683,8 @@ All the complete files are in the collapsible sections below. Create each file i
     cl {
         import from frontend { app as ClientApp }
 
-        def:pub app -> Any {
+        def:pub app -> JsxElement {
+
             return
                 <ClientApp />;
         }
@@ -893,7 +898,8 @@ All the complete files are in the collapsible sections below. Create each file i
         GenerateShoppingList, ListMealPlan, ClearMealPlan
     }
 
-    def:pub app -> Any {
+    def:pub app -> JsxElement {
+
         has isLoggedIn: bool = False,
             checkingAuth: bool = True,
             isSignup: bool = False,
@@ -928,12 +934,12 @@ All the complete files are in the collapsible sections below. Create each file i
         async def handleLogin -> None;
         async def handleSignup -> None;
         def handleLogout -> None;
-        async def handleSubmit(e: any) -> None;
-        def handleTodoKeyPress(e: any) -> None;
+        async def handleSubmit(e: Any) -> None;
+        def handleTodoKeyPress(e: Any) -> None;
         async def fetchMealPlan -> None;
         async def generateIngredients -> None;
         async def clearIngredients -> None;
-        def handleMealKeyPress(e: any) -> None;
+        def handleMealKeyPress(e: Any) -> None;
         def getIngredientsTotal -> float;
 
         if checkingAuth {
@@ -970,7 +976,7 @@ All the complete files are in the collapsible sections below. Create each file i
                                         <input
                                             type="text"
                                             value={newTodoText}
-                                            onChange={lambda e: any -> None { newTodoText = e.target.value; }}
+                                            onChange={lambda e: Any -> None { newTodoText = e.target.value; }}
                                             onKeyPress={handleTodoKeyPress}
                                             placeholder="What needs to be done?"
                                             className="todo-input"
@@ -992,7 +998,7 @@ All the complete files are in the collapsible sections below. Create each file i
                                                 <div className="empty-message">
                                                     No tasks yet. Add one above!
                                                 </div>
-                                            ) if todos.length == 0 else (
+                                            ) if len(todos) == 0 else (
                                                 <div>
                                                     {[
                                                         <TodoItem
@@ -1008,9 +1014,9 @@ All the complete files are in the collapsible sections below. Create each file i
                                     )}
                                 </div>
                                 <div className="remaining-count">
-                                    {todos.filter(
-                                        lambda t: any -> bool { return not t.completed; }
-                                    ).length} items remaining
+                                    {len(todos.filter(
+                                        lambda t: Any -> bool { return not t.completed; }
+                                    ))} items remaining
                                 </div>
                             </div>
                             <div className="column-right">
@@ -1023,7 +1029,7 @@ All the complete files are in the collapsible sections below. Create each file i
                                         <input
                                             type="text"
                                             value={mealInput}
-                                            onChange={lambda e: any -> None { mealInput = e.target.value; }}
+                                            onChange={lambda e: Any -> None { mealInput = e.target.value; }}
                                             onKeyPress={handleMealKeyPress}
                                             placeholder="e.g. spaghetti bolognese for 4"
                                             className="todo-input"
@@ -1049,7 +1055,7 @@ All the complete files are in the collapsible sections below. Create each file i
                                                 <div className="empty-message">
                                                     Enter a meal above to generate ingredients.
                                                 </div>
-                                            ) if ingredients.length == 0 else (
+                                            ) if len(ingredients) == 0 else (
                                                 <div>
                                                     {[
                                                         <IngredientItem
@@ -1086,8 +1092,8 @@ All the complete files are in the collapsible sections below. Create each file i
                 password={password}
                 error={error}
                 loading={loading}
-                onUsernameChange={lambda e: any -> None { username = e.target.value; }}
-                onPasswordChange={lambda e: any -> None { password = e.target.value; }}
+                onUsernameChange={lambda e: Any -> None { username = e.target.value; }}
+                onPasswordChange={lambda e: Any -> None { password = e.target.value; }}
                 onSubmit={handleSubmit}
                 onToggleMode={lambda -> None { isSignup = not isSignup; error = ""; }}
             />;
@@ -1107,7 +1113,7 @@ All the complete files are in the collapsible sections below. Create each file i
     }
 
     impl app.addTodo -> None {
-        if not newTodoText.trim() { return; }
+        if not newTodoText.strip() { return; }
         response = root spawn AddTodo(title=newTodoText);
         newTodo = response.reports[0];
         todos = todos.concat([{
@@ -1122,7 +1128,7 @@ All the complete files are in the collapsible sections below. Create each file i
     impl app.toggleTodo(todoId: str) -> None {
         root spawn ToggleTodo(todo_id=todoId);
         todos = todos.map(
-            lambda t: any -> Any {
+            lambda t: Any -> Any {
                 if t.id == todoId {
                     return {
                         "id": t.id, "title": t.title,
@@ -1137,13 +1143,13 @@ All the complete files are in the collapsible sections below. Create each file i
     impl app.deleteTodo(todoId: str) -> None {
         root spawn DeleteTodo(todo_id=todoId);
         todos = todos.filter(
-            lambda t: any -> bool { return t.id != todoId; }
+            lambda t: Any -> bool { return t.id != todoId; }
         );
     }
 
     impl app.handleLogin -> None {
         error = "";
-        if not username.trim() or not password {
+        if not username.strip() or not password {
             error = "Please fill in all fields";
             return;
         }
@@ -1161,11 +1167,11 @@ All the complete files are in the collapsible sections below. Create each file i
 
     impl app.handleSignup -> None {
         error = "";
-        if not username.trim() or not password {
+        if not username.strip() or not password {
             error = "Please fill in all fields";
             return;
         }
-        if password.length < 4 {
+        if len(password) < 4 {
             error = "Password must be at least 4 characters";
             return;
         }
@@ -1189,7 +1195,7 @@ All the complete files are in the collapsible sections below. Create each file i
         mealInput = "";
     }
 
-    impl app.handleSubmit(e: any) -> None {
+    impl app.handleSubmit(e: Any) -> None {
         e.preventDefault();
         if isSignup {
             await handleSignup();
@@ -1198,7 +1204,7 @@ All the complete files are in the collapsible sections below. Create each file i
         }
     }
 
-    impl app.handleTodoKeyPress(e: any) -> None {
+    impl app.handleTodoKeyPress(e: Any) -> None {
         if e.key == "Enter" { addTodo(); }
     }
 
@@ -1208,7 +1214,7 @@ All the complete files are in the collapsible sections below. Create each file i
     }
 
     impl app.generateIngredients -> None {
-        if not mealInput.trim() { return; }
+        if not mealInput.strip() { return; }
         ingredientsLoading = True;
         result = root spawn GenerateShoppingList(meal_description=mealInput);
         ingredients = result.reports[0] if result.reports else [];
@@ -1221,7 +1227,7 @@ All the complete files are in the collapsible sections below. Create each file i
         mealInput = "";
     }
 
-    impl app.handleMealKeyPress(e: any) -> None {
+    impl app.handleMealKeyPress(e: Any) -> None {
         if e.key == "Enter" { generateIngredients(); }
     }
 
@@ -1245,10 +1251,10 @@ All the complete files are in the collapsible sections below. Create each file i
         password: str,
         error: str,
         loading: bool,
-        onUsernameChange: any,
-        onPasswordChange: any,
-        onSubmit: any,
-        onToggleMode: any
+        onUsernameChange: Any,
+        onPasswordChange: Any,
+        onSubmit: Any,
+        onToggleMode: Any
     ) -> Any {
         return
             <div className="auth-container">
@@ -1320,7 +1326,8 @@ All the complete files are in the collapsible sections below. Create each file i
     ```jac
     """Todo item component."""
 
-    def:pub TodoItem(todo: dict, onToggle: any, onDelete: any) -> Any {
+    def:pub TodoItem(todo: dict, onToggle: Any, onDelete: Any) -> JsxElement {
+
         return
             <div className="todo-item">
                 <input
@@ -1350,7 +1357,8 @@ All the complete files are in the collapsible sections below. Create each file i
     ```jac
     """Ingredient item component for the shopping list."""
 
-    def:pub IngredientItem(ingredient: dict) -> Any {
+    def:pub IngredientItem(ingredient: dict) -> JsxElement {
+
         return
             <div className="ingredient-item">
                 <div className="ingredient-info">

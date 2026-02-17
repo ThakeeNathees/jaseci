@@ -15,7 +15,8 @@ Inside `cl { }` blocks, `has` creates reactive state (like React's `useState`):
 
 ```jac
 cl {
-    def:pub Counter() -> Any {
+    def:pub Counter() -> JsxElement {
+
         has count: int = 0;  # Reactive state
 
         return <div>
@@ -40,7 +41,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Form() -> Any {
+    def:pub Form() -> JsxElement {
+
         has name: str = "";
         has email: str = "";
         has submitted: bool = False;
@@ -57,12 +59,12 @@ cl {
         return <form>
             <input
                 value={name}
-                onChange={lambda e: any -> None { name = e.target.value; }}
+                onChange={lambda e: Any -> None { name = e.target.value; }}
                 placeholder="Name"
             />
             <input
                 value={email}
-                onChange={lambda e: any -> None { email = e.target.value; }}
+                onChange={lambda e: Any -> None { email = e.target.value; }}
                 placeholder="Email"
             />
             <button
@@ -82,7 +84,8 @@ cl {
 
 ```jac
 cl {
-    def:pub TodoApp() -> Any {
+    def:pub TodoApp() -> JsxElement {
+
         has todos: list = [];
         has input_text: str = "";
 
@@ -100,12 +103,12 @@ cl {
         return <div>
             <input
                 value={input_text}
-                onChange={lambda e: any -> None { input_text = e.target.value; }}
+                onChange={lambda e: Any -> None { input_text = e.target.value; }}
             />
             <button onClick={lambda -> None { add_todo(); }}>Add</button>
 
             <ul>
-                {todos.map(lambda todo: any -> Any {
+                {todos.map(lambda todo: Any -> Any {
                     return <li key={todo["id"]}>
                         {todo["text"]}
                         <button onClick={lambda -> None { remove_todo(todo["id"]); }}>
@@ -134,7 +137,8 @@ Similar to how `has` automatically generates `useState`, you can use `can with e
 
 ```jac
 cl {
-    def:pub DataFetcher() -> Any {
+    def:pub DataFetcher() -> JsxElement {
+
         has data: list = [];
         has loading: bool = True;
 
@@ -150,7 +154,7 @@ cl {
         }
 
         return <ul>
-            {data.map(lambda item: any -> Any {
+            {data.map(lambda item: Any -> Any {
                 return <li key={item.id}>{item.name}</li>;
             })}
         </ul>;
@@ -164,7 +168,8 @@ Use list `[dep]` or tuple `(dep1, dep2)` syntax to specify dependencies:
 
 ```jac
 cl {
-    def:pub SearchResults() -> Any {
+    def:pub SearchResults() -> JsxElement {
+
         has query: str = "";
         has results: list = [];
 
@@ -178,10 +183,10 @@ cl {
         return <div>
             <input
                 value={query}
-                onChange={lambda e: any -> None { query = e.target.value; }}
+                onChange={lambda e: Any -> None { query = e.target.value; }}
             />
             <ul>
-                {results.map(lambda r: any -> Any { return <li>{r}</li>; })}
+                {results.map(lambda r: Any -> Any { return <li>{r}</li>; })}
             </ul>
         </div>;
     }
@@ -194,7 +199,8 @@ Use `can with exit` for cleanup logic (runs on unmount):
 
 ```jac
 cl {
-    def:pub Timer() -> Any {
+    def:pub Timer() -> JsxElement {
+
         has seconds: int = 0;
 
         # Setup interval on mount
@@ -222,7 +228,8 @@ You can also use `useEffect` manually by importing from React:
 cl {
     import from react { useEffect }
 
-    def:pub DataFetcher() -> Any {
+    def:pub DataFetcher() -> JsxElement {
+
         has data: list = [];
 
         useEffect(lambda -> None {
@@ -248,14 +255,15 @@ cl {
     glob AppContext = createContext(None);
 
     # Provider component
-    def:pub AppProvider(props: dict) -> Any {
-        has user: any = None;
+    def:pub AppProvider(props: dict) -> JsxElement {
+
+        has user: Any = None;
         has theme: str = "light";
 
         value = {
             "user": user,
             "theme": theme,
-            "setUser": lambda u: any -> None { user = u; },
+            "setUser": lambda u: Any -> None { user = u; },
             "setTheme": lambda t: str -> None { theme = t; }
         };
 
@@ -265,7 +273,8 @@ cl {
     }
 
     # Consumer component
-    def:pub UserDisplay() -> Any {
+    def:pub UserDisplay() -> JsxElement {
+
         ctx = useContext(AppContext);
 
         if ctx.user {
@@ -274,7 +283,8 @@ cl {
         return <p>Not logged in</p>;
     }
 
-    def:pub ThemeToggle() -> Any {
+    def:pub ThemeToggle() -> JsxElement {
+
         ctx = useContext(AppContext);
 
         return <button onClick={lambda -> None {
@@ -284,7 +294,8 @@ cl {
         </button>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <AppProvider>
             <UserDisplay />
             <ThemeToggle />
@@ -304,8 +315,8 @@ cl {
     import from react { useEffect }
 
     # Custom hook
-    def use_local_storage(key: str, initial_value: any) -> tuple {
-        has value: any = initial_value;
+    def use_local_storage(key: str, initial_value: Any) -> tuple {
+        has value: Any = initial_value;
 
         # Load from localStorage on mount
         useEffect(lambda -> None {
@@ -320,10 +331,11 @@ cl {
             localStorage.setItem(key, JSON.stringify(value));
         }, [value]);
 
-        return (value, lambda v: any -> None { value = v; });
+        return (value, lambda v: Any -> None { value = v; });
     }
 
-    def:pub Settings() -> Any {
+    def:pub Settings() -> JsxElement {
+
         (theme, set_theme) = use_local_storage("theme", "light");
 
         return <div>
@@ -347,8 +359,9 @@ cl {
 
 ```jac
 cl {
-    def:pub DataComponent() -> Any {
-        has data: any = None;
+    def:pub DataComponent() -> JsxElement {
+
+        has data: Any = None;
         has loading: bool = True;
         has error: str = "";
 
@@ -371,7 +384,8 @@ cl {
 
 ```jac
 cl {
-    def:pub ContactForm() -> Any {
+    def:pub ContactForm() -> JsxElement {
+
         has form_data: dict = {
             "name": "",
             "email": "",
@@ -406,7 +420,7 @@ cl {
         return <form>
             <input
                 value={form_data["name"]}
-                onChange={lambda e: any -> None { update_field("name", e.target.value); }}
+                onChange={lambda e: Any -> None { update_field("name", e.target.value); }}
             />
             {errors.get("name") and <span className="error">{errors["name"]}</span>}
         </form>;

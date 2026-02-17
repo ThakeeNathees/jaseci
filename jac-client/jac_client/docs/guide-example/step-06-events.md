@@ -16,7 +16,8 @@ Let's make the input field track what you type:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoInput(props: any) -> Any {
+    def TodoInput(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -25,7 +26,7 @@ cl {
             <input
                 type="text"
                 value={props.input}
-                onChange={lambda e: any -> None {
+                onChange={lambda e: Any -> None {
                     props.setInput(e.target.value);
                 }}
                 placeholder="What needs to be done?"
@@ -49,7 +50,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         [input, setInput] = useState("");
 
         return <div style={{
@@ -75,7 +77,8 @@ Now let's make the "Add" button work:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoInput(props: any) -> Any {
+    def TodoInput(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -84,7 +87,7 @@ cl {
             <input
                 type="text"
                 value={props.input}
-                onChange={lambda e: any -> None {
+                onChange={lambda e: Any -> None {
                     props.setInput(e.target.value);
                 }}
                 placeholder="What needs to be done?"
@@ -96,7 +99,7 @@ cl {
                 }}
             />
             <button
-                onClick={lambda e: any -> None {
+                onClick={lambda e: Any -> None {
                     props.addTodo();
                 }}
                 style={{
@@ -113,7 +116,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [input, setInput] = useState("");
 
@@ -146,7 +150,7 @@ cl {
 
             # Display todos
             <div>
-                {todos.map(lambda todo: any -> Any {
+                {todos.map(lambda todo: Any -> Any {
                     return <div style={{"padding": "8px"}}>
                         {todo.text}
                     </div>;
@@ -167,7 +171,8 @@ Let's add the ability to press Enter to add a todo:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoInput(props: any) -> Any {
+    def TodoInput(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
@@ -176,10 +181,10 @@ cl {
             <input
                 type="text"
                 value={props.input}
-                onChange={lambda e: any -> None {
+                onChange={lambda e: Any -> None {
                     props.setInput(e.target.value);
                 }}
-                onKeyPress={lambda e: any -> None {
+                onKeyPress={lambda e: Any -> None {
                     if e.key == "Enter" {
                         props.addTodo();
                     }
@@ -193,7 +198,7 @@ cl {
                 }}
             />
             <button
-                onClick={lambda e: any -> None {
+                onClick={lambda e: Any -> None {
                     props.addTodo();
                 }}
                 style={{
@@ -226,7 +231,8 @@ Let's add the complete functionality:
 cl {
     # ... (keep TodoInput and TodoFilters)
 
-    def TodoItem(props: any) -> Any {
+    def TodoItem(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "alignItems": "center",
@@ -237,7 +243,7 @@ cl {
             <input
                 type="checkbox"
                 checked={props.done}
-                onChange={lambda e: any -> None {
+                onChange={lambda e: Any -> None {
                     props.toggleTodo(props.id);
                 }}
                 style={{"cursor": "pointer"}}
@@ -250,7 +256,7 @@ cl {
                 {props.text}
             </span>
             <button
-                onClick={lambda e: any -> None {
+                onClick={lambda e: Any -> None {
                     props.deleteTodo(props.id);
                 }}
                 style={{
@@ -268,7 +274,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [input, setInput] = useState("");
 
@@ -289,8 +296,8 @@ cl {
         }
 
         # Toggle todo
-        def toggleTodo(id: any) -> None {
-            setTodos(todos.map(lambda todo: any -> Any {
+        def toggleTodo(id: Any) -> None {
+            setTodos(todos.map(lambda todo: Any -> Any {
                 if todo["id"] == id {
                     return {
                         "id": todo["id"],
@@ -303,8 +310,8 @@ cl {
         }
 
         # Delete todo
-        def deleteTodo(id: any) -> None {
-            setTodos(todos.filter(lambda todo: any -> bool {
+        def deleteTodo(id: Any) -> None {
+            setTodos(todos.filter(lambda todo: Any -> bool {
                 return todo["id"] != id;
             }));
         }
@@ -322,7 +329,7 @@ cl {
             />
 
             <div>
-                {todos.map(lambda todo: any -> Any {
+                {todos.map(lambda todo: Any -> Any {
                     return <TodoItem
                         key={todo["id"]}
                         id={todo["id"]}
@@ -352,14 +359,15 @@ Final step - make the filter buttons work:
 # No useState import needed - it's auto-injected!
 
 cl {
-    def TodoFilters(props: any) -> Any {
+    def TodoFilters(props: Any) -> JsxElement {
+
         return <div style={{
             "display": "flex",
             "gap": "8px",
             "marginBottom": "16px"
         }}>
             <button
-                onClick={lambda e: any -> None {
+                onClick={lambda e: Any -> None {
                     props.setFilter("all");
                 }}
                 style={{
@@ -374,7 +382,7 @@ cl {
                 All
             </button>
             <button
-                onClick={lambda e: any -> None {
+                onClick={lambda e: Any -> None {
                     props.setFilter("active");
                 }}
                 style={{
@@ -389,7 +397,7 @@ cl {
                 Active
             </button>
             <button
-                onClick={lambda e: any -> None {
+                onClick={lambda e: Any -> None {
                     props.setFilter("completed");
                 }}
                 style={{
@@ -406,7 +414,8 @@ cl {
         </div>;
     }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [input, setInput] = useState("");
         [filter, setFilter] = useState("all");
@@ -416,11 +425,11 @@ cl {
         # Filter todos based on current filter
         def getFilteredTodos() -> list {
             if filter == "active" {
-                return todos.filter(lambda todo: any -> bool {
+                return todos.filter(lambda todo: Any -> bool {
                     return not todo["done"];
                 });
             } elif filter == "completed" {
-                return todos.filter(lambda todo: any -> bool {
+                return todos.filter(lambda todo: Any -> bool {
                     return todo["done"];
                 });
             }
@@ -439,7 +448,7 @@ cl {
             <TodoFilters filter={filter} setFilter={setFilter} />
 
             <div>
-                {filteredTodos.map(lambda todo: any -> Any {
+                {filteredTodos.map(lambda todo: Any -> Any {
                     return <TodoItem
                         key={todo["id"]}
                         id={todo["id"]}
@@ -481,7 +490,7 @@ Event handlers are functions that run when something happens (user clicks, types
 ### Event Handler Syntax
 
 ```jac
-<button onClick={lambda e: any -> None {
+<button onClick={lambda e: Any -> None {
     # Code runs when button is clicked
     console.log("Clicked!");
 }}>
@@ -492,13 +501,13 @@ Event handlers are functions that run when something happens (user clicks, types
 **Breakdown:**
 
 - `onClick={}` - The event attribute
-- `lambda e: any -> None { }` - Anonymous function
+- `lambda e: Any -> None { }` - Anonymous function
 - `e` - Event object (contains info about the event)
 
 ### The Event Object (`e`)
 
 ```jac
-onChange={lambda e: any -> None {
+onChange={lambda e: Any -> None {
     console.log(e.target);        # The element that triggered the event
     console.log(e.target.value);  # For inputs: the current value
     console.log(e.key);           # For key events: which key was pressed
@@ -517,7 +526,8 @@ onChange={lambda e: any -> None {
 You can pass functions down to child components:
 
 ```jac
-def Parent() -> Any {
+def Parent() -> JsxElement {
+
     def handleClick() -> None {
         console.log("Clicked!");
     }
@@ -526,7 +536,8 @@ def Parent() -> Any {
     return <Child onClick={handleClick} />;
 }
 
-def Child(props: any) -> Any {
+def Child(props: Any) -> JsxElement {
+
     # Call parent's function
     return <button onClick={props.onClick}>
         Click me
@@ -539,7 +550,8 @@ This lets children trigger parent behavior!
 ### Updating State in Event Handlers
 
 ```jac
-def:pub app() -> Any {
+def:pub app() -> JsxElement {
+
     [count, setCount] = useState(0);
 
     def increment() -> None {
@@ -571,7 +583,7 @@ setTodos(todos);
 
 ```jac
 # Toggle a todo
-setTodos(todos.map(lambda todo: any -> Any {
+setTodos(todos.map(lambda todo: Any -> Any {
     if todo["id"] == targetId {
         return {"id": todo["id"], "done": not todo["done"]};
     }
@@ -583,7 +595,7 @@ setTodos(todos.map(lambda todo: any -> Any {
 
 ```jac
 # Delete a todo
-setTodos(todos.filter(lambda todo: any -> bool {
+setTodos(todos.filter(lambda todo: Any -> bool {
     return todo["id"] != targetId;
 }));
 ```
@@ -593,7 +605,7 @@ setTodos(todos.filter(lambda todo: any -> bool {
 **Inline (good for simple logic):**
 
 ```jac
-<button onClick={lambda e: any -> None {
+<button onClick={lambda e: Any -> None {
     setCount(count + 1);
 }}>
     Click
@@ -635,7 +647,7 @@ def toggle() -> None {
 
 <input
     value={text}
-    onChange={lambda e: any -> None {
+    onChange={lambda e: Any -> None {
         setText(e.target.value);
     }}
 />
@@ -646,7 +658,7 @@ def toggle() -> None {
 ```jac
 [items, setItems] = useState([]);
 
-def addItem(newItem: any) -> None {
+def addItem(newItem: Any) -> None {
     setItems(items.concat([newItem]));
 }
 ```
@@ -654,8 +666,8 @@ def addItem(newItem: any) -> None {
 **Pattern 4: Remove from List**
 
 ```jac
-def removeItem(id: any) -> None {
-    setItems(items.filter(lambda item: any -> bool {
+def removeItem(id: Any) -> None {
+    setItems(items.filter(lambda item: Any -> bool {
         return item.id != id;
     }));
 }
@@ -696,7 +708,7 @@ def removeItem(id: any) -> None {
 #  Correct
 <input
     value={text}
-    onChange={lambda e: any -> None {
+    onChange={lambda e: Any -> None {
         setText(e.target.value);
     }}
 />
@@ -736,7 +748,7 @@ And a "Clear Completed" button:
 
 ```jac
 def clearCompleted() -> None {
-    setTodos(todos.filter(lambda todo: any -> bool {
+    setTodos(todos.filter(lambda todo: Any -> bool {
         return not todo["done"];
     }));
 }

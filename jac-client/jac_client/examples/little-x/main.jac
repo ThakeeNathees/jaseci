@@ -223,7 +223,10 @@ cl obj ClientProfile {
 }
 
 # UI Components - Render a single tweet card
-cl def TweetCard(tweet: ClientTweet) -> Any {
+cl def TweetCard(
+    tweet: ClientTweet
+) -> JsxElement {
+
     return
         <div
             class="tweet-card"
@@ -248,10 +251,10 @@ cl def TweetCard(tweet: ClientTweet) -> Any {
                     onclick={like_tweet_action(tweet.id)}
                     style={{"padding": "5px 10px", "cursor": "pointer"}}
                 >
-                    Like ({tweet.likes.length})
+                    Like ({len(tweet.likes)})
                 </button>
                 <button style={{"padding": "5px 10px"}}>
-                    Comment ({tweet.comments.length})
+                    Comment ({len(tweet.comments)})
                 </button>
             </div>
         </div>;
@@ -273,7 +276,8 @@ cl async def like_tweet_action(
 }
 
 # Render the main feed view
-cl def FeedView(tweets: list) -> Any {
+cl def FeedView(tweets: list) -> JsxElement {
+
     return
         <div
             class="feed-container"
@@ -298,7 +302,8 @@ cl def FeedView(tweets: list) -> Any {
 }
 
 # Render login form
-cl def LoginForm -> Any {
+cl def LoginForm -> JsxElement {
+
     suggestions = ['good luck', 'have fun', 'enjoy the ride'];
     randomSuggestion = _.sample(suggestions);
     result = "Good luck with your journey!";
@@ -307,7 +312,7 @@ cl def LoginForm -> Any {
             title="Login to LittleX"
             style={{"maxWidth": "400px", "margin": "50px auto"}}
         >
-            <Card.Meta title={randomSuggestion} description={result} />
+            <Card.Meta title={randomSuggestion} description={result}/>
             <form onSubmit={handle_login}>
                 <div style={{"marginBottom": "15px"}}>
                     <label style={{"display": "block", "marginBottom": "5px"}}>
@@ -373,7 +378,7 @@ cl def LoginForm -> Any {
 }
 
 # Handle login form submission
-cl async def handle_login(event: any) -> None {
+cl async def handle_login(event: Any) -> None {
     event.preventDefault();
     username = document.getElementById("username").value;
     password = document.getElementById("password").value;
@@ -386,7 +391,8 @@ cl async def handle_login(event: any) -> None {
 }
 
 # Render signup form
-cl def SignupForm -> Any {
+cl def SignupForm -> JsxElement {
+
     return
         <div
             class="signup-container"
@@ -474,7 +480,7 @@ cl def SignupForm -> Any {
 # Navigation helper functions removed - using Link component and navigate() directly
 
 # Handle signup form submission
-cl async def handle_signup(event: any) -> None {
+cl async def handle_signup(event: Any) -> None {
     event.preventDefault();
     username = document.getElementById("signup-username").value;
     password = document.getElementById("signup-password").value;
@@ -484,11 +490,11 @@ cl async def handle_signup(event: any) -> None {
         alert("Passwords do not match!");
         return;
     }
-    if username.length < 3 {
+    if len(username) < 3 {
         alert("Username must be at least 3 characters long.");
         return;
     }
-    if password.length < 6 {
+    if len(password) < 6 {
         alert("Password must be at least 6 characters long.");
         return;
     }
@@ -509,7 +515,8 @@ cl def logout_action -> None {
 }
 
 # Main App component with declarative router
-cl def:pub App -> Any {
+cl def:pub App -> JsxElement {
+
     # Create routes array manually (workaround for JS compiler bug with named args)
     login_route = {
         "path": "/login",
@@ -551,7 +558,8 @@ cl def:pub App -> Any {
 }
 
 # Helper to build navigation bar
-cl def build_nav_bar(route: str) -> Any {
+cl def build_nav_bar(route: str) -> JsxElement {
+
     if not jacIsLoggedIn() or route == "/login" or route == "/signup" {
         return None;
     }
@@ -614,7 +622,8 @@ cl def build_nav_bar(route: str) -> Any {
 }
 
 # Home view - simplified for testing reactive routing
-cl def HomeView -> Any {
+cl def HomeView -> JsxElement {
+
     if not jacIsLoggedIn() {
         navigate("/login");
         return
@@ -642,7 +651,8 @@ cl def HomeView -> Any {
 }
 
 # Profile view
-cl def ProfileView -> Any {
+cl def ProfileView -> JsxElement {
+
     if not jacIsLoggedIn() {
         navigate("/login");
         return
@@ -676,6 +686,7 @@ cl def ProfileView -> Any {
 }
 
 # Main SPA entry point - simplified with reactive routing
-cl def:pub jac_app -> Any {
+cl def:pub jac_app -> JsxElement {
+
     return App();
 }

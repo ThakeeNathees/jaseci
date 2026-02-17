@@ -101,7 +101,8 @@ walker create_todo {
 
 # Frontend Components
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         [todos, setTodos] = useState([]);
 
         async def addTodo() -> None {
@@ -144,7 +145,8 @@ walker create_todo { ... }
 
 # Frontend code (cl block)
 cl {
-    def app() -> Any { ... }
+    def app() -> JsxElement { ... }
+
 }
 ```
 

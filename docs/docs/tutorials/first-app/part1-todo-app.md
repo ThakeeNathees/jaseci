@@ -111,7 +111,8 @@ root ---> Todo("Buy groceries")
 ## Build the Frontend
 
 ```jac
-cl def:pub app -> Any {
+cl def:pub app -> JsxElement {
+
     has items: list = [],
         text: str = "";
 
@@ -120,8 +121,8 @@ cl def:pub app -> Any {
     }
 
     async def add -> None {
-        if text.trim() {
-            todo = await add_todo(text.trim());
+        if text.strip() {
+            todo = await add_todo(text.strip());
             items = items.concat([todo]);
             text = "";
         }
@@ -130,7 +131,7 @@ cl def:pub app -> Any {
     async def toggle(id: str) -> None {
         await toggle_todo(id);
         items = items.map(
-            lambda t: any -> Any {
+            lambda t: Any -> Any {
                 return {"id": t.id, "title": t.title, "done": not t.done}
                 if t.id == id else t;
             }
@@ -139,10 +140,10 @@ cl def:pub app -> Any {
 
     async def remove(id: str) -> None {
         await delete_todo(id);
-        items = items.filter(lambda t: any -> bool { return t.id != id; });
+        items = items.filter(lambda t: Any -> bool { return t.id != id; });
     }
 
-    remaining = items.filter(lambda t: any -> bool { return not t.done; }).length;
+    remaining = len(items.filter(lambda t: Any -> bool { return not t.done; }));
 
     return
         <div class="container">
@@ -151,8 +152,8 @@ cl def:pub app -> Any {
                 <input
                     class="input"
                     value={text}
-                    onChange={lambda e: any -> None { text = e.target.value; }}
-                    onKeyPress={lambda e: any -> None {
+                    onChange={lambda e: Any -> None { text = e.target.value; }}
+                    onKeyPress={lambda e: Any -> None {
                         if e.key == "Enter" { add(); }
                     }}
                     placeholder="What needs to be done?"
@@ -241,7 +242,8 @@ The rest is JSX-like syntax: `{[... for t in items]}` renders a list, `lambda` h
         return {};
     }
 
-    cl def:pub app -> Any {
+    cl def:pub app -> JsxElement {
+
         has items: list = [],
             text: str = "";
 
@@ -250,8 +252,8 @@ The rest is JSX-like syntax: `{[... for t in items]}` renders a list, `lambda` h
         }
 
         async def add -> None {
-            if text.trim() {
-                todo = await add_todo(text.trim());
+            if text.strip() {
+                todo = await add_todo(text.strip());
                 items = items.concat([todo]);
                 text = "";
             }
@@ -260,7 +262,7 @@ The rest is JSX-like syntax: `{[... for t in items]}` renders a list, `lambda` h
         async def toggle(id: str) -> None {
             await toggle_todo(id);
             items = items.map(
-                lambda t: any -> Any {
+                lambda t: Any -> Any {
                     return {"id": t.id, "title": t.title, "done": not t.done}
                     if t.id == id else t;
                 }
@@ -269,10 +271,10 @@ The rest is JSX-like syntax: `{[... for t in items]}` renders a list, `lambda` h
 
         async def remove(id: str) -> None {
             await delete_todo(id);
-            items = items.filter(lambda t: any -> bool { return t.id != id; });
+            items = items.filter(lambda t: Any -> bool { return t.id != id; });
         }
 
-        remaining = items.filter(lambda t: any -> bool { return not t.done; }).length;
+        remaining = len(items.filter(lambda t: Any -> bool { return not t.done; }));
 
         return
             <div class="container">
@@ -281,8 +283,8 @@ The rest is JSX-like syntax: `{[... for t in items]}` renders a list, `lambda` h
                     <input
                         class="input"
                         value={text}
-                        onChange={lambda e: any -> None { text = e.target.value; }}
-                        onKeyPress={lambda e: any -> None {
+                        onChange={lambda e: Any -> None { text = e.target.value; }}
+                        onKeyPress={lambda e: Any -> None {
                             if e.key == "Enter" { add(); }
                         }}
                         placeholder="What needs to be done?"

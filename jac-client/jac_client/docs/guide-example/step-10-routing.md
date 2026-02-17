@@ -68,7 +68,7 @@ Update the login handler to navigate to todos after successful login:
 
 ```jac
 # In LoginPage
-async def handleLogin(e: any) -> None {
+async def handleLogin(e: Any) -> None {
     e.preventDefault();
     setError("");
 
@@ -90,7 +90,7 @@ Update the signup handler:
 
 ```jac
 # In SignupPage
-async def handleSignup(e: any) -> None {
+async def handleSignup(e: Any) -> None {
     e.preventDefault();
     setError("");
 
@@ -113,7 +113,8 @@ async def handleSignup(e: any) -> None {
 Add this component to show navigation at the top:
 
 ```jac
-def Navigation() -> Any {
+def Navigation() -> JsxElement {
+
     isLoggedIn = jacIsLoggedIn();
 
     if isLoggedIn {
@@ -133,7 +134,7 @@ def Navigation() -> Any {
                     Todos
                 </Link>
                 <button
-                    onClick={lambda e: any -> None {
+                    onClick={lambda e: Any -> None {
                         e.preventDefault();
                         jacLogout();
                         window.location.href = "/cl/app#/login";
@@ -184,7 +185,8 @@ def Navigation() -> Any {
 Update your `TodosPage`:
 
 ```jac
-def TodosPage() -> Any {
+def TodosPage() -> JsxElement {
+
     # Redirect to login if not logged in
     if not jacIsLoggedIn() {
         return <Navigate to="/login" />;
@@ -199,7 +201,8 @@ def TodosPage() -> Any {
 Add this simple home page:
 
 ```jac
-def HomePage() -> Any {
+def HomePage() -> JsxElement {
+
     if jacIsLoggedIn() {
         return <Navigate to="/todos" />;
     }
@@ -212,7 +215,8 @@ def HomePage() -> Any {
 Now, update your `app` function to use the router:
 
 ```jac
-def:pub app() -> Any {
+def:pub app() -> JsxElement {
+
     return <Router>
         <div style={{"fontFamily": "system-ui, sans-serif"}}>
             <Navigation />
@@ -336,7 +340,8 @@ def login():
 ### Navigate Component
 
 ```jac
-def TodosPage() -> Any {
+def TodosPage() -> JsxElement {
+
     if not jacIsLoggedIn() {
         return <Navigate to="/login" />;
     }
@@ -381,7 +386,8 @@ http://localhost:8000/cl/app#/todos
 ### Protected Routes Pattern
 
 ```jac
-def ProtectedPage() -> Any {
+def ProtectedPage() -> JsxElement {
+
     if not jacIsLoggedIn() {
         return <Navigate to="/login" />;
     }
@@ -400,7 +406,8 @@ This pattern:
 ### Conditional Navigation
 
 ```jac
-def Navigation() -> Any {
+def Navigation() -> JsxElement {
+
     isLoggedIn = jacIsLoggedIn();
 
     if isLoggedIn {
@@ -441,7 +448,8 @@ Routes are matched **in order**:
 **Pattern 1: Auto-redirect based on auth**
 
 ```jac
-def HomePage() -> Any {
+def HomePage() -> JsxElement {
+
     if jacIsLoggedIn() {
         return <Navigate to="/todos" />;
     }
@@ -526,7 +534,8 @@ def handleLogout() -> None {
 Try adding a 404 page for unknown routes:
 
 ```jac
-def NotFoundPage() -> Any {
+def NotFoundPage() -> JsxElement {
+
     return <div style={{
         "textAlign": "center",
         "padding": "50px"

@@ -151,7 +151,8 @@ cl import from .level1.Card {
     Card
 }
 
-cl def:pub app() -> Any {
+cl def:pub app() -> JsxElement {
+
     return <div>
         <ButtonRoot />
         <ButtonSecondL />
@@ -168,7 +169,8 @@ cl import from ..ButtonRoot {
     ButtonRoot
 }
 
-cl def:pub ButtonSecondL() -> Any {
+cl def:pub ButtonSecondL() -> JsxElement {
+
     return <div>
         <Button>Second Level</Button>
         <ButtonRoot />
@@ -187,7 +189,8 @@ cl import from .level2.ButtonThirdL {
     ButtonThirdL
 }
 
-cl def:pub Card() -> Any {
+cl def:pub Card() -> JsxElement {
+
     return <div>
         <ButtonRoot />
         <ButtonThirdL />
@@ -205,7 +208,8 @@ cl import from ..ButtonSecondL {
     ButtonSecondL
 }
 
-cl def:pub ButtonThirdL() -> Any {
+cl def:pub ButtonThirdL() -> JsxElement {
+
     return <div>
         <Button>Third Level</Button>
         <ButtonRoot />

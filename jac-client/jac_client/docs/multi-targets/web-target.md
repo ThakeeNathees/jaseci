@@ -67,7 +67,8 @@ Jac code is compiled to JavaScript using the Jac runtime:
 ```jac
 # Your Jac code
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         has count: int = 0;
         return <div>Count: {count}</div>;
     }
@@ -219,7 +220,8 @@ Import CSS files in your Jac code:
 cl import "./styles.css"
 
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div className="container">Hello</div>;
     }
 }
@@ -233,7 +235,8 @@ Static assets (images, fonts, etc.) are handled automatically:
 
 ```jac
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <img src="/assets/logo.png" alt="Logo" />;
     }
 }
@@ -357,7 +360,8 @@ Use configuration for environment-specific settings:
 ```jac
 # main.jac
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         has count: int = 0;
 
         return <div style={{padding: "2rem"}}>
@@ -383,7 +387,8 @@ jac start main.jac
 ```jac
 # main.jac
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         has todos: list = [];
 
         async def loadTodos() -> None {
@@ -397,7 +402,7 @@ cl {
 
         return <div>
             <h1>Todo App</h1>
-            {todos.map(lambda todo: any -> Any {
+            {todos.map(lambda todo: Any -> Any {
                 return <div key={todo._jac_id}>{todo.text}</div>;
             })}
         </div>;

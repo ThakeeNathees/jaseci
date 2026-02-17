@@ -28,7 +28,8 @@ To export a function, add `:pub` after `def`:
 
 ```jac
 cl {
-    def:pub MyComponent() -> Any {
+    def:pub MyComponent() -> JsxElement {
+
         return <div>
             <h1>Hello from MyComponent!</h1>
         </div>;
@@ -53,7 +54,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Button(label: str, onClick: callable) -> Any {
+    def:pub Button(label: str, onClick: callable) -> JsxElement {
+
         return <button onClick={onClick}>
             {label}
         </button>;
@@ -114,7 +116,8 @@ Here's a complete example showing how to export and import:
 ```jac
 cl {
     # Export a component
-    def:pub Button(label: str, variant: str = "primary") -> Any {
+    def:pub Button(label: str, variant: str = "primary") -> JsxElement {
+
         styles = {
             "primary": {"backgroundColor": "#3b82f6", "color": "white"},
             "secondary": {"backgroundColor": "#6b7280", "color": "white"}
@@ -139,7 +142,8 @@ cl import from .components.Button {
 }
 
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <h1>My App</h1>
             <Button label="Click Me" variant="primary" />
@@ -156,7 +160,8 @@ The `app()` function in your main entry file (`main.jac`) **must** be exported:
 
 ```jac
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <h1>Hello, World!</h1>
         </div>;
@@ -217,7 +222,8 @@ When organizing code in nested folders, exported functions can be imported using
 
 ```jac
 cl {
-    def:pub Button(label: str) -> Any {
+    def:pub Button(label: str) -> JsxElement {
+
         return <button>{label}</button>;
     }
 }
@@ -231,7 +237,8 @@ cl import from .components.ui.Button {
 }
 
 cl {
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <div>
             <Button label="Click Me" />
         </div>;
@@ -249,7 +256,8 @@ cl {
 cl {
     glob:pub BUTTON_SIZES: list = ["small", "medium", "large"];
 
-    def:pub Button(label: str, size: str = "medium") -> Any {
+    def:pub Button(label: str, size: str = "medium") -> JsxElement {
+
         sizeStyles = {
             "small": {"padding": "0.5rem", "fontSize": "0.875rem"},
             "medium": {"padding": "0.75rem", "fontSize": "1rem"},
@@ -269,7 +277,7 @@ cl {
 
 ```jac
 cl {
-    def:pub formatDate(date: any) -> str {
+    def:pub formatDate(date: Any) -> str {
         return date.toLocaleDateString();
     }
 
@@ -325,12 +333,14 @@ cl {
 ```jac
 # Wrong - missing :pub
 cl {
-    def MyComponent() -> Any { ... }
+    def MyComponent() -> JsxElement { ... }
+
 }
 
 # Correct - has :pub
 cl {
-    def:pub MyComponent() -> Any { ... }
+    def:pub MyComponent() -> JsxElement { ... }
+
 }
 ```
 
@@ -361,12 +371,14 @@ cl {
 ```jac
 # Wrong
 cl {
-    def app() -> Any { ... }
+    def app() -> JsxElement { ... }
+
 }
 
 # Correct
 cl {
-    def:pub app() -> Any { ... }
+    def:pub app() -> JsxElement { ... }
+
 }
 ```
 

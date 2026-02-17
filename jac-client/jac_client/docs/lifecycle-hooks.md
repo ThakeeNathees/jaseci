@@ -54,12 +54,13 @@ The `useState` hook lets you add state to your components.
 cl import from react { useState }
 
 cl {
-    def Counter() -> Any {
+    def Counter() -> JsxElement {
+
         [count, setCount] = useState(0);
 
         return <div>
             <h1>Count: {count}</h1>
-            <button onClick={lambda e: any -> None {
+            <button onClick={lambda e: Any -> None {
                 setCount(count + 1);
             }}>
                 Increment
@@ -82,7 +83,8 @@ cl {
 cl import from react { useState }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [inputValue, setInputValue] = useState("");
         [filter, setFilter] = useState("all");
@@ -102,7 +104,8 @@ The `useEffect` hook lets you perform side effects in your components. It provid
 cl import from react { useState, useEffect }
 
 cl {
-    def MyComponent() -> Any {
+    def MyComponent() -> JsxElement {
+
         [data, setData] = useState(None);
 
         useEffect(lambda -> None {
@@ -135,7 +138,8 @@ cl {
 cl import from react { useState, useEffect }
 
 cl {
-    def Counter() -> Any {
+    def Counter() -> JsxElement {
+
         [count, setCount] = useState(0);
 
         useEffect(lambda -> None {
@@ -145,7 +149,7 @@ cl {
 
         return <div>
             <h1>Count: {count}</h1>
-            <button onClick={lambda e: any -> None {
+            <button onClick={lambda e: Any -> None {
                 setCount(count + 1);
             }}>
                 Increment
@@ -161,8 +165,9 @@ cl {
 cl import from react { useEffect }
 
 cl {
-    def TimerComponent() -> Any {
+    def TimerComponent() -> JsxElement {
         useEffect(lambda -> Any {
+
             # Setup
             intervalId = setInterval(lambda -> None {
                 console.log("Timer tick");
@@ -192,7 +197,8 @@ cl import from react { useState, useEffect }
 cl import from '@jac/runtime' { jacSpawn }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [loading, setLoading] = useState(True);
 
@@ -214,7 +220,7 @@ cl {
         }
 
         return <div>
-            {todos.map(lambda todo: any -> Any {
+            {todos.map(lambda todo: Any -> Any {
                 return <TodoItem todo={todo} />;
             })}
         </div>;
@@ -230,7 +236,8 @@ Set up event listeners with proper cleanup:
 cl import from react { useState, useEffect }
 
 cl {
-    def WindowResizeHandler() -> Any {
+    def WindowResizeHandler() -> JsxElement {
+
         [width, setWidth] = useState(0);
         [height, setHeight] = useState(0);
 
@@ -268,7 +275,8 @@ cl import from react { useState, useEffect }
 cl import from '@jac/runtime' { jacSpawn }
 
 cl {
-    def ProfileView() -> Any {
+    def ProfileView() -> JsxElement {
+
         [profile, setProfile] = useState(None);
         [loading, setLoading] = useState(True);
 
@@ -311,8 +319,9 @@ Initialize external libraries or APIs:
 cl import from react { useEffect }
 
 cl {
-    def ChartComponent() -> Any {
+    def ChartComponent() -> JsxElement {
         useEffect(lambda -> Any {
+
             # Initialize chart library
             chart = new Chart("myChart", {
                 "type": "line",
@@ -339,7 +348,8 @@ Focus an input field when a component mounts:
 cl import from react { useEffect }
 
 cl {
-    def SearchBar() -> Any {
+    def SearchBar() -> JsxElement {
+
         useEffect(lambda -> None {
             # Focus search input on mount
             inputEl = document.getElementById("search-input");
@@ -368,7 +378,8 @@ cl import from react { useState, useEffect }
 cl import from '@jac/runtime' { jacSpawn }
 
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [inputValue, setInputValue] = useState("");
         [filter, setFilter] = useState("all");
@@ -397,9 +408,9 @@ cl {
         }
 
         # Toggle todo completion status
-        async def toggleTodo(id: any) -> None {
+        async def toggleTodo(id: Any) -> None {
             await jacSpawn("toggle_todo",id, {});
-            setTodos(todos.map(lambda todo: any -> Any {
+            setTodos(todos.map(lambda todo: Any -> Any {
                 if todo._jac_id == id {
                     updatedTodo = {
                         "_jac_id": todo._jac_id,
@@ -416,9 +427,9 @@ cl {
         # Filter todos based on current filter
         def getFilteredTodos() -> list {
             if filter == "active" {
-                return todos.filter(lambda todo: any -> bool { return not todo.done; });
+                return todos.filter(lambda todo: Any -> bool { return not todo.done; });
             } elif filter == "completed" {
-                return todos.filter(lambda todo: any -> bool { return todo.done; });
+                return todos.filter(lambda todo: Any -> bool { return todo.done; });
             }
             return todos;
         }
@@ -438,8 +449,8 @@ cl {
                 <input
                     type="text"
                     value={inputValue}
-                    onChange={lambda e: any -> None { setInputValue(e.target.value); }}
-                    onKeyPress={lambda e: any -> None {
+                    onChange={lambda e: Any -> None { setInputValue(e.target.value); }}
+                    onKeyPress={lambda e: Any -> None {
                         if e.key == "Enter" { addTodo(); }
                     }}
                     placeholder="What needs to be done?"
@@ -459,7 +470,7 @@ cl {
 
             # Todo list
             <ul>
-                {filteredTodos.map(lambda todo: any -> Any {
+                {filteredTodos.map(lambda todo: Any -> Any {
                     return <li key={todo._jac_id}>
                         <input
                             type="checkbox"
@@ -482,7 +493,8 @@ cl import from react { useState, useEffect }
 cl import from '@jac/runtime' { jacSpawn }
 
 cl {
-    def Dashboard() -> Any {
+    def Dashboard() -> JsxElement {
+
         [stats, setStats] = useState(None);
         [activity, setActivity] = useState([]);
         [loading, setLoading] = useState(True);
@@ -524,7 +536,8 @@ Proper cleanup when component unmounts:
 cl import from react { useState, useEffect }
 
 cl {
-    def TimerComponent() -> Any {
+    def TimerComponent() -> JsxElement {
+
         [seconds, setSeconds] = useState(0);
 
         useEffect(lambda -> Any {
@@ -614,7 +627,8 @@ Show loading indicators while data is being fetched:
 
 ```jac
 #  Good: Clear loading states
-def Component() -> Any {
+def Component() -> JsxElement {
+
     [data, setData] = useState(None);
     [loading, setLoading] = useState(True);
     [error, setError] = useState(None);
@@ -646,7 +660,8 @@ Each effect should have a single responsibility:
 
 ```jac
 #  Good: Separate effects for separate concerns
-def Component() -> Any {
+def Component() -> JsxElement {
+
     useEffect(lambda -> None {
         loadData();  # Data loading
     }, []);
@@ -711,7 +726,8 @@ The `onMount()` hook was a Jac-specific hook for running code once when a compon
 
 ```jac
 # Legacy approach - use useEffect instead
-def Component() -> Any {
+def Component() -> JsxElement {
+
     onMount(lambda -> None {
         loadData();
     });
@@ -723,7 +739,8 @@ def Component() -> Any {
 
 ```jac
 # Modern approach with React hooks
-def Component() -> Any {
+def Component() -> JsxElement {
+
     useEffect(lambda -> None {
         loadData();
     }, []);
@@ -739,7 +756,8 @@ The `createState()` hook was a Jac-specific state management solution:
 # Legacy approach - use useState instead
 [state, setState] = createState({"count": 0});
 
-def Component() -> Any {
+def Component() -> JsxElement {
+
     s = state();
     return <div>{s.count}</div>;
 }
@@ -749,7 +767,8 @@ def Component() -> Any {
 
 ```jac
 # Modern approach with React hooks
-def Component() -> Any {
+def Component() -> JsxElement {
+
     [count, setCount] = useState(0);
     return <div>{count}</div>;
 }

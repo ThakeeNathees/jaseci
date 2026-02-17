@@ -35,7 +35,8 @@ Jac uses React hooks for all state management. The most common hooks are:
 cl import from react { useState, useEffect }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
         [loading, setLoading] = useState(False);
@@ -53,7 +54,8 @@ cl {
         return <div>{/* your UI */}</div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -71,7 +73,8 @@ Instead of putting everything in one state object, split state into multiple var
 cl import from react { useState, useEffect }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         # Separate state variables for different concerns
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
@@ -98,13 +101,14 @@ cl {
         if error { return <div>Error: {error}</div>; }
 
         return <div>
-            {todos.map(lambda todo: any -> Any {
+            {todos.map(lambda todo: Any -> Any {
                 return <TodoItem key={todo._jac_id} todo={todo} />;
             })}
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -125,7 +129,8 @@ Sometimes an object makes sense for closely related data:
 cl import from react { useState }
 
 cl {
-    def UserProfile() -> Any {
+    def UserProfile() -> JsxElement {
+
         # Good: Related data in one object
         [user, setUser] = useState({
             "name": "",
@@ -138,7 +143,7 @@ cl {
         }
 
         return <div>
-            <input value={user.name} onChange={lambda e: any -> None {
+            <input value={user.name} onChange={lambda e: Any -> None {
                 updateName(e.target.value);
             }} />
         </div>;
@@ -158,7 +163,8 @@ Organize state by feature or domain using multiple `useState` calls:
 cl import from react { useState, useEffect }
 
 cl {
-    def App() -> Any {
+    def App() -> JsxElement {
+
         # User state
         [user, setUser] = useState(None);
         [isLoggedIn, setIsLoggedIn] = useState(False);
@@ -191,7 +197,8 @@ cl {
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <App />;
     }
 }
@@ -208,7 +215,8 @@ cl {
     # Create context for global state
     AppContext = createContext(None);
 
-    def App() -> Any {
+    def App() -> JsxElement {
+
         # Global state
         [currentUser, setCurrentUser] = useState(None);
         [theme, setTheme] = useState("light");
@@ -227,7 +235,8 @@ cl {
     }
 
     # Component with local state
-    def TodoForm() -> Any {
+    def TodoForm() -> JsxElement {
+
         # Access global context
         app = useContext(AppContext);
 
@@ -242,7 +251,7 @@ cl {
         return <form>
             <input
                 value={text}
-                onChange={lambda e: any -> None {
+                onChange={lambda e: Any -> None {
                     newText = e.target.value;
                     setText(newText);
                     validate(newText);
@@ -252,7 +261,8 @@ cl {
         </form>;
     }
 
-    def TodoList() -> Any {
+    def TodoList() -> JsxElement {
+
         # Local list state
         [sortBy, setSortBy] = useState("date");
         [order, setOrder] = useState("asc");
@@ -265,7 +275,8 @@ cl {
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <App />;
     }
 }
@@ -340,7 +351,7 @@ cl {
 
         async def toggleTodo(id: str) -> None {
             id spawn toggle_todo();
-            setTodos(todos.map(lambda todo: any -> Any {
+            setTodos(todos.map(lambda todo: Any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -362,7 +373,8 @@ cl {
     }
 
     # Using custom hooks in components
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         userData = useUser();
         todoData = useTodos();
 
@@ -373,13 +385,14 @@ cl {
         return <div>
             <h1>Welcome, {userData.user.name if userData.user else "Guest"}</h1>
             <button onClick={userData.logout}>Logout</button>
-            {todoData.todos.map(lambda todo: any -> Any {
+            {todoData.todos.map(lambda todo: Any -> Any {
                 return <TodoItem key={todo._jac_id} todo={todo} />;
             })}
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -397,16 +410,17 @@ Use `useMemo` to memoize expensive computations:
 cl import from react { useState, useMemo }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
         # Memoized filtered todos - only recomputes when todos or filter changes
         filteredTodos = useMemo(lambda -> list {
             if filter == "active" {
-                return todos.filter(lambda item: any -> bool { return not item.done; });
+                return todos.filter(lambda item: Any -> bool { return not item.done; });
             } elif filter == "completed" {
-                return todos.filter(lambda item: any -> bool { return item.done; });
+                return todos.filter(lambda item: Any -> bool { return item.done; });
             }
             return todos;
         }, [todos, filter]);
@@ -414,7 +428,7 @@ cl {
         # Memoized stats - only recomputes when todos changes
         stats = useMemo(lambda -> dict {
             total = todos.length;
-            active = todos.filter(lambda item: any -> bool { return not item.done; }).length;
+            active = todos.filter(lambda item: Any -> bool { return not item.done; }).length;
             completed = total - active;
 
             return {
@@ -428,13 +442,14 @@ cl {
             <div>
                 Total: {stats.total}, Active: {stats.active}, Completed: {stats.completed}
             </div>
-            {filteredTodos.map(lambda item: any -> Any {
+            {filteredTodos.map(lambda item: Any -> Any {
                 return <TodoItem key={item._jac_id} todo={item} />;
             })}
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -448,32 +463,34 @@ For simple computations, you don't need `useMemo`:
 cl import from react { useState }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
         # Simple derived values - computed on each render
         def getFilteredTodos() -> list {
             if filter == "active" {
-                return todos.filter(lambda item: any -> bool { return not item.done; });
+                return todos.filter(lambda item: Any -> bool { return not item.done; });
             } elif filter == "completed" {
-                return todos.filter(lambda item: any -> bool { return item.done; });
+                return todos.filter(lambda item: Any -> bool { return item.done; });
             }
             return todos;
         }
 
         filtered = getFilteredTodos();
-        activeCount = todos.filter(lambda item: any -> bool { return not item.done; }).length;
+        activeCount = todos.filter(lambda item: Any -> bool { return not item.done; }).length;
 
         return <div>
             <div>{activeCount} active todos</div>
-            {filtered.map(lambda item: any -> Any {
+            {filtered.map(lambda item: Any -> Any {
                 return <TodoItem key={item._jac_id} todo={item} />;
             })}
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -487,7 +504,8 @@ Use `useEffect` to sync derived state or perform side effects:
 cl import from react { useState, useEffect }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [stats, setStats] = useState({
             "total": 0,
@@ -498,7 +516,7 @@ cl {
         # Update stats whenever todos change
         useEffect(lambda -> None {
             total = todos.length;
-            active = todos.filter(lambda item: any -> bool { return not item.done; }).length;
+            active = todos.filter(lambda item: Any -> bool { return not item.done; }).length;
             completed = total - active;
 
             setStats({
@@ -513,13 +531,14 @@ cl {
 
         return <div>
             <StatsDisplay stats={stats} />
-            {todos.map(lambda item: any -> Any {
+            {todos.map(lambda item: Any -> Any {
                 return <TodoItem key={item._jac_id} todo={item} />;
             })}
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -546,7 +565,7 @@ cl {
         } elif type == "TOGGLE_TODO" {
             return {
                 ...state,
-                "todos": state.todos.map(lambda todo: any -> Any {
+                "todos": state.todos.map(lambda todo: Any -> Any {
                     if todo._jac_id == action.payload {
                         return {...todo, "done": not todo.done};
                     }
@@ -556,7 +575,7 @@ cl {
         } elif type == "REMOVE_TODO" {
             return {
                 ...state,
-                "todos": state.todos.filter(lambda todo: any -> bool {
+                "todos": state.todos.filter(lambda todo: Any -> bool {
                     return todo._jac_id != action.payload;
                 })
             };
@@ -569,7 +588,8 @@ cl {
         return state;
     }
 
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         # Initial state
         initialState = {
             "todos": [],
@@ -603,7 +623,7 @@ cl {
 
         return <div>
             {state.loading and <div>Loading...</div>}
-            {state.todos.map(lambda todo: any -> Any {
+            {state.todos.map(lambda todo: Any -> Any {
                 return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
@@ -613,7 +633,8 @@ cl {
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -631,7 +652,8 @@ cl {
     TodoContext = createContext(None);
 
     # Provider component
-    def TodoProvider(props: dict) -> Any {
+    def TodoProvider(props: dict) -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
@@ -643,7 +665,7 @@ cl {
 
         async def toggleTodo(id: str) -> None {
             id spawn toggle_todo();
-            setTodos(todos.map(lambda todo: any -> Any {
+            setTodos(todos.map(lambda todo: Any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -670,17 +692,18 @@ cl {
     }
 
     # Components using the context
-    def TodoList() -> Any {
+    def TodoList() -> JsxElement {
+
         ctx = useTodoContext();
 
-        filteredTodos = ctx.todos.filter(lambda todo: any -> bool {
+        filteredTodos = ctx.todos.filter(lambda todo: Any -> bool {
             if ctx.filter == "active" { return not todo.done; }
             if ctx.filter == "completed" { return todo.done; }
             return True;
         });
 
         return <div>
-            {filteredTodos.map(lambda todo: any -> Any {
+            {filteredTodos.map(lambda todo: Any -> Any {
                 return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
@@ -690,7 +713,8 @@ cl {
         </div>;
     }
 
-    def FilterButtons() -> Any {
+    def FilterButtons() -> JsxElement {
+
         ctx = useTodoContext();
 
         return <div>
@@ -701,14 +725,16 @@ cl {
     }
 
     # App with provider
-    def MainApp() -> Any {
+    def MainApp() -> JsxElement {
+
         return <TodoProvider>
             <FilterButtons />
             <TodoList />
         </TodoProvider>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <MainApp />;
     }
 }
@@ -722,12 +748,13 @@ Prevent unnecessary re-renders by memoizing callbacks:
 cl import from react { useState, useCallback }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
 
         # Memoized callback - only recreated if todos changes
         handleToggle = useCallback(lambda id: str -> None {
-            setTodos(todos.map(lambda todo: any -> Any {
+            setTodos(todos.map(lambda todo: Any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -736,7 +763,7 @@ cl {
         }, [todos]);
 
         return <div>
-            {todos.map(lambda todo: any -> Any {
+            {todos.map(lambda todo: Any -> Any {
                 return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
@@ -746,7 +773,8 @@ cl {
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -764,7 +792,8 @@ Encapsulate state logic in reusable action functions:
 cl import from react { useState }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
@@ -778,7 +807,7 @@ cl {
 
         async def toggleTodo(id: str) -> None {
             id spawn toggle_todo();
-            setTodos(todos.map(lambda todo: any -> Any {
+            setTodos(todos.map(lambda todo: Any -> Any {
                 if todo._jac_id == id {
                     return {...todo, "done": not todo.done};
                 }
@@ -787,13 +816,13 @@ cl {
         }
 
         def removeTodo(id: str) -> None {
-            setTodos(todos.filter(lambda todo: any -> bool {
+            setTodos(todos.filter(lambda todo: Any -> bool {
                 return todo._jac_id != id;
             }));
         }
 
         def clearCompleted() -> None {
-            setTodos(todos.filter(lambda todo: any -> bool {
+            setTodos(todos.filter(lambda todo: Any -> bool {
                 return not todo.done;
             }));
         }
@@ -803,7 +832,8 @@ cl {
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -817,38 +847,40 @@ Create memoized selector functions for derived data:
 cl import from react { useState, useMemo }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
 
         # Memoized selectors
         filteredTodos = useMemo(lambda -> list {
             if filter == "active" {
-                return todos.filter(lambda t: any -> bool { return not t.done; });
+                return todos.filter(lambda t: Any -> bool { return not t.done; });
             } elif filter == "completed" {
-                return todos.filter(lambda t: any -> bool { return t.done; });
+                return todos.filter(lambda t: Any -> bool { return t.done; });
             }
             return todos;
         }, [todos, filter]);
 
         activeTodos = useMemo(lambda -> list {
-            return todos.filter(lambda t: any -> bool { return not t.done; });
+            return todos.filter(lambda t: Any -> bool { return not t.done; });
         }, [todos]);
 
         completedTodos = useMemo(lambda -> list {
-            return todos.filter(lambda t: any -> bool { return t.done; });
+            return todos.filter(lambda t: Any -> bool { return t.done; });
         }, [todos]);
 
         return <div>
             <div>Active: {activeTodos.length}</div>
             <div>Completed: {completedTodos.length}</div>
-            {filteredTodos.map(lambda todo: any -> Any {
+            {filteredTodos.map(lambda todo: Any -> Any {
                 return <TodoItem key={todo._jac_id} todo={todo} />;
             })}
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -866,7 +898,8 @@ cl {
     AppContext = createContext(None);
 
     # Main app with combined hooks
-    def App() -> Any {
+    def App() -> JsxElement {
+
         # User state with useState
         [user, setUser] = useState(None);
 
@@ -877,7 +910,7 @@ cl {
             } elif action.type == "TOGGLE" {
                 return {
                     ...state,
-                    "todos": state.todos.map(lambda t: any -> Any {
+                    "todos": state.todos.map(lambda t: Any -> Any {
                         if t._jac_id == action.payload {
                             return {...t, "done": not t.done};
                         }
@@ -915,7 +948,8 @@ cl {
         </AppContext.Provider>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <App />;
     }
 }
@@ -931,7 +965,8 @@ Here's a complete example combining multiple React hooks and patterns:
 cl import from react { useState, useEffect, useMemo, useCallback }
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         # State management
         [todos, setTodos] = useState([]);
         [filter, setFilter] = useState("all");
@@ -965,16 +1000,16 @@ cl {
         # Memoized derived state
         filteredTodos = useMemo(lambda -> list {
             if filter == "active" {
-                return todos.filter(lambda t: any -> bool { return not t.done; });
+                return todos.filter(lambda t: Any -> bool { return not t.done; });
             } elif filter == "completed" {
-                return todos.filter(lambda t: any -> bool { return t.done; });
+                return todos.filter(lambda t: Any -> bool { return t.done; });
             }
             return todos;
         }, [todos, filter]);
 
         stats = useMemo(lambda -> dict {
             total = todos.length;
-            active = todos.filter(lambda t: any -> bool { return not t.done; }).length;
+            active = todos.filter(lambda t: Any -> bool { return not t.done; }).length;
             return {"total": total, "active": active, "completed": total - active};
         }, [todos]);
 
@@ -991,7 +1026,7 @@ cl {
         toggleTodo = useCallback(lambda id: str -> None {
             async def _toggleTodo() -> None {
                 id spawn toggle_todo();
-                setTodos(todos.map(lambda t: any -> Any {
+                setTodos(todos.map(lambda t: Any -> Any {
                     if t._jac_id == id {
                         return {...t, "done": not t.done};
                     }
@@ -1002,11 +1037,11 @@ cl {
         }, [todos]);
 
         removeTodo = useCallback(lambda id: str -> None {
-            setTodos(todos.filter(lambda t: any -> bool { return t._jac_id != id; }));
+            setTodos(todos.filter(lambda t: Any -> bool { return t._jac_id != id; }));
         }, [todos]);
 
         clearCompleted = useCallback(lambda -> None {
-            setTodos(todos.filter(lambda t: any -> bool { return not t.done; }));
+            setTodos(todos.filter(lambda t: Any -> bool { return not t.done; }));
         }, [todos]);
 
         toggleSidebar = useCallback(lambda -> None {
@@ -1050,7 +1085,7 @@ cl {
 
                 # Todo list
                 <div>
-                    {filteredTodos.map(lambda todo: any -> Any {
+                    {filteredTodos.map(lambda todo: Any -> Any {
                         return <div key={todo._jac_id} style={{"marginBottom": "10px"}}>
                             <input
                                 type="checkbox"
@@ -1079,7 +1114,8 @@ cl {
         </div>;
     }
 
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <TodoApp />;
     }
 }
@@ -1095,7 +1131,8 @@ cl {
 cl import from react { useState }
 
 #  Good: Separate state variables
-def App() -> Any {
+def App() -> JsxElement {
+
     [user, setUser] = useState(None);
     [todos, setTodos] = useState([]);
     [sidebarOpen, setSidebarOpen] = useState(False);
@@ -1103,7 +1140,8 @@ def App() -> Any {
 }
 
 #  Avoid: One giant state object for unrelated data
-def App() -> Any {
+def App() -> JsxElement {
+
     [appState, setAppState] = useState({
         "user": None,
         "todos": [],
@@ -1119,20 +1157,22 @@ def App() -> Any {
 cl import from react { useState, useMemo }
 
 #  Good: Memoize expensive calculations
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     [todos, setTodos] = useState([]);
 
     activeTodos = useMemo(lambda -> list {
-        return todos.filter(lambda t: any -> bool { return not t.done; });
+        return todos.filter(lambda t: Any -> bool { return not t.done; });
     }, [todos]);
 }
 
 #  Avoid: Computing on every render
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     [todos, setTodos] = useState([]);
 
     # This runs on every render, even if todos hasn't changed
-    activeTodos = todos.filter(lambda t: any -> bool { return not t.done; });
+    activeTodos = todos.filter(lambda t: Any -> bool { return not t.done; });
 }
 ```
 
@@ -1142,13 +1182,15 @@ def TodoApp() -> Any {
 cl import from react { useState }
 
 #  Good: Calculate derived values
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     [todos, setTodos] = useState([]);
-    activeCount = todos.filter(lambda t: any -> bool { return not t.done; }).length;
+    activeCount = todos.filter(lambda t: Any -> bool { return not t.done; }).length;
 }
 
 #  Avoid: Storing derived values in state
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     [todos, setTodos] = useState([]);
     [activeCount, setActiveCount] = useState(0);  # Redundant!
 }
@@ -1160,7 +1202,8 @@ def TodoApp() -> Any {
 cl import from react { useReducer }
 
 #  Good: useReducer for complex interdependent state
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     def reducer(state: dict, action: dict) -> dict {
         if action.type == "ADD" {
             return {...state, "todos": state.todos.concat([action.payload]), "count": state.count + 1};
@@ -1172,7 +1215,8 @@ def TodoApp() -> Any {
 }
 
 #  Avoid: Multiple useState for interdependent state
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     [todos, setTodos] = useState([]);
     [count, setCount] = useState(0);
     # Risk of inconsistency - need to update both together
@@ -1185,7 +1229,8 @@ def TodoApp() -> Any {
 cl import from react { useState, useEffect }
 
 #  Good: Comprehensive state management
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     [todos, setTodos] = useState([]);
     [loading, setLoading] = useState(False);
     [error, setError] = useState(None);
@@ -1218,11 +1263,12 @@ def TodoApp() -> Any {
 cl import from react { useState, useCallback }
 
 #  Good: Memoized callbacks prevent unnecessary re-renders
-def TodoApp() -> Any {
+def TodoApp() -> JsxElement {
+
     [todos, setTodos] = useState([]);
 
     handleToggle = useCallback(lambda id: str -> None {
-        setTodos(todos.map(lambda t: any -> Any {
+        setTodos(todos.map(lambda t: Any -> Any {
             if t._jac_id == id { return {...t, "done": not t.done}; }
             return t;
         }));
@@ -1240,14 +1286,16 @@ cl import from react { useState, useContext, createContext }
 #  Good: Context avoids prop drilling
 ThemeContext = createContext("light");
 
-def App() -> Any {
+def App() -> JsxElement {
+
     [theme, setTheme] = useState("light");
     return <ThemeContext.Provider value={theme}>
         <DeeplyNestedComponent />
     </ThemeContext.Provider>;
 }
 
-def DeeplyNestedComponent() -> Any {
+def DeeplyNestedComponent() -> JsxElement {
+
     theme = useContext(ThemeContext);
     return <div style={{"background": theme}}></div>;
 }

@@ -176,7 +176,8 @@ cl {
         };
     }
 
-    def TodoList(filteredTodos: any, toggleTodo: any, deleteTodo: any) -> Any {
+    def TodoList(filteredTodos: Any, toggleTodo: Any, deleteTodo: Any) -> JsxElement {
+
         if filteredTodos.length == 0 {
             return <div
                 style={{"padding": "20px", "textAlign": "center", "color": "#999"}}
@@ -187,7 +188,7 @@ cl {
 
         return <div>
             {filteredTodos.map(
-                lambda  todo: any  -> Any{ return <TodoItem
+                lambda  todo: Any  -> Any{ return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
                     toggleTodo={toggleTodo}
@@ -198,7 +199,8 @@ cl {
         </div>;
     }
 
-    def PropTodoList(props: any) -> Any {
+    def PropTodoList(props: Any) -> JsxElement {
+
         if props.filteredTodos.length == 0 {
             return <div
                 style={{"padding": "20px", "textAlign": "center", "color": "#999"}}
@@ -209,7 +211,7 @@ cl {
 
         return <div>
             {props.filteredTodos.map(
-                lambda  todo: any  -> Any{ return <TodoItem
+                lambda  todo: Any  -> Any{ return <TodoItem
                     key={todo._jac_id}
                     todo={todo}
                     toggleTodo={props.toggleTodo}

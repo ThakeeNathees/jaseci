@@ -47,7 +47,8 @@ cl import from "@mui/icons-material/Add" { default as AddIcon }
 cl import from "@mui/icons-material/Remove" { default as RemoveIcon }
 
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <Box sx={{"display": "flex", "justifyContent": "center"}}>
             <Card>
                 <CardContent>

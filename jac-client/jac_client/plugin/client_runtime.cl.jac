@@ -16,7 +16,7 @@ import from 'react-router-dom' {
 }
 import from 'react-error-boundary' { ErrorBoundary }
 
-def:pub __jacJsx(tag: any, props: dict = {}, children: any = []) -> JsxElement;
+def:pub __jacJsx(tag: Any, props: dict = {}, children: Any = []) -> JsxElement;
 
 # React hooks re-exported for auto-injection by `has` variables and `can with entry/exit` effects
 glob:
@@ -46,6 +46,6 @@ def:pub __getApiBaseUrl -> str;
 def:pub __getLocalStorage(key: str) -> str;
 def:pub __setLocalStorage(key: str, value: str) -> None;
 def:pub __removeLocalStorage(key: str) -> None;
-def:pub AuthGuard(redirect: str = "/login") -> Any;
-def:pub ErrorFallback(error: str, resetErrorBoundary: any) -> Any;
-def:pub errorOverlay(filePath: str, errors: str) -> Any;
+def:pub AuthGuard(redirect: str = "/login") -> JsxElement;
+def:pub ErrorFallback(error: str, resetErrorBoundary: Any) -> JsxElement;
+def:pub errorOverlay(filePath: str, errors: str) -> JsxElement;

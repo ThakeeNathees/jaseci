@@ -183,8 +183,9 @@ cl {
     glob AuthContext = createContext(None);
 
     # Auth Provider component
-    def:pub AuthProvider(props: dict) -> Any {
-        has user: any = None;
+    def:pub AuthProvider(props: dict) -> JsxElement {
+
+        has user: Any = None;
         has token: str = "";
         has loading: bool = True;
 
@@ -275,7 +276,8 @@ cl {
 
 ```jac
 cl {
-    def:pub LoginForm() -> Any {
+    def:pub LoginForm() -> JsxElement {
+
         has email: str = "";
         has password: str = "";
         has error: str = "";
@@ -305,7 +307,7 @@ cl {
             <input
                 type="email"
                 value={email}
-                onChange={lambda e: any -> None { email = e.target.value; }}
+                onChange={lambda e: Any -> None { email = e.target.value; }}
                 placeholder="Email"
                 required={True}
             />
@@ -313,7 +315,7 @@ cl {
             <input
                 type="password"
                 value={password}
-                onChange={lambda e: any -> None { password = e.target.value; }}
+                onChange={lambda e: Any -> None { password = e.target.value; }}
                 placeholder="Password"
                 required={True}
             />
@@ -341,7 +343,8 @@ cl {
 
 ```jac
 cl {
-    def:pub SignupForm() -> Any {
+    def:pub SignupForm() -> JsxElement {
+
         has name: str = "";
         has email: str = "";
         has password: str = "";
@@ -383,7 +386,7 @@ cl {
             <input
                 type="text"
                 value={name}
-                onChange={lambda e: any -> None { name = e.target.value; }}
+                onChange={lambda e: Any -> None { name = e.target.value; }}
                 placeholder="Full Name"
                 required={True}
             />
@@ -391,7 +394,7 @@ cl {
             <input
                 type="email"
                 value={email}
-                onChange={lambda e: any -> None { email = e.target.value; }}
+                onChange={lambda e: Any -> None { email = e.target.value; }}
                 placeholder="Email"
                 required={True}
             />
@@ -399,7 +402,7 @@ cl {
             <input
                 type="password"
                 value={password}
-                onChange={lambda e: any -> None { password = e.target.value; }}
+                onChange={lambda e: Any -> None { password = e.target.value; }}
                 placeholder="Password"
                 required={True}
             />
@@ -407,7 +410,7 @@ cl {
             <input
                 type="password"
                 value={confirm_password}
-                onChange={lambda e: any -> None { confirm_password = e.target.value; }}
+                onChange={lambda e: Any -> None { confirm_password = e.target.value; }}
                 placeholder="Confirm Password"
                 required={True}
             />
@@ -437,7 +440,8 @@ cl {
 
 ```jac
 cl {
-    def:pub ProtectedRoute(props: dict) -> Any {
+    def:pub ProtectedRoute(props: dict) -> JsxElement {
+
         auth = use_auth();
 
         # Still loading auth state
@@ -462,7 +466,8 @@ cl {
 
 ```jac
 cl {
-    def:pub Dashboard() -> Any {
+    def:pub Dashboard() -> JsxElement {
+
         auth = use_auth();
 
         return <ProtectedRoute>
@@ -486,7 +491,8 @@ cl {
 cl {
     import from jac_client { Router, Route }
 
-    def:pub app() -> Any {
+    def:pub app() -> JsxElement {
+
         return <AuthProvider>
             <Router>
                 <nav>
@@ -504,7 +510,8 @@ cl {
         </AuthProvider>;
     }
 
-    def:pub NavBar() -> Any {
+    def:pub NavBar() -> JsxElement {
+
         auth = use_auth();
 
         return <div className="navbar">
@@ -539,8 +546,9 @@ cl {
 cl {
     import from jac_client { callWalker }
 
-    def:pub UserData() -> Any {
-        has data: any = None;
+    def:pub UserData() -> JsxElement {
+
+        has data: Any = None;
         auth = use_auth();
 
         async def fetch_private_data() -> None {

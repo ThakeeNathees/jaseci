@@ -61,7 +61,8 @@ cl import from '@jac/runtime' { jacSpawn }
 # Note: When using `has` variables, useState is auto-injected
 
 cl {
-    def TodoApp() -> Any {
+    def TodoApp() -> JsxElement {
+
         [todos, setTodos] = useState([]);
 
         useEffect(lambda -> None {
@@ -102,8 +103,9 @@ jacSpawn(walker_name: str, node_id: str, params: dict) -> Any
 cl import from '@jac/runtime' { jacLogin, navigate }
 
 cl {
-    def LoginForm() -> Any {
-        async def handleLogin(e: any) -> None {
+    def LoginForm() -> JsxElement {
+
+        async def handleLogin(e: Any) -> None {
             e.preventDefault();
             username = document.getElementById("username").value;
             password = document.getElementById("password").value;
@@ -132,8 +134,9 @@ cl {
 cl import from '@jac/runtime' { jacSignup, navigate }
 
 cl {
-    def SignupForm() -> Any {
-        async def handleSignup(e: any) -> None {
+    def SignupForm() -> JsxElement {
+
+        async def handleSignup(e: Any) -> None {
             e.preventDefault();
             username = document.getElementById("username").value;
             password = document.getElementById("password").value;
@@ -163,7 +166,8 @@ cl {
 cl import from '@jac/runtime' { jacLogout, navigate }
 
 cl {
-    def Header() -> Any {
+    def Header() -> JsxElement {
+
         def handleLogout() -> None {
             jacLogout();
             navigate("/login");
@@ -182,7 +186,8 @@ cl {
 cl import from '@jac/runtime' { jacIsLoggedIn, navigate }
 
 cl {
-    def ProtectedPage() -> Any {
+    def ProtectedPage() -> JsxElement {
+
         if not jacIsLoggedIn() {
             navigate("/login");
             return <div>Redirecting...</div>;
@@ -204,7 +209,8 @@ cl {
 cl import from '@jac/runtime' { navigate }
 
 cl {
-    def MyComponent() -> Any {
+    def MyComponent() -> JsxElement {
+
         def goToHome() -> None {
             navigate("/");
         }
@@ -227,7 +233,8 @@ cl {
 cl import from '@jac/runtime' { Link }
 
 cl {
-    def Navigation() -> Any {
+    def Navigation() -> JsxElement {
+
         return <nav>
             <Link href="/">Home</Link>
             <Link href="/about">About</Link>
@@ -243,7 +250,8 @@ cl {
 cl import from '@jac/runtime' { initRouter, jacIsLoggedIn }
 
 cl {
-    def App() -> Any {
+    def App() -> JsxElement {
+
         # Define routes
         routes = [
             {
@@ -291,10 +299,11 @@ cl import from '@jac/runtime' {
 # Note: When using `has` variables, useState is auto-injected
 
 cl {
-    def LoginPage() -> Any {
+    def LoginPage() -> JsxElement {
+
         [error, setError] = useState("");
 
-        async def handleLogin(e: any) -> None {
+        async def handleLogin(e: Any) -> None {
             e.preventDefault();
             username = document.getElementById("username").value;
             password = document.getElementById("password").value;
@@ -334,7 +343,8 @@ cl {
         </div>;
     }
 
-    def Dashboard() -> Any {
+    def Dashboard() -> JsxElement {
+
         if not jacIsLoggedIn() {
             navigate("/login");
             return <div>Redirecting...</div>;
@@ -352,7 +362,8 @@ cl {
         </div>;
     }
 
-    def App() -> Any {
+    def App() -> JsxElement {
+
         routes = [
             {"path": "/login", "component": lambda -> Any { return LoginPage(); }, "guard": None},
             {"path": "/dashboard", "component": lambda -> Any { return Dashboard(); }, "guard": jacIsLoggedIn}
@@ -378,7 +389,8 @@ cl import from '@jac/runtime' { jacIsLoggedIn, jacSpawn, navigate }
 # Note: When using `has` variables, useState is auto-injected
 
 cl {
-    def ProtectedDashboard() -> Any {
+    def ProtectedDashboard() -> JsxElement {
+
         [user, setUser] = useState(None);
         [loading, setLoading] = useState(True);
 
@@ -414,11 +426,12 @@ cl import from '@jac/runtime' { jacSpawn }
 # Note: When using `has` variables, useState is auto-injected
 
 cl {
-    def CreateTodoForm() -> Any {
+    def CreateTodoForm() -> JsxElement {
+
         [text, setText] = useState("");
         [loading, setLoading] = useState(False);
 
-        async def handleSubmit(e: any) -> None {
+        async def handleSubmit(e: Any) -> None {
             e.preventDefault();
             if not text.trim() { return; }
 
@@ -437,7 +450,7 @@ cl {
         return <form onSubmit={handleSubmit}>
             <input
                 value={text}
-                onChange={lambda e: any -> None { setText(e.target.value); }}
+                onChange={lambda e: Any -> None { setText(e.target.value); }}
                 placeholder="Enter todo..."
                 disabled={loading}
             />
@@ -455,7 +468,8 @@ cl {
 cl import from '@jac/runtime' { Link, jacIsLoggedIn, jacLogout, navigate }
 
 cl {
-    def Navigation() -> Any {
+    def Navigation() -> JsxElement {
+
         isLoggedIn = jacIsLoggedIn();
 
         def handleLogout() -> None {
@@ -598,7 +612,8 @@ npm install antd
 cl import from antd { Button, Input, Card, Typography, Space }
 
 cl {
-    def MyApp() -> Any {
+    def MyApp() -> JsxElement {
+
         return <div>
             <Card title="Welcome" style={{"maxWidth": "400px", "margin": "50px auto"}}>
                 <Card.Meta title="Hello" description="Welcome to Jac!" />
@@ -614,7 +629,8 @@ cl {
         </div>;
     }
 
-    def jac_app() -> Any {
+    def jac_app() -> JsxElement {
+
         return MyApp();
     }
 }
@@ -639,14 +655,15 @@ cl import from react { useEffect }
 cl {
     has count: int = 0;  # Automatically creates React state
 
-    def Counter() -> Any {
+    def Counter() -> JsxElement {
+
         useEffect(lambda -> None {
             console.log("Count: ", count);
         }, [count]);
 
         return <div>
             <h1>Count: {count}</h1>
-            <button onClick={lambda e: any -> None {
+            <button onClick={lambda e: Any -> None {
                 setCount(count + 1);
             }}>
                 Increment
@@ -671,7 +688,8 @@ npm install lodash
 cl import from lodash { * as _ }
 
 cl {
-    def RandomQuoteCard() -> Any {
+    def RandomQuoteCard() -> JsxElement {
+
         suggestions = ['good luck', 'have fun', 'enjoy the ride'];
         randomSuggestion = _.sample(suggestions);  # Pick random item
 
@@ -700,7 +718,8 @@ cl import from pluralize { default as pluralize }
 cl import from 'react-animated-components' { Rotate }
 
 cl {
-    def AnimatedDemo() -> Any {
+    def AnimatedDemo() -> JsxElement {
+
         word = "tweet";
         count = 5;
         pluralWord = pluralize(word, count);
@@ -730,7 +749,8 @@ cl import from antd {
     Table
 }
 
-cl def FormExample() -> Any {
+cl def FormExample() -> JsxElement {
+
     return <Card title="Form Example">
         <Form>
             <Input placeholder="Name" />
@@ -771,7 +791,8 @@ cl import from antd {
     Modal
 }
 
-cl def MyComponent() -> Any {
+cl def MyComponent() -> JsxElement {
+
     return <div>
         <Card title="My Card">
             <Button
@@ -816,7 +837,8 @@ cl import from .module_name {
 ```jac
 """Button component."""
 
-cl def:pub CustomButton(props: dict) -> Any {
+cl def:pub CustomButton(props: dict) -> JsxElement {
+
     return <button
         style={{
             "padding": "10px 20px",
@@ -832,7 +854,8 @@ cl def:pub CustomButton(props: dict) -> Any {
     </button>;
 }
 
-cl def:pub PrimaryButton(props: dict) -> Any {
+cl def:pub PrimaryButton(props: dict) -> JsxElement {
+
     return <button
         style={{
             "padding": "10px 20px",
@@ -859,7 +882,8 @@ cl import from .button {
     PrimaryButton
 }
 
-cl def:pub App() -> Any {
+cl def:pub App() -> JsxElement {
+
     return <div>
         <CustomButton onClick={lambda -> None { console.log("Clicked!"); }}>
             Custom Button
@@ -870,7 +894,8 @@ cl def:pub App() -> Any {
     </div>;
 }
 
-cl def:pub jac_app() -> Any {
+cl def:pub jac_app() -> JsxElement {
+
     return App();
 }
 ```
@@ -929,7 +954,8 @@ cl import from .utils {
     MessageFormatter
 }
 
-cl def:pub JsImportTest() -> Any {
+cl def:pub JsImportTest() -> JsxElement {
+
     greeting = formatMessage("Jac");
     sum = calculateSum(5, 3);
     formatter = MessageFormatter("JS");
@@ -944,7 +970,8 @@ cl def:pub JsImportTest() -> Any {
     </div>;
 }
 
-cl def:pub jac_app() -> Any {
+cl def:pub jac_app() -> JsxElement {
+
     return JsImportTest();
 }
 ```
@@ -965,7 +992,8 @@ cl import from .stringUtils {
     slugify
 }
 
-cl def DateComponent() -> Any {
+cl def DateComponent() -> JsxElement {
+
     today = new Date();
     formatted = formatDate(today);
 
@@ -986,14 +1014,15 @@ cl import from .validators {
     PasswordValidator
 }
 
-cl def ValidationForm() -> Any {
+cl def ValidationForm() -> JsxElement {
+
     emailValidator = EmailValidator();
     passwordValidator = PasswordValidator();
 
     return <form>
         <input
             type="text"
-            onBlur={lambda e: any -> None {
+            onBlur={lambda e: Any -> None {
                 if not emailValidator.validate(e.target.value) {
                     alert("Invalid email");
                 }
@@ -1001,7 +1030,7 @@ cl def ValidationForm() -> Any {
         />
         <input
             type="password"
-            onBlur={lambda e: any -> None {
+            onBlur={lambda e: Any -> None {
                 if not passwordValidator.validate(e.target.value) {
                     alert("Invalid password");
                 }
@@ -1060,7 +1089,8 @@ cl import from antd {
     Layout
 }
 
-cl def Dashboard() -> Any {
+cl def Dashboard() -> JsxElement {
+
     return <Layout>
         <Card title="Dashboard">
             <Space direction="vertical">
@@ -1087,7 +1117,8 @@ cl import from .stringUtils {
     truncate
 }
 
-cl def PostCard(post: dict) -> Any {
+cl def PostCard(post: dict) -> JsxElement {
+
     return <div>
         <h3>{capitalize(post.title)}</h3>
         <p>{truncate(post.content, 100)}</p>
@@ -1113,7 +1144,8 @@ cl import from .layout {
     Column
 }
 
-cl def ContactForm() -> Any {
+cl def ContactForm() -> JsxElement {
+
     return <Container>
         <Row>
             <Column>

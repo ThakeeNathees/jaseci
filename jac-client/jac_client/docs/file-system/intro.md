@@ -27,7 +27,8 @@ node Todo { has text: str; }
 
 # Frontend
 cl {
-    def app() -> Any {
+    def app() -> JsxElement {
+
         return <div>Hello</div>;
     }
 }
