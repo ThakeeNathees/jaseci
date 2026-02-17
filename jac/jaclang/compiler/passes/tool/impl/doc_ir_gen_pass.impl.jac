@@ -1589,9 +1589,26 @@ impl DocIRGenPass.exit_return_stmt(nd: uni.ReturnStmt) -> None {
     parts: list[doc.DocType] = [];
     # Check if returning a JSX element directly (not wrapped in parens)
     is_jsx_return = isinstance(nd.expr, uni.JsxElement);
+    prev_kid: (uni.UniNode | None) = None;
     for i in nd.kid {
+        # Check for gap between previous kid and current kid
+        if (prev_kid is not None) {
+            if self.has_gap(prev_kid, i) {
+                # Remove trailing space if present and add hard line
+                if (parts and isinstance(parts[-1], doc.Text) and (parts[-1].text == ' ')) {
+                    parts.pop();
+                }
+                parts.append(self.hard_line());
+            } elif not (isinstance(i, uni.Token) and (i.name == Tok.SEMI)) {
+                # Add space separator if no gap and current is not semicolon
+                parts.append(self.space());
+            }
+        }
         if (isinstance(i, uni.Token) and (i.name == Tok.SEMI)) {
-            parts.pop();
+            # Remove trailing space before semicolon
+            if (parts and isinstance(parts[-1], doc.Text) and (parts[-1].text == ' ')) {
+                parts.pop();
+            }
             parts.append(i.gen.doc_ir);
         } elif (is_jsx_return and isinstance(i, uni.JsxElement)) {
             # For JSX returns, add hard line and indent
@@ -1599,7 +1616,7 @@ impl DocIRGenPass.exit_return_stmt(nd: uni.ReturnStmt) -> None {
         } else {
             parts.append(i.gen.doc_ir);
         }
-        parts.append(self.space());
+        prev_kid = i;
     }
     nd.gen.doc_ir = self.group(self.concat(parts, ast_node=nd), ast_node=nd);
 }
